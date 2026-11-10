@@ -29,7 +29,7 @@ Confirmed product surface: 76 built-in checks across six categories (correctness
 Durable constraints:
 
 - Every factual claim on the site — counts, timings, rule names, sample output, severity behavior — must be reproducible from the repository's real CLI output. No invented benchmarks, testimonials, customer stories, or adoption numbers.
-- npm publication is **not confirmed** as of this record. The README says "published usage (once released)" while site copy already presents `npx angular-doctor@latest` as live. Site copy implying a stable published release is an open decision, not a settled fact.
+- npm publication is **not confirmed** as of this record. The README says "published usage (once released)" while site copy already presents `npx @abiramcodes/angular-doctor@latest` as live. Site copy implying a stable published release is an open decision, not a settled fact.
 - The product is MIT-licensed open source; do not imply pricing, hosted accounts, or a paid tier.
 - Do not position it as replacing builds, tests, or the user's current lint setup.
 

@@ -2,6 +2,7 @@
 
 # Compiled output
 dist/
+packages/angular-doctor/skills/
 **/angular-doctor-report.md
 /tmp
 /out-tsc

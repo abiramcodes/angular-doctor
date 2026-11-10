@@ -2,10 +2,10 @@
 
 Plans for the docs site. Executors start from the file, not from chat.
 
-| Plan | Title | Severity | Status |
-| --- | --- | --- | --- |
-| [001](001-press-feedback.md) | Extend the existing press nudge to the other controls | MEDIUM | DONE |
-| [002](002-palette-color-transition.md) | Crossfade the palette preview instead of swapping it | LOW | DONE |
+| Plan                                   | Title                                                 | Severity | Status |
+| -------------------------------------- | ----------------------------------------------------- | -------- | ------ |
+| [001](001-press-feedback.md)           | Extend the existing press nudge to the other controls | MEDIUM   | DONE   |
+| [002](002-palette-color-transition.md) | Crossfade the palette preview instead of swapping it  | LOW      | DONE   |
 
 ## Order
 

@@ -69,7 +69,7 @@ export function buildMarkdownReport(
   const lines: string[] = [
     '# Angular Doctor report',
     '',
-    '> Self-contained findings for coding agents. Re-run `npx angular-doctor@latest --verbose` after fixes.',
+    '> Self-contained findings for coding agents. Re-run `npx @abiramcodes/angular-doctor@latest --verbose` after fixes.',
     '',
     '## Summary',
     '',
@@ -127,7 +127,7 @@ export function buildMarkdownReport(
     '2. Fix style guide findings using the linked section per rule (naming, structure, components, templates).',
     '3. Read grouped findings below for anything migrations do not cover.',
     '4. Align with the `angular-developer` skill.',
-    '5. Re-scan with `npx angular-doctor@latest --verbose --scope changed`.',
+    '5. Re-scan with `npx @abiramcodes/angular-doctor@latest --verbose --scope changed`.',
     '',
   );
 

@@ -2490,51 +2490,51 @@ html.can-scroll .scroll-fade--bottom {
     animation-delay: 90ms;
   }
 
-  [data-reveal='wait'] .fact,
-  [data-reveal='wait'] .section-head,
-  [data-reveal='wait'] .set-row,
-  [data-reveal='wait'] .output-grid,
-  [data-reveal='wait'] .command-row,
-  [data-reveal='wait'] .ci-command,
-  [data-reveal='wait'] .close-body {
+  [data-reveal="wait"] .fact,
+  [data-reveal="wait"] .section-head,
+  [data-reveal="wait"] .set-row,
+  [data-reveal="wait"] .output-grid,
+  [data-reveal="wait"] .command-row,
+  [data-reveal="wait"] .ci-command,
+  [data-reveal="wait"] .close-body {
     opacity: 0;
     transform: translateY(22px);
   }
 
-  [data-reveal='in'] .fact,
-  [data-reveal='in'] .section-head,
-  [data-reveal='in'] .set-row,
-  [data-reveal='in'] .output-grid,
-  [data-reveal='in'] .command-row,
-  [data-reveal='in'] .ci-command,
-  [data-reveal='in'] .close-body {
+  [data-reveal="in"] .fact,
+  [data-reveal="in"] .section-head,
+  [data-reveal="in"] .set-row,
+  [data-reveal="in"] .output-grid,
+  [data-reveal="in"] .command-row,
+  [data-reveal="in"] .ci-command,
+  [data-reveal="in"] .close-body {
     animation: reveal-rise 560ms var(--ease-out) both;
   }
 
-  [data-reveal='in'] .fact:nth-child(2),
-  [data-reveal='in'] .set-row:nth-child(2),
-  [data-reveal='in'] .command-row:nth-child(2) {
+  [data-reveal="in"] .fact:nth-child(2),
+  [data-reveal="in"] .set-row:nth-child(2),
+  [data-reveal="in"] .command-row:nth-child(2) {
     animation-delay: 60ms;
   }
 
-  [data-reveal='in'] .fact:nth-child(3),
-  [data-reveal='in'] .set-row:nth-child(3),
-  [data-reveal='in'] .command-row:nth-child(3) {
+  [data-reveal="in"] .fact:nth-child(3),
+  [data-reveal="in"] .set-row:nth-child(3),
+  [data-reveal="in"] .command-row:nth-child(3) {
     animation-delay: 110ms;
   }
 
-  [data-reveal='in'] .fact:nth-child(4),
-  [data-reveal='in'] .set-row:nth-child(4),
-  [data-reveal='in'] .command-row:nth-child(4) {
+  [data-reveal="in"] .fact:nth-child(4),
+  [data-reveal="in"] .set-row:nth-child(4),
+  [data-reveal="in"] .command-row:nth-child(4) {
     animation-delay: 160ms;
   }
 
-  [data-reveal='in'] .set-row:nth-child(5),
-  [data-reveal='in'] .command-row:nth-child(5) {
+  [data-reveal="in"] .set-row:nth-child(5),
+  [data-reveal="in"] .command-row:nth-child(5) {
     animation-delay: 200ms;
   }
 
-  [data-reveal='in'] .set-row:nth-child(6) {
+  [data-reveal="in"] .set-row:nth-child(6) {
     animation-delay: 240ms;
   }
 }

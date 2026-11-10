@@ -3,8 +3,12 @@ import { defineConfig } from 'tsdown';
 export default defineConfig({
   entry: ['src/cli.ts'],
   format: 'esm',
-  dts: true,
+  dts: false,
   clean: true,
   platform: 'node',
   fixedExtension: false,
+  deps: {
+    neverBundle: true,
+    alwaysBundle: [/^@angular-doctor\/core(\/.*)?$/],
+  },
 });

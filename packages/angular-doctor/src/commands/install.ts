@@ -11,7 +11,16 @@ const SKILL_TARGETS = [
 
 function skillSourcePath(): string {
   const here = dirname(fileURLToPath(import.meta.url));
-  return join(here, '..', '..', 'skills', 'angular-doctor', 'SKILL.md');
+  const candidates = [
+    join(here, '..', 'skills', 'angular-doctor', 'SKILL.md'),
+    join(here, '..', '..', 'skills', 'angular-doctor', 'SKILL.md'),
+    join(here, '..', '..', '..', 'skills', 'angular-doctor', 'SKILL.md'),
+  ];
+  const found = candidates.find((path) => existsSync(path));
+  if (!found) {
+    throw new Error(`Bundled skill missing. Looked in:\n${candidates.join('\n')}`);
+  }
+  return found;
 }
 
 export async function runInstall(options: { cwd: string; force?: boolean }): Promise<void> {
@@ -59,7 +68,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: npx angular-doctor@latest --json
+      - run: npx @abiramcodes/angular-doctor@latest --json
 `;
   await import('node:fs').then(({ writeFileSync }) =>
     writeFileSync(workflowPath, workflow, 'utf8'),

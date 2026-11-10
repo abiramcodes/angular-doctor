@@ -4,22 +4,26 @@ Deterministic, fast health scans for Angular codebases and coding agents. Ships 
 
 ## Quick start
 
+From a published install:
+
+```bash
+npx @abiramcodes/angular-doctor@latest
+npx @abiramcodes/angular-doctor@latest --verbose --scope changed
+npx @abiramcodes/angular-doctor@latest --category security
+npx @abiramcodes/angular-doctor@latest rules list
+npx @abiramcodes/angular-doctor@latest --colors pastel
+npx @abiramcodes/angular-doctor@latest rules explain angular-doctor/client-secret
+npx @abiramcodes/angular-doctor@latest install
+```
+
+Requires Node.js 20.19 or newer. Run it in an Angular or Nx workspace.
+
+Develop this repo:
+
 ```bash
 pnpm install
 pnpm build
 pnpm doctor:fixture
-```
-
-Published usage (once released):
-
-```bash
-npx angular-doctor@latest
-npx angular-doctor@latest --verbose --scope changed
-npx angular-doctor@latest --category security
-npx angular-doctor@latest rules list
-npx angular-doctor@latest --colors pastel
-npx angular-doctor@latest rules explain angular-doctor/client-secret
-npx angular-doctor@latest install
 ```
 
 `--colors` chooses `default` (the normal terminal colors), `pastel`, or `velvet`. The default is `default`.
@@ -55,7 +59,7 @@ After you edit source, rebuild before scanning again, or the last build is what 
 
 ```bash
 pnpm --filter @angular-doctor/core build
-pnpm --filter angular-doctor build
+pnpm --filter @abiramcodes/angular-doctor build
 ```
 
 Rebuild core when a rule, score, or report changes. Rebuild the CLI when the terminal output changes. `pnpm build` rebuilds both.
@@ -225,10 +229,10 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for where a new rule lives, how it is reg
 ## Agent skill
 
 ```bash
-npx angular-doctor@latest install
+npx @abiramcodes/angular-doctor@latest install
 ```
 
-Agents should run `npx angular-doctor@latest --verbose --scope changed` after edits and read `angular-doctor-report.md` when present.
+Agents should run `npx @abiramcodes/angular-doctor@latest --verbose --scope changed` after edits and read `angular-doctor-report.md` when present.
 
 ## Recommended skill
 
@@ -237,6 +241,42 @@ The scan report stands on its own. The official [angular/skills](https://github.
 ```bash
 npx skills add https://github.com/angular/skills
 ```
+
+## Publishing
+
+The npm package is `@abiramcodes/angular-doctor`. The unscoped name `angular-doctor` is already taken, so the public command is:
+
+```bash
+npx @abiramcodes/angular-doctor@latest
+```
+
+The installed bin is still `angular-doctor`. `@angular-doctor/core` stays private and is bundled into the CLI at build time.
+
+1. Log in with the npm account that owns the `@abiramcodes` scope: `npm login`.
+2. From the repo root, the first time and every later release:
+
+```bash
+pnpm publish:pkg
+```
+
+Scoped packages are private unless you pass `--access public`. The script does that. `prepublishOnly` builds `@angular-doctor/core`, bundles it into `packages/angular-doctor/dist`, and copies the agent skill into the tarball.
+
+npm identifies a release by the `version` field in `packages/angular-doctor/package.json`. `0.1.0` can be published once. The next publish must be a higher version, or npm rejects it. The CLI `--version` output reads that same field. `@angular-doctor/core` has its own version and is not published.
+
+Bump only the CLI package, then publish:
+
+| Change | Version | Example |
+| --- | --- | --- |
+| Bug fix, no new behavior | patch | `0.1.0` → `0.1.1` |
+| New command or flag, old commands still work | minor | `0.1.1` → `0.2.0` |
+| A command or flag changes in a way that breaks existing use | major | `0.2.0` → `1.0.0` |
+
+```bash
+pnpm --filter @abiramcodes/angular-doctor version patch
+pnpm publish:pkg
+```
+
+`version` rewrites `package.json` and creates a git commit and tag. Do not publish `packages/core`.
 
 ## License
 

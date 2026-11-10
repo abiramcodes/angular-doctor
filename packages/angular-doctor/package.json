@@ -1,5 +1,5 @@
 {
-  "name": "angular-doctor",
+  "name": "@abiramcodes/angular-doctor",
   "version": "0.1.0",
   "description": "Deterministic health scans for Angular codebases and coding agents.",
   "keywords": [
@@ -8,31 +8,49 @@
     "cli",
     "diagnostics",
     "linter",
+    "nx",
     "oxlint",
     "typescript"
   ],
+  "homepage": "https://github.com/abiramcodes/angular-doctor#readme",
+  "bugs": {
+    "url": "https://github.com/abiramcodes/angular-doctor/issues"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abiramcodes/angular-doctor.git",
+    "directory": "packages/angular-doctor"
+  },
   "bin": {
     "angular-doctor": "./bin/angular-doctor.js"
   },
   "files": [
     "bin",
     "dist",
-    "skills"
+    "skills",
+    "README.md"
   ],
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && node ./scripts/copy-skill.mjs",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm -w --filter @angular-doctor/core build && pnpm run build"
   },
   "dependencies": {
-    "@angular-doctor/core": "workspace:*",
     "commander": "^15.1.0",
-    "picocolors": "^1.1.1"
+    "fast-glob": "^3.3.3",
+    "oxlint": "^1.93.0",
+    "picocolors": "^1.1.1",
+    "semver": "^7.7.2"
   },
   "devDependencies": {
+    "@angular-doctor/core": "workspace:*",
     "@types/node": "^22.15.0",
+    "@types/semver": "^7.7.0",
     "tsdown": "^0.23.7",
     "typescript": "^6.0.3"
   },

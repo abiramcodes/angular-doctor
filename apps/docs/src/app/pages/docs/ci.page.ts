@@ -3,9 +3,9 @@ import { DocPage } from '../../doc-page';
 import { CodeBlock } from '../../code-block';
 import { Callout } from '../../callout';
 
-const installCommand = 'npx angular-doctor@latest ci install';
-const scanCommands = `npx angular-doctor@latest --scope changed --json
-npx angular-doctor@latest --score-only`;
+const installCommand = 'npx @abiramcodes/angular-doctor@latest ci install';
+const scanCommands = `npx @abiramcodes/angular-doctor@latest --scope changed --json
+npx @abiramcodes/angular-doctor@latest --score-only`;
 
 @Component({
   selector: 'docs-ci',

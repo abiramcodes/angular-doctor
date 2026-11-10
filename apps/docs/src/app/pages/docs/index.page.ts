@@ -7,17 +7,17 @@ const quickstartSteps: QuickstartStep[] = [
   {
     title: 'Run the scan',
     body: 'One command in your project root once the package is published. No install, no config.',
-    command: 'npx angular-doctor@latest',
+    command: 'npx @abiramcodes/angular-doctor@latest',
   },
   {
     title: 'Read the score',
     body: 'A 0–100 score, a health meter, and findings grouped by severity.',
-    command: 'npx angular-doctor@latest --verbose',
+    command: 'npx @abiramcodes/angular-doctor@latest --verbose',
   },
   {
     title: 'Fix what changed',
     body: 'Re-scan after edits. The report lists each finding with a suggested fix when the rule has one.',
-    command: 'npx angular-doctor@latest --scope changed',
+    command: 'npx @abiramcodes/angular-doctor@latest --scope changed',
   },
 ];
 

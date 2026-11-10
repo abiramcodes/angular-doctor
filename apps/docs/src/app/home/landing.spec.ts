@@ -15,7 +15,7 @@ describe('Landing', () => {
     const text = fixture.nativeElement.textContent as string;
 
     expect(text).toContain('Your codebase, live.');
-    expect(text).toContain('npx angular-doctor@latest');
+    expect(text).toContain('npx @abiramcodes/angular-doctor@latest');
     expect(text).toContain('85');
     expect(text).toContain('suggested fix');
     expect(text).toContain('angular-doctor-report.md');

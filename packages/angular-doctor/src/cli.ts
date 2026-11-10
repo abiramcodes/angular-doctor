@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { readFileSync } from 'node:fs';
 import { Command } from 'commander';
 import { colorize, parseColorMode, setColorMode } from './commands/palette.js';
 import { runInstall, runCiInstall } from './commands/install.js';
@@ -6,12 +7,16 @@ import { runMigrationsCommand } from './commands/migrations.js';
 import { categoryFromCommand, runRulesExplain, runRulesList } from './commands/rules.js';
 import { runScanCommand } from './commands/scan.js';
 
+const packageJson = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+) as { version: string };
+
 const program = new Command();
 
 program
   .name('angular-doctor')
   .description('Scan Angular projects for health, performance, and agent-ready diagnostics.')
-  .version('0.1.0')
+  .version(packageJson.version)
   .option('--colors <mode>', 'Color palette: default, pastel, or velvet', 'default');
 
 program.hook('preAction', (thisCommand) => {

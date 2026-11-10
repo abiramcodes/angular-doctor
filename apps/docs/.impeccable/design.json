@@ -9,44 +9,107 @@
         "role": "primary",
         "displayName": "Signal Blue",
         "canonical": "#3366CC",
-        "tonalRamp": ["#142448", "#1E3A78", "#2D54A1", "#3366CC", "#4F78CC", "#698BD3", "#9BB4E4", "#D2D4E1"]
+        "tonalRamp": [
+          "#142448",
+          "#1E3A78",
+          "#2D54A1",
+          "#3366CC",
+          "#4F78CC",
+          "#698BD3",
+          "#9BB4E4",
+          "#D2D4E1"
+        ]
       },
       "lamp-red": {
         "role": "secondary",
         "displayName": "Lamp Red",
         "canonical": "#FF3036",
-        "tonalRamp": ["#3A1619", "#5E292F", "#962B31", "#C4452A", "#FF3036", "#F55B1D", "#FF8A86", "#FFD0CE"]
+        "tonalRamp": [
+          "#3A1619",
+          "#5E292F",
+          "#962B31",
+          "#C4452A",
+          "#FF3036",
+          "#F55B1D",
+          "#FF8A86",
+          "#FFD0CE"
+        ]
       },
       "cursor-gold": {
         "role": "tertiary",
         "displayName": "Cursor Gold",
         "canonical": "#E0AF46",
-        "tonalRamp": ["#2A220F", "#3F3418", "#5F4E29", "#8A7030", "#B48F3A", "#E0AF46", "#E8C97A", "#F4E6B8"]
+        "tonalRamp": [
+          "#2A220F",
+          "#3F3418",
+          "#5F4E29",
+          "#8A7030",
+          "#B48F3A",
+          "#E0AF46",
+          "#E8C97A",
+          "#F4E6B8"
+        ]
       },
       "broadcast-black": {
         "role": "neutral",
         "displayName": "Broadcast Black",
         "canonical": "#1A1A1A",
-        "tonalRamp": ["#0E0E0E", "#1A1A1A", "#221C1D", "#2A2224", "#343434", "#666666", "#8C8D95", "#D2D4E1"]
+        "tonalRamp": [
+          "#0E0E0E",
+          "#1A1A1A",
+          "#221C1D",
+          "#2A2224",
+          "#343434",
+          "#666666",
+          "#8C8D95",
+          "#D2D4E1"
+        ]
       },
       "metal": {
         "role": "neutral",
         "displayName": "Metal",
         "canonical": "#D2D4E1",
-        "tonalRamp": ["#666666", "#767778", "#8C8D95", "#A6A7B1", "#D2D4E1", "#EDEDED", "#F4F5F8", "#FBFBFD"]
+        "tonalRamp": [
+          "#666666",
+          "#767778",
+          "#8C8D95",
+          "#A6A7B1",
+          "#D2D4E1",
+          "#EDEDED",
+          "#F4F5F8",
+          "#FBFBFD"
+        ]
       },
       "cream": {
         "role": "neutral",
         "displayName": "Cream",
         "canonical": "#E3CFAA",
-        "tonalRamp": ["#1A1A1A", "#5E292F", "#634E50", "#9B7568", "#C2A68B", "#D8C2A0", "#E3CFAA", "#E8DECC"]
+        "tonalRamp": [
+          "#1A1A1A",
+          "#5E292F",
+          "#634E50",
+          "#9B7568",
+          "#C2A68B",
+          "#D8C2A0",
+          "#E3CFAA",
+          "#E8DECC"
+        ]
       }
     },
     "typographyMeta": {
       "root": { "displayName": "Document Scale", "purpose": "Fluid root size, 1rem to 1.125rem." },
-      "display": { "displayName": "Buffer Display", "purpose": "Landing headline only; two lines maximum." },
-      "body": { "displayName": "Reading Sans", "purpose": "Docs and landing prose at a 40rem measure." },
-      "label": { "displayName": "Stage Label", "purpose": "Line numbers, counts, metadata, controls." }
+      "display": {
+        "displayName": "Buffer Display",
+        "purpose": "Landing headline only; two lines maximum."
+      },
+      "body": {
+        "displayName": "Reading Sans",
+        "purpose": "Docs and landing prose at a 40rem measure."
+      },
+      "label": {
+        "displayName": "Stage Label",
+        "purpose": "Line numbers, counts, metadata, controls."
+      }
     },
     "shadows": [
       {
@@ -56,10 +119,18 @@
       }
     ],
     "motion": [
-      { "name": "ease-out", "value": "cubic-bezier(0.23, 1, 0.32, 1)", "purpose": "Default state transition and scan entrance." },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Default state transition and scan entrance."
+      },
       { "name": "dur-fast", "value": "120ms", "purpose": "Hover and press." },
       { "name": "dur-mid", "value": "180ms", "purpose": "Theme and background transitions." },
-      { "name": "scan", "value": "240ms line entrance, 420ms meter fill, 20ms per bar", "purpose": "The one authored moment, replayed from the meter." }
+      {
+        "name": "scan",
+        "value": "240ms line entrance, 420ms meter fill, 20ms per bar",
+        "purpose": "The one authored moment, replayed from the meter."
+      }
     ],
     "breakpoints": [
       { "name": "mobile", "value": "640px" },
@@ -98,7 +169,7 @@
       "kind": "card",
       "refersTo": "meter-panel",
       "description": "The hero score panel: 85/100, 20-cell bar row, three counts, first finding, pre-release action.",
-      "html": "<aside class=\"ds-meter\"><div class=\"ds-meter-head\"><span>MASTER METER</span><span>0—100</span></div><p class=\"ds-score\">85<small> / 100</small></p><div class=\"ds-bars\" aria-hidden=\"true\"></div><div class=\"ds-counts\"><span>3 ERRORS</span><span>27 WARNINGS</span><span>6 NOTES</span></div><code>npx angular-doctor@latest</code></aside>",
+      "html": "<aside class=\"ds-meter\"><div class=\"ds-meter-head\"><span>MASTER METER</span><span>0—100</span></div><p class=\"ds-score\">85<small> / 100</small></p><div class=\"ds-bars\" aria-hidden=\"true\"></div><div class=\"ds-counts\"><span>3 ERRORS</span><span>27 WARNINGS</span><span>6 NOTES</span></div><code>npx @abiramcodes/angular-doctor@latest</code></aside>",
       "css": ".ds-meter { border: 1px solid var(--line-strong); background: var(--card); padding: 1rem 1.1rem; color: var(--foreground); font-family: var(--font-mono); } .ds-meter-head { display: flex; justify-content: space-between; padding-bottom: .6rem; border-bottom: 1px solid var(--border); color: var(--dim); font-size: .5625rem; letter-spacing: .08em; text-transform: uppercase; } .ds-score { margin: .65rem 0 0; color: var(--green); font-size: 5.5rem; font-weight: 700; line-height: .82; letter-spacing: -.06em; } .ds-score small { color: var(--dim); font-size: .9rem; letter-spacing: 0; } .ds-bars { height: .55rem; margin-top: .85rem; background: repeating-linear-gradient(90deg, var(--green) 0 12px, transparent 12px 15px); } .ds-counts { display: flex; justify-content: space-between; margin-top: .85rem; padding-top: .65rem; border-top: 1px solid var(--border); color: var(--dim); font-size: .625rem; letter-spacing: .1em; } .ds-meter code { display: block; margin-top: 1rem; padding: .55rem .6rem; border: 1px solid var(--border); color: var(--magenta); font-size: .72rem; }"
     },
     {
@@ -128,12 +199,36 @@
       "Angie appears only on the 404, as a stage character."
     ],
     "rules": [
-      { "name": "The Three Inks Rule", "body": "Signal blue, lamp red, and cursor gold are the only chromatic inks. Hazard orange stays inside the lamp ramp. Neutrals, borders, and dim text are derived tints. A fourth hue is a bug.", "section": "colors" },
-      { "name": "The No Glow Rule", "body": "Nothing glows. Emphasis comes from solid fill, a hard 1px rule, or a scale step.", "section": "colors" },
-      { "name": "The House Lights Rule", "body": "Light mode is not an inversion. It is cream paper. Code and instrument panels stay on the night palette.", "section": "colors" },
-      { "name": "The Mono-For-Data Rule", "body": "Monospace is used for code, commands, counts, scores, line numbers, and labels. It never sets a paragraph of prose.", "section": "typography" },
-      { "name": "The One Display Rule", "body": "Only the landing headline uses the display step. Docs titles step down to the headline size.", "section": "typography" },
-      { "name": "The Border-Not-Shadow Rule", "body": "If a surface needs separation, add a 1px hairline or move it one tonal step. Do not add a shadow.", "section": "elevation" }
+      {
+        "name": "The Three Inks Rule",
+        "body": "Signal blue, lamp red, and cursor gold are the only chromatic inks. Hazard orange stays inside the lamp ramp. Neutrals, borders, and dim text are derived tints. A fourth hue is a bug.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Glow Rule",
+        "body": "Nothing glows. Emphasis comes from solid fill, a hard 1px rule, or a scale step.",
+        "section": "colors"
+      },
+      {
+        "name": "The House Lights Rule",
+        "body": "Light mode is not an inversion. It is cream paper. Code and instrument panels stay on the night palette.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono-For-Data Rule",
+        "body": "Monospace is used for code, commands, counts, scores, line numbers, and labels. It never sets a paragraph of prose.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Display Rule",
+        "body": "Only the landing headline uses the display step. Docs titles step down to the headline size.",
+        "section": "typography"
+      },
+      {
+        "name": "The Border-Not-Shadow Rule",
+        "body": "If a surface needs separation, add a 1px hairline or move it one tonal step. Do not add a shadow.",
+        "section": "elevation"
+      }
     ],
     "dos": [
       "Do keep exactly three chromatic inks and derive every other surface from the reference metal, black, burgundy, and cream. Borders, dim text, and meter-off are tints, not new hues.",

@@ -1,4 +1,4 @@
-export const runCommand = 'npx angular-doctor@latest';
+export const runCommand = 'npx @abiramcodes/angular-doctor@latest';
 
 export type PaletteId = 'default' | 'pastel' | 'velvet';
 
@@ -142,28 +142,28 @@ updateValue(event: KeyboardEvent) {}`,
 
 export const quickCommands = [
   {
-    command: 'npx angular-doctor@latest --verbose --scope changed',
+    command: 'npx @abiramcodes/angular-doctor@latest --verbose --scope changed',
     detail: 'Scan what git shows as changed. The command to run after an edit.',
   },
   {
-    command: 'npx angular-doctor@latest --category security',
+    command: 'npx @abiramcodes/angular-doctor@latest --category security',
     detail: 'Print one category. The score is still the full scan.',
   },
   {
-    command: 'npx angular-doctor@latest --json',
+    command: 'npx @abiramcodes/angular-doctor@latest --json',
     detail: 'Print one JSON object for another tool to read.',
   },
   {
-    command: 'npx angular-doctor@latest rules list',
+    command: 'npx @abiramcodes/angular-doctor@latest rules list',
     detail: 'List the built-in checks grouped by category.',
   },
   {
-    command: 'npx angular-doctor@latest install',
+    command: 'npx @abiramcodes/angular-doctor@latest install',
     detail: 'Copy the agent skill into your project.',
   },
 ];
 
-export const ciCommand = 'npx angular-doctor@latest ci install';
+export const ciCommand = 'npx @abiramcodes/angular-doctor@latest ci install';
 
 export const ciCopy =
   'Write a GitHub Actions workflow that scans pushes to main and every pull request. Add --scope changed to report local working-tree changes, or --json to feed another job.';
@@ -210,7 +210,7 @@ export const requirements = [
   {
     need: 'A terminal',
     detail:
-      'npx angular-doctor@latest runs a one-off scan without adding a dependency. Pass a path to scan another folder.',
+      'npx @abiramcodes/angular-doctor@latest runs a one-off scan without adding a dependency. Pass a path to scan another folder.',
   },
   {
     need: 'No extra install',
@@ -227,28 +227,28 @@ export const commandGroups = [
     title: 'Scan',
     rows: [
       {
-        command: 'npx angular-doctor@latest',
+        command: 'npx @abiramcodes/angular-doctor@latest',
         detail: 'Scan the current directory.',
       },
       {
-        command: 'npx angular-doctor@latest path/to/app',
+        command: 'npx @abiramcodes/angular-doctor@latest path/to/app',
         detail: 'Scan that directory. Workspace detection still walks up to 12 parents.',
       },
       {
-        command: 'npx angular-doctor@latest --verbose --scope changed',
+        command: 'npx @abiramcodes/angular-doctor@latest --verbose --scope changed',
         detail:
           'Scan source files git shows as changed. This is the command to run after an edit. With no matching changes, it scans the whole project.',
       },
       {
-        command: 'npx angular-doctor@latest --scope files --files src/app/app.ts',
+        command: 'npx @abiramcodes/angular-doctor@latest --scope files --files src/app/app.ts',
         detail: 'Read only the paths you list.',
       },
       {
-        command: 'npx angular-doctor@latest --scope contextual --files src/app/app.ts',
+        command: 'npx @abiramcodes/angular-doctor@latest --scope contextual --files src/app/app.ts',
         detail: 'Keep files under the same top-level folder as each seed.',
       },
       {
-        command: 'npx angular-doctor@latest --category security',
+        command: 'npx @abiramcodes/angular-doctor@latest --category security',
         detail:
           'Print one category: correctness, performance, maintainability, security, accessibility, or hygiene. The score is still the full scan.',
       },
@@ -258,16 +258,16 @@ export const commandGroups = [
     title: 'Change the output',
     rows: [
       {
-        command: 'npx angular-doctor@latest --json',
+        command: 'npx @abiramcodes/angular-doctor@latest --json',
         detail:
           'Print one JSON object: score, diagnostics, totals, project, report path, skipped checks, duration, and file counts.',
       },
       {
-        command: 'npx angular-doctor@latest --score-only',
+        command: 'npx @abiramcodes/angular-doctor@latest --score-only',
         detail: 'Print the numeric score and nothing else.',
       },
       {
-        command: 'npx angular-doctor@latest --colors pastel',
+        command: 'npx @abiramcodes/angular-doctor@latest --colors pastel',
         detail: 'Color the terminal with the pastel palette. Also accepts default or velvet.',
       },
     ],
@@ -276,19 +276,20 @@ export const commandGroups = [
     title: 'Inspect rules and migrations',
     rows: [
       {
-        command: 'npx angular-doctor@latest rules list',
+        command: 'npx @abiramcodes/angular-doctor@latest rules list',
         detail: 'List built-in rules grouped by category.',
       },
       {
-        command: 'npx angular-doctor@latest rules list --category accessibility',
+        command: 'npx @abiramcodes/angular-doctor@latest rules list --category accessibility',
         detail: 'List one category.',
       },
       {
-        command: 'npx angular-doctor@latest rules explain angular-doctor/client-secret',
+        command:
+          'npx @abiramcodes/angular-doctor@latest rules explain angular-doctor/client-secret',
         detail: 'Print one rule. Use the full rule id.',
       },
       {
-        command: 'npx angular-doctor@latest migrations',
+        command: 'npx @abiramcodes/angular-doctor@latest migrations',
         detail:
           'Print the ng generate @angular/core migrations that match this scan. Run them with --dry-run first.',
       },
@@ -298,16 +299,16 @@ export const commandGroups = [
     title: 'Install',
     rows: [
       {
-        command: 'npx angular-doctor@latest install',
+        command: 'npx @abiramcodes/angular-doctor@latest install',
         detail:
           'Copy the agent skill to .cursor/skills/angular-doctor and .agents/skills/angular-doctor. An existing skill is left in place.',
       },
       {
-        command: 'npx angular-doctor@latest install --force',
+        command: 'npx @abiramcodes/angular-doctor@latest install --force',
         detail: 'Overwrite an existing skill install.',
       },
       {
-        command: 'npx angular-doctor@latest ci install',
+        command: 'npx @abiramcodes/angular-doctor@latest ci install',
         detail: 'Write .github/workflows/angular-doctor.yml when that file is not already there.',
       },
     ],
@@ -542,7 +543,7 @@ export const reportSections = [
 
 export const markdownExcerpt = `# Angular Doctor report
 
-> Self-contained findings for coding agents. Re-run \`npx angular-doctor@latest --verbose\` after fixes.
+> Self-contained findings for coding agents. Re-run \`npx @abiramcodes/angular-doctor@latest --verbose\` after fixes.
 
 ## Summary
 

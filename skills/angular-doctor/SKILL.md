@@ -10,13 +10,13 @@ description: Run Angular Doctor after Angular edits. Scan for correctness, perfo
 After meaningful Angular changes (components, templates, services, routes, forms, DI), run:
 
 ```bash
-npx angular-doctor@latest --verbose --scope changed
+npx @abiramcodes/angular-doctor@latest --verbose --scope changed
 ```
 
 For a full workspace audit:
 
 ```bash
-npx angular-doctor@latest --verbose
+npx @abiramcodes/angular-doctor@latest --verbose
 ```
 
 ## Primary artifact
@@ -46,5 +46,5 @@ Follow `playbooks/triage.md` in this skill folder:
 ## Install this skill locally
 
 ```bash
-npx angular-doctor@latest install
+npx @abiramcodes/angular-doctor@latest install
 ```
