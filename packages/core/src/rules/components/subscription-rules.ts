@@ -169,4 +169,3 @@ function sliceDelimited(content: string, open: number, start: string, end: strin
   }
   return null;
 }
-
