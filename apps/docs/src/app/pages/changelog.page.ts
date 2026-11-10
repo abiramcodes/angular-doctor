@@ -22,7 +22,9 @@ import { Title } from '@angular/platform-browser';
                   still do not change the score.
                 </li>
                 <li>Oxlint findings keep their rule id and the line they were found on.</li>
-                <li>The landing headline is "Check Angular code." Angular sits on the lamp-red block.</li>
+                <li>
+                  The landing headline is "Check Angular code." Angular sits on the lamp-red block.
+                </li>
                 <li>The docs pointer is a scan reticle. Clicks land on the red square.</li>
                 <li>Overview commands place the copy control at the right edge of the command.</li>
               </ul>
