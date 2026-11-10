@@ -316,7 +316,7 @@ export const commandGroups = [
 ];
 
 export const commandsIntro =
-  'These are the pre-release commands. --colors works on all of them. Anything other than default, pastel, or velvet exits with an error that names those three.';
+  'These are the commands. --colors works on all of them. Anything other than default, pastel, or velvet exits with an error that names those three.';
 
 export const flags = [
   {

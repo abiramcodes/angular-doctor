@@ -70,13 +70,6 @@ import { Theme } from './theme';
         </div>
       </header>
 
-      <div class="release-strip">
-        <div class="shell">
-          <span>Pre-release</span>
-          The npm package is not published yet.
-        </div>
-      </div>
-
       <main id="content" class="flex-1">
         <router-outlet />
       </main>

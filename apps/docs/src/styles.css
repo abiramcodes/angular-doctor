@@ -359,38 +359,6 @@ html.can-scroll .scroll-fade--bottom {
   }
 }
 
-.release-strip {
-  border-bottom: 1px solid var(--border);
-  color: var(--amber);
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
-  letter-spacing: 0.04em;
-}
-
-.release-strip .shell {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 0.5rem;
-  padding-block: 0.3rem;
-}
-
-.release-strip span {
-  border: 1px solid var(--amber);
-  padding: 0 0.3rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.release-strip a {
-  color: var(--heading);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.release-strip a:hover {
-  color: var(--green);
-}
-
 .site-footer {
   border-top: 1px solid var(--border);
   margin-top: 4rem;

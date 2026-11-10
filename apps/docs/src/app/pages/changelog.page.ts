@@ -15,7 +15,7 @@ import { Title } from '@angular/platform-browser';
             <span class="changelog-marker" aria-hidden="true"></span>
             <div class="changelog-body">
               <h2 class="changelog-version">0.1.0</h2>
-              <p class="changelog-status">Current package</p>
+              <p class="changelog-status">Released on npm</p>
               <ul>
                 <li>Scan an Angular or Nx project and print a 0–100 health score.</li>
                 <li>Group findings into errors, warnings, and notes.</li>

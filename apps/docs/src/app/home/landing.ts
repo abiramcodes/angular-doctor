@@ -267,7 +267,7 @@ import {
       <div class="shell section-grid">
         <div class="section-body close-body">
           <h2 id="close-title" class="close-title">Run it on your workspace.</h2>
-          <p class="close-lede">The package is still pre-release. Scan the directory you are in.</p>
+          <p class="close-lede">Scan the directory you are in.</p>
           <div class="close-actions">
             <div class="ci-command">
               <span class="ci-prompt" aria-hidden="true">$</span>

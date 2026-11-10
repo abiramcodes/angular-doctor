@@ -160,15 +160,15 @@
       "name": "Copy Command",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Wide preview-command control with a visible label and state text.",
-      "html": "<button class=\"ds-copy\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"9\" y=\"9\" width=\"12\" height=\"12\" rx=\"2\"/><path d=\"M5 15V5a2 2 0 0 1 2-2h10\"/></svg>COPY PREVIEW COMMAND</button>",
+      "description": "Wide command control with a visible label and state text.",
+      "html": "<button class=\"ds-copy\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"9\" y=\"9\" width=\"12\" height=\"12\" rx=\"2\"/><path d=\"M5 15V5a2 2 0 0 1 2-2h10\"/></svg>COPY COMMAND</button>",
       "css": ".ds-copy { display: inline-flex; align-items: center; gap: .4rem; min-height: 2rem; padding: 0 .75rem; border: 1px solid var(--line-strong); border-radius: 2px; background: transparent; color: var(--heading); font-family: var(--font-mono); font-size: .6875rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; } .ds-copy:hover { border-color: var(--green); color: var(--green); } .ds-copy:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }"
     },
     {
       "name": "Master Meter",
       "kind": "card",
       "refersTo": "meter-panel",
-      "description": "The hero score panel: 85/100, 20-cell bar row, three counts, first finding, pre-release action.",
+      "description": "The hero score panel: 85/100, 20-cell bar row, three counts, first finding.",
       "html": "<aside class=\"ds-meter\"><div class=\"ds-meter-head\"><span>MASTER METER</span><span>0—100</span></div><p class=\"ds-score\">85<small> / 100</small></p><div class=\"ds-bars\" aria-hidden=\"true\"></div><div class=\"ds-counts\"><span>3 ERRORS</span><span>27 WARNINGS</span><span>6 NOTES</span></div><code>npx @abiramcodes/angular-doctor@latest</code></aside>",
       "css": ".ds-meter { border: 1px solid var(--line-strong); background: var(--card); padding: 1rem 1.1rem; color: var(--foreground); font-family: var(--font-mono); } .ds-meter-head { display: flex; justify-content: space-between; padding-bottom: .6rem; border-bottom: 1px solid var(--border); color: var(--dim); font-size: .5625rem; letter-spacing: .08em; text-transform: uppercase; } .ds-score { margin: .65rem 0 0; color: var(--green); font-size: 5.5rem; font-weight: 700; line-height: .82; letter-spacing: -.06em; } .ds-score small { color: var(--dim); font-size: .9rem; letter-spacing: 0; } .ds-bars { height: .55rem; margin-top: .85rem; background: repeating-linear-gradient(90deg, var(--green) 0 12px, transparent 12px 15px); } .ds-counts { display: flex; justify-content: space-between; margin-top: .85rem; padding-top: .65rem; border-top: 1px solid var(--border); color: var(--dim); font-size: .625rem; letter-spacing: .1em; } .ds-meter code { display: block; margin-top: 1rem; padding: .55rem .6rem; border: 1px solid var(--border); color: var(--magenta); font-size: .72rem; }"
     },
@@ -235,7 +235,7 @@
       "Do use JetBrains Mono for code, commands, counts, and labels, and Public Sans for running prose.",
       "Do put the score and the command in the first desktop viewport. State each sample number once.",
       "Do keep docs prose near 40rem and align header, quickstart, pager, and prose to it.",
-      "Do preserve the pre-release status: build-from-source is the primary action, the npx command is labelled preview.",
+      "Do use npx @abiramcodes/angular-doctor@latest as the primary action. That command runs the published package.",
       "Do confine Angie to the 404 and keep the rest of the site mascot-free."
     ],
     "donts": [

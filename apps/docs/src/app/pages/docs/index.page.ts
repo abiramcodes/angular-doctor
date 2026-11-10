@@ -6,7 +6,7 @@ import { steps, whatItIs } from '../../home/landing-content';
 const quickstartSteps: QuickstartStep[] = [
   {
     title: 'Run the scan',
-    body: 'One command in your project root once the package is published. No install, no config.',
+    body: 'One command in your project root. No install, no config.',
     command: 'npx @abiramcodes/angular-doctor@latest',
   },
   {

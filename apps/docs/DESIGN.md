@@ -1,6 +1,6 @@
 ---
 name: Angular Doctor
-description: A pre-release health scan for Angular and Nx workspaces, presented as a live code buffer.
+description: A health scan for Angular and Nx workspaces, presented as a live code buffer.
 colors:
   signal-blue: "#698BD3"
   signal-blue-paper: "#2D54A1"
@@ -228,7 +228,7 @@ Controls and panels are square: 2px on buttons and copy controls, 0 elsewhere. B
 
 ### Signature component: Master meter
 
-The hero's right rail is a 21rem panel: a 4.5–6.5rem signal-blue score, a 20-cell bar row, three severity counts, a first-finding line, and a pre-release action block. It is the product demo, the score, and the conversion point in one surface.
+The hero's right rail is a 21rem panel: a 4.5–6.5rem signal-blue score, a 20-cell bar row, three severity counts, and a first-finding line. The published `npx @abiramcodes/angular-doctor@latest` command sits in the buffer pane beside it.
 
 ### Signature component: Code buffer
 
@@ -242,7 +242,7 @@ Seven grid lines with a 2.35rem gutter, syntax inks, one gold hot line with a 2p
 - **Do** use JetBrains Mono for code, commands, counts, and labels, and Public Sans for running prose.
 - **Do** put the score and the command in the first desktop viewport. State each sample number once.
 - **Do** keep docs prose near 40rem and align header, quickstart, pager, and prose to it.
-- **Do** preserve the pre-release status: build-from-source is the primary action, the npx command is labelled preview.
+- **Do** use `npx @abiramcodes/angular-doctor@latest` as the primary action. That command runs the published package.
 - **Do** confine Angie to the 404 and keep the rest of the site mascot-free.
 
 ### Don't:
