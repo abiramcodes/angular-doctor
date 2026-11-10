@@ -150,6 +150,8 @@ function shortPath(file: string, projectRoot: string): string {
   return rel.startsWith('..') ? file : rel;
 }
 
+const ansiColor = new RegExp(`${String.fromCharCode(0x1b)}\\[[0-9;]*m`, 'g');
+
 function visibleLength(value: string): number {
-  return value.replace(/\u001b\[[0-9;]*m/g, '').length;
+  return value.replace(ansiColor, '').length;
 }

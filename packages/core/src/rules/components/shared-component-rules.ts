@@ -62,7 +62,7 @@ function isSkippedFile(file: string): boolean {
     base === 'bootstrap.ts' ||
     base === 'routes.ts' ||
     /\.config\.(?:ts|mts|cts|js|mjs|cjs)$/.test(base) ||
-    /\.routes\.ts$/.test(base) ||
+    base.endsWith('.routes.ts') ||
     base.startsWith('federation.config.')
   );
 }

@@ -265,11 +265,11 @@ npm identifies a release by the `version` field in `packages/angular-doctor/pack
 
 Bump only the CLI package, then publish:
 
-| Change | Version | Example |
-| --- | --- | --- |
-| Bug fix, no new behavior | patch | `0.1.0` → `0.1.1` |
-| New command or flag, old commands still work | minor | `0.1.1` → `0.2.0` |
-| A command or flag changes in a way that breaks existing use | major | `0.2.0` → `1.0.0` |
+| Change                                                      | Version | Example           |
+| ----------------------------------------------------------- | ------- | ----------------- |
+| Bug fix, no new behavior                                    | patch   | `0.1.0` → `0.1.1` |
+| New command or flag, old commands still work                | minor   | `0.1.1` → `0.2.0` |
+| A command or flag changes in a way that breaks existing use | major   | `0.2.0` → `1.0.0` |
 
 ```bash
 pnpm --filter @abiramcodes/angular-doctor version patch
