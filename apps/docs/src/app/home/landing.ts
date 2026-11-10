@@ -23,7 +23,9 @@ import {
     <section class="floor" [class.is-scanning]="scanning()" aria-labelledby="floor-title">
       <div class="shell floor-grid">
         <div class="buffer-pane">
-          <h1 id="floor-title" class="floor-title">Your codebase, live.</h1>
+          <h1 id="floor-title" class="floor-title">
+            Check <span class="mark">Angular</span> code.
+          </h1>
           <ol class="buffer" aria-label="Sample scan, drawn as a live code buffer">
             <li class="line">
               <span class="n">01</span>

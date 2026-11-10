@@ -14,7 +14,7 @@ describe('Landing', () => {
     fixture.detectChanges();
     const text = fixture.nativeElement.textContent as string;
 
-    expect(text).toContain('Your codebase, live.');
+    expect(text).toContain('Check Angular code.');
     expect(text).toContain('npx @abiramcodes/angular-doctor@latest');
     expect(text).toContain('85');
     expect(text).toContain('suggested fix');

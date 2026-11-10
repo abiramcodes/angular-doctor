@@ -1,6 +1,6 @@
 {
   "name": "@abiramcodes/angular-doctor",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Deterministic health scans for Angular codebases and coding agents.",
   "keywords": [
     "accessibility",

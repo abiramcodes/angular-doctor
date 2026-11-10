@@ -21,13 +21,21 @@ describe('calculateScore', () => {
     expect(calculateScore([])).toBe(100);
   });
 
-  it('charges each rule once', () => {
+  it('charges an error once per file and a warning once per rule', () => {
     expect(calculateScore([diag('error')])).toBe(98.5);
     expect(calculateScore([diag('warning')])).toBe(99.25);
     expect(calculateScore([diag('info')])).toBe(100);
-    expect(calculateScore([diag('error'), diag('error', 'test/rule', 'b.ts'), diag('error')])).toBe(
+    expect(calculateScore([diag('error'), diag('error')])).toBe(98.5);
+    expect(calculateScore([diag('error'), diag('error', 'test/rule', 'b.ts')])).toBe(97);
+    expect(calculateScore([diag('error', 'test/one'), diag('error', 'test/two')])).toBe(97);
+    expect(
+      calculateScore([
+        diag('warning', 'test/style', 'a.ts'),
+        diag('warning', 'test/style', 'b.ts'),
+      ]),
+    ).toBe(99.25);
+    expect(calculateScore([diag('error', 'test/rule'), diag('warning', 'test/rule', 'b.ts')])).toBe(
       98.5,
     );
-    expect(calculateScore([diag('error', 'test/one'), diag('error', 'test/two')])).toBe(97);
   });
 });

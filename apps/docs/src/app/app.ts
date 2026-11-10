@@ -37,7 +37,7 @@ import { Theme } from './theme';
           </nav>
 
           <div class="site-header-aside">
-            <span class="header-state" aria-hidden="true"><i></i>v0.1.1</span>
+            <span class="header-state" aria-hidden="true"><i></i>v0.1.2</span>
             <a
               class="header-github"
               href="https://github.com/abiramcodes/angular-doctor"

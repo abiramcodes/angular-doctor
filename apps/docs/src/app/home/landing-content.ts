@@ -47,7 +47,7 @@ export interface PaletteSpec {
  * ------------------------------------------------------------------ */
 
 export const hero = {
-  title: 'Your Angular codebase, diagnosed.',
+  title: 'Check Angular code.',
   lede: 'Angular Doctor scans your Angular or Nx workspace, scores it from 0 to 100, and writes a report you can fix from.',
   note: 'A real scan of the sample workspace.',
 };
@@ -69,9 +69,9 @@ export const facts = [
     detail: 'full, changed, files, and contextual.',
   },
   {
-    value: 'Once',
-    label: 'Per rule',
-    detail: 'An error costs 1.5, a warning 0.75, a note nothing.',
+    value: '1.5',
+    label: 'Per file',
+    detail: 'An error costs 1.5 in each file. A warning costs 0.75 once. A note costs nothing.',
   },
 ];
 
@@ -174,7 +174,7 @@ export const ciCopy =
 
 export const whatItIs = [
   'Angular Doctor is a command-line health scan for an Angular CLI or Nx workspace. Run it in the project and it reads the source, prints a score from 0 to 100, and lists what it found.',
-  'Each rule counts once, at its strongest severity. An error costs 1.5 points, a warning costs 0.75, and a note costs nothing. The same rule in ten files costs the same as in one file. The score never goes below 0.',
+  'An error costs 1.5 points in each file where that rule fires. The same error twice in one file still costs 1.5. A warning costs 0.75 once per rule, even when it appears in many files. A note costs nothing. The score starts at 100 and does not go below 0.',
   'TypeScript goes through Oxlint. Built-in rules cover Angular habits those linters do not: inject(), host bindings, control flow, secrets in client code, accessibility gaps, and similar checks. An HTML template ESLint runner is wired and currently skipped until its peers are enabled. The scan sits next to the lint setup you already run. It does not replace a build or your tests.',
 ];
 
@@ -189,7 +189,7 @@ export const steps = [
   },
   {
     title: 'Check and score',
-    body: 'Built-in rules run on the source, then Oxlint runs on the scripts. The score starts at 100 and subtracts once per rule. Filtering with --category changes which findings are printed. The score stays the full scan.',
+    body: 'Built-in rules run on the source, then Oxlint runs on the TypeScript. An error costs 1.5 in each file. A warning costs 0.75 once per rule. Filtering with --category changes which findings are printed. The score stays the full scan.',
   },
   {
     title: 'Print, then write',

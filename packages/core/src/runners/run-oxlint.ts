@@ -41,13 +41,45 @@ function resolveOxlintBinary(): string {
   }
 }
 
+interface OxlintSpan {
+  line?: number;
+  column?: number;
+}
+
 interface OxlintJsonMessage {
   filename?: string;
   message?: string;
+  code?: string;
+  severity?: string | number;
+  labels?: Array<{ span?: OxlintSpan }>;
+  ruleId?: string;
   line?: number;
   column?: number;
-  ruleId?: string;
-  severity?: number;
+}
+
+export function oxlintRuleId(message: OxlintJsonMessage): string {
+  const code = message.code ?? message.ruleId;
+  if (!code) {
+    return 'oxlint/unknown';
+  }
+  const named = /^[A-Za-z0-9_-]+\(([^)]+)\)$/.exec(code);
+  const rule = named?.[1] ?? code;
+  return rule.startsWith('oxlint/') ? rule : `oxlint/${rule}`;
+}
+
+function oxlintSeverity(severity: OxlintJsonMessage['severity']): Diagnostic['severity'] {
+  if (severity === 'error' || severity === 2) {
+    return 'error';
+  }
+  return 'warning';
+}
+
+function oxlintPosition(message: OxlintJsonMessage): { line: number; column: number } {
+  const span = message.labels?.[0]?.span;
+  return {
+    line: span?.line ?? message.line ?? 1,
+    column: span?.column ?? message.column ?? 1,
+  };
 }
 
 export function runOxlint(
@@ -95,17 +127,21 @@ export function runOxlint(
     };
   }
 
-  const diagnostics: Diagnostic[] = messages.map((m, index) => ({
-    id: `oxlint:${m.ruleId ?? 'unknown'}:${m.filename ?? ''}:${m.line ?? 0}:${index}`,
-    ruleId: m.ruleId ?? 'oxlint/unknown',
-    severity: m.severity === 2 ? 'error' : 'warning',
-    category: 'hygiene',
-    message: m.message ?? 'Lint issue',
-    file: m.filename ?? '',
-    line: m.line ?? 1,
-    column: m.column ?? 1,
-    source: 'oxlint',
-  }));
+  const diagnostics: Diagnostic[] = messages.map((m, index) => {
+    const ruleId = oxlintRuleId(m);
+    const position = oxlintPosition(m);
+    return {
+      id: `oxlint:${ruleId}:${m.filename ?? ''}:${position.line}:${index}`,
+      ruleId,
+      severity: oxlintSeverity(m.severity),
+      category: 'hygiene',
+      message: m.message ?? 'Lint issue',
+      file: m.filename ?? '',
+      line: position.line,
+      column: position.column,
+      source: 'oxlint',
+    };
+  });
 
   return { diagnostics, skipped: false };
 }

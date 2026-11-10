@@ -19,7 +19,7 @@ OWN-WORLD: Broadcast-black ground; exactly three inks — signal blue, lamp red,
 
 STORY: The visitor sees the scan as one live set: source in, findings out, score on the meter. They believe one command produces a report worth acting on, then run it.
 
-FIRST VIEWPORT: Header strip with brand, context, live state. Left: buffer title, “Your codebase, live.”, seven syntax lines with the hot line lit gold, one-line lede, and the command. Right: master meter 85, bar row, counts, one sample finding. Below the fold: four operating facts, then the six families listed once.
+FIRST VIEWPORT: Header strip with brand, context, live state. Left: buffer title, “Check Angular code.”, seven syntax lines with the hot line lit gold, one-line lede, and the command. Right: master meter 85, bar row, counts, one sample finding. Below the fold: four operating facts, then the six families listed once.
 
 FORM: dealt lead (first challenger, bolder register), seed:144f62de4d8b383f.
 

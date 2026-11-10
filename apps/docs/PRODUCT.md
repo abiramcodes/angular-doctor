@@ -24,12 +24,12 @@ A developer runs the command from an Angular workspace root (the scan walks up t
 
 ## Capabilities and Constraints
 
-Confirmed product surface: 76 built-in checks across six categories (correctness, performance, maintainability, security, accessibility, hygiene); scoring where each rule counts once at its strongest severity, an error costing 1.5 points, a warning 0.75, and a note nothing; scope modes full, changed, files, and contextual; `--verbose`, `--category`, `--json`, `--colors`, `--scope`; `rules list`, `rules explain`, migrations, `ci install`, and agent skill `install`. The site covers a landing page, docs (overview, run, reference, output, colors, CI, open source), and a changelog.
+Confirmed product surface: 76 built-in checks across six categories (correctness, performance, maintainability, security, accessibility, hygiene); scoring where an error costs 1.5 points in each file, a warning costs 0.75 once per rule, and a note costs nothing; scope modes full, changed, files, and contextual; `--verbose`, `--category`, `--json`, `--colors`, `--scope`; `rules list`, `rules explain`, migrations, `ci install`, and agent skill `install`. The site covers a landing page, docs (overview, run, reference, output, colors, CI, open source), and a changelog.
 
 Durable constraints:
 
 - Every factual claim on the site — counts, timings, rule names, sample output, severity behavior — must be reproducible from the repository's real CLI output. No invented benchmarks, testimonials, customer stories, or adoption numbers.
-- `@abiramcodes/angular-doctor` 0.1.1 is the current package. Install copy uses `npx @abiramcodes/angular-doctor@latest`.
+- `@abiramcodes/angular-doctor` 0.1.2 is the current package. Install copy uses `npx @abiramcodes/angular-doctor@latest`.
 - The product is MIT-licensed open source; do not imply pricing, hosted accounts, or a paid tier.
 - Do not position it as replacing builds, tests, or the user's current lint setup.
 

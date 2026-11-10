@@ -104,7 +104,7 @@ pnpm docs:build
 
 When violations exist, **`angular-doctor-report.md`** is written for agents. Clean scans print only the score.
 
-The score counts each rule once. An error costs 1.5 points and a warning costs 0.75. Info findings do not lower the score, and repeating one rule does not lower it again. `--category` filters the findings list. The score stays the full scan. `rules list` and `rules explain` show the built-in rules grouped by category.
+An error costs 1.5 points in each file where that rule fires. Repeating it in the same file does not cost more. A warning costs 0.75 once per rule, no matter how many files repeat it. Info findings do not lower the score. The score starts at 100 and does not go below 0. `--category` filters the findings list. The score stays the full scan. `rules list` and `rules explain` show the built-in rules grouped by category.
 
 ## When a check is skipped
 

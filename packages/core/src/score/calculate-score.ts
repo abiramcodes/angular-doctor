@@ -1,17 +1,4 @@
-import { isStyleGuideOnlyRule } from '../rules/style-guide-catalog.js';
 import type { Diagnostic, ScanTotals } from '../types.js';
-
-const WEIGHT: Record<Diagnostic['severity'], number> = {
-  error: 1.5,
-  warning: 0.75,
-  info: 0,
-};
-
-const SEVERITY_RANK: Record<Diagnostic['severity'], number> = {
-  info: 1,
-  warning: 2,
-  error: 3,
-};
 
 export function summarizeDiagnostics(diagnostics: Diagnostic[]): ScanTotals {
   const totals: ScanTotals = {
@@ -28,28 +15,36 @@ export function summarizeDiagnostics(diagnostics: Diagnostic[]): ScanTotals {
     },
   };
 
-  for (const d of diagnostics) {
-    totals[d.severity] += 1;
-    totals.byCategory[d.category] += 1;
+  for (const diagnostic of diagnostics) {
+    totals[diagnostic.severity] += 1;
+    totals.byCategory[diagnostic.category] += 1;
   }
 
   return totals;
 }
 
+const ERROR_WEIGHT = 1.5;
+const WARNING_WEIGHT = 0.75;
+
 export function calculateScore(diagnostics: Diagnostic[]): number {
-  const worst = new Map<string, Diagnostic['severity']>();
+  const errorFiles = new Set<string>();
+  const warningRules = new Set<string>();
+
   for (const diagnostic of diagnostics) {
-    if (diagnostic.severity === 'info' && isStyleGuideOnlyRule(diagnostic.ruleId)) {
+    if (diagnostic.severity === 'info') {
       continue;
     }
-    const current = worst.get(diagnostic.ruleId);
-    if (!current || SEVERITY_RANK[diagnostic.severity] > SEVERITY_RANK[current]) {
-      worst.set(diagnostic.ruleId, diagnostic.severity);
+    if (diagnostic.severity === 'error') {
+      errorFiles.add(`${diagnostic.ruleId}\0${diagnostic.file}`);
+      continue;
     }
+    warningRules.add(diagnostic.ruleId);
   }
-  let penalty = 0;
-  for (const severity of worst.values()) {
-    penalty += WEIGHT[severity];
+
+  for (const key of errorFiles) {
+    warningRules.delete(key.slice(0, key.indexOf('\0')));
   }
+
+  const penalty = errorFiles.size * ERROR_WEIGHT + warningRules.size * WARNING_WEIGHT;
   return Math.max(0, 100 - Math.min(penalty, 100));
 }
