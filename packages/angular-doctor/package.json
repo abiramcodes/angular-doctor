@@ -1,0 +1,42 @@
+{
+  "name": "angular-doctor",
+  "version": "0.1.0",
+  "description": "Deterministic health scans for Angular codebases and coding agents.",
+  "keywords": [
+    "accessibility",
+    "angular",
+    "cli",
+    "diagnostics",
+    "linter",
+    "oxlint",
+    "typescript"
+  ],
+  "license": "MIT",
+  "bin": {
+    "angular-doctor": "./bin/angular-doctor.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "skills"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "@angular-doctor/core": "workspace:*",
+    "commander": "^15.1.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "tsdown": "^0.23.7",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

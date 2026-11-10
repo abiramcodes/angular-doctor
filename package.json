@@ -1,35 +1,31 @@
 {
-  "name": "angular-doctor",
-  "version": "0.0.0",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
-  },
+  "name": "angular-doctor-repo",
   "private": true,
-  "packageManager": "pnpm@12.6.0",
-  "dependencies": {
-    "@angular/common": "^22.2.0",
-    "@angular/compiler": "^22.2.0",
-    "@angular/core": "^22.2.0",
-    "@angular/forms": "^22.2.0",
-    "@angular/platform-browser": "^22.2.0",
-    "@angular/router": "^22.2.0",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm -r --filter @angular-doctor/core --filter angular-doctor run build",
+    "test": "pnpm -r --filter @angular-doctor/core run test",
+    "typecheck": "pnpm -r --filter @angular-doctor/core --filter angular-doctor run typecheck",
+    "doctor": "node packages/angular-doctor/bin/angular-doctor.js",
+    "doctor:fixture": "node packages/angular-doctor/bin/angular-doctor.js --verbose fixtures/sample-app",
+    "docs:dev": "pnpm --filter @angular-doctor/docs dev",
+    "docs:build": "pnpm --filter @angular-doctor/docs build",
+    "docs:preview": "pnpm --filter @angular-doctor/docs preview",
+    "format": "pnpm exec oxfmt",
+    "lint:fix": "pnpm exec oxlint --fix-suggestions",
+    "fix": "pnpm exec oxfmt && pnpm exec oxlint --fix-suggestions",
+    "prepare": "pnpm exec husky"
   },
   "devDependencies": {
-    "@angular/build": "^22.2.3",
-    "@angular/cli": "^22.2.3",
-    "@angular/compiler-cli": "^22.2.0",
-    "@tailwindcss/postcss": "^4.1.12",
-    "jsdom": "^30.0.0",
-    "postcss": "^8.5.3",
-    "prettier": "^3.8.1",
-    "tailwindcss": "^4.1.12",
-    "typescript": "~6.0.2",
-    "vitest": "^5.0.0"
-  }
+    "husky": "^9.1.7",
+    "oxfmt": "^0.77.0",
+    "oxlint": "1.93.0",
+    "typescript": "^6.0.3",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "packageManager": "pnpm@12.6.0"
 }

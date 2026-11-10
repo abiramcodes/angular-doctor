@@ -1,0 +1,8 @@
+before=$(git status --porcelain)
+pnpm exec oxfmt
+pnpm exec oxlint --fix-suggestions
+after=$(git status --porcelain)
+if [ "$before" != "$after" ]; then
+  echo "oxfmt or oxlint --fix-suggestions changed files. Commit those fixes before pushing."
+  exit 1
+fi

@@ -1,5 +1,25 @@
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 
+## Project agent skills
+
+Use the skills in this repo when the user asks or the task clearly fits.
+
+### `caveman` (`.agents/skills/caveman/SKILL.md`)
+
+- **When:** The user says `/caveman`, "caveman mode", "be brief", "less tokens", or similar.
+- **What:** Terse, answer-first replies. Keep every technical fact, path, command, and code change exact. Stay in caveman voice until the user says "stop caveman" or "normal mode".
+- **Out of scope:** Do not apply caveman voice to persisted text (commits, PR bodies, generated docs) unless the user wants that.
+
+### `grill-me` (`.agents/skills/grill-me/SKILL.md`)
+
+- **When:** The user says `/grill-me`, "grill me", "interview this plan", or wants a design or plan stress-tested before implementation.
+- **What:** Run a relentless interview: challenge assumptions, edge cases, failure modes, and missing requirements. Do not start large implementation until the user confirms the sharpened plan (unless they say to proceed anyway).
+
+### Other skills
+
+- **`angular-developer`:** `.agents/skills/angular-developer/SKILL.md` is the source of truth for Angular conventions in this repo.
+- **`angular-doctor`:** After Angular edits, follow `skills/angular-doctor/SKILL.md` (or run the CLI skill install).
+
 ## TypeScript Best Practices
 
 - Use strict type checking

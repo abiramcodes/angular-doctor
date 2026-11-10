@@ -1,0 +1,34 @@
+packages:
+  - packages/*
+  - fixtures/*
+  - apps/*
+catalog:
+  vitest: ^5.1.0
+overrides:
+  vitest: "catalog:"
+allowBuilds:
+  "@parcel/watcher": true
+  esbuild: true
+  lmdb: set this to true or false
+  msgpackr-extract: set this to true or false
+minimumReleaseAgeExclude:
+  - "@oxlint/binding-android-arm-eabi@1.93.0"
+  - "@oxlint/binding-android-arm64@1.93.0"
+  - "@oxlint/binding-darwin-arm64@1.93.0"
+  - "@oxlint/binding-darwin-x64@1.93.0"
+  - "@oxlint/binding-freebsd-x64@1.93.0"
+  - "@oxlint/binding-linux-arm-gnueabihf@1.93.0"
+  - "@oxlint/binding-linux-arm-musleabihf@1.93.0"
+  - "@oxlint/binding-linux-arm64-gnu@1.93.0"
+  - "@oxlint/binding-linux-arm64-musl@1.93.0"
+  - "@oxlint/binding-linux-ppc64-gnu@1.93.0"
+  - "@oxlint/binding-linux-riscv64-gnu@1.93.0"
+  - "@oxlint/binding-linux-riscv64-musl@1.93.0"
+  - "@oxlint/binding-linux-s390x-gnu@1.93.0"
+  - "@oxlint/binding-linux-x64-gnu@1.93.0"
+  - "@oxlint/binding-linux-x64-musl@1.93.0"
+  - "@oxlint/binding-openharmony-arm64@1.93.0"
+  - "@oxlint/binding-win32-arm64-msvc@1.93.0"
+  - "@oxlint/binding-win32-ia32-msvc@1.93.0"
+  - "@oxlint/binding-win32-x64-msvc@1.93.0"
+  - oxlint@1.93.0

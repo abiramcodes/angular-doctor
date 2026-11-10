@@ -1,0 +1,49 @@
+{
+  "name": "@angular-doctor/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Diagnostic engine for Angular Doctor.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.3",
+    "oxlint": "^1.93.0",
+    "picocolors": "^1.1.1",
+    "semver": "^7.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/semver": "^7.7.0",
+    "tsdown": "^0.23.7",
+    "typescript": "^6.0.3",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@angular-eslint/eslint-plugin-template": ">=20.0.0",
+    "@angular-eslint/template-parser": ">=20.0.0",
+    "eslint": ">=9.0.0"
+  },
+  "peerDependenciesMeta": {
+    "eslint": {
+      "optional": true
+    },
+    "@angular-eslint/eslint-plugin-template": {
+      "optional": true
+    },
+    "@angular-eslint/template-parser": {
+      "optional": true
+    }
+  }
+}
