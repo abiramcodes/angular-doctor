@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'docs-changelog',
@@ -13,7 +14,7 @@ import { Component } from '@angular/core';
           <li class="changelog-entry">
             <span class="changelog-marker" aria-hidden="true"></span>
             <div class="changelog-body">
-              <p class="changelog-version">0.1.0</p>
+              <h2 class="changelog-version">0.1.0</h2>
               <p class="changelog-status">Current package</p>
               <ul>
                 <li>Scan an Angular or Nx project and print a 0–100 health score.</li>
@@ -29,4 +30,8 @@ import { Component } from '@angular/core';
     </div>
   `,
 })
-export default class Changelog {}
+export default class Changelog {
+  constructor() {
+    inject(Title).setTitle('Changelog — Angular Doctor');
+  }
+}

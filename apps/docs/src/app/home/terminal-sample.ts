@@ -15,7 +15,7 @@ import {
   providers: [provideIcons({ lucideRotateCw })],
   template: `
     <figure class="terminal" [attr.id]="anchor()">
-      <figcaption class="terminal-head">
+      <div class="terminal-head">
         <span class="terminal-dots" aria-hidden="true"
           ><span></span><span></span><span></span
         ></span>
@@ -29,7 +29,7 @@ import {
         >
           <ng-icon name="lucideRotateCw" size="14" aria-hidden="true" />
         </button>
-      </figcaption>
+      </div>
       <div class="terminal-body" [class.is-scanning]="scanning()">
         @if (scanning()) {
           <div class="scan-veil" aria-hidden="true">

@@ -16,11 +16,15 @@ type CopyTone = 'primary' | 'quiet' | 'ghost';
       [class.copy-btn--primary]="tone() === 'primary'"
       [class.copy-btn--ghost]="tone() === 'ghost'"
       [class.copy-btn--sm]="size() === 'sm'"
+      [class.copy-btn--wide]="!!text()"
       [attr.aria-label]="label()"
-      aria-live="polite"
       (click)="copy()"
     >
       <ng-icon [name]="icon()" [size]="size() === 'sm' ? '14' : '16'" aria-hidden="true" />
+      @if (text(); as visible) {
+        <span>{{ statusText(visible) }}</span>
+      }
+      <span class="sr-only" aria-live="polite">{{ liveText() }}</span>
     </button>
   `,
 })
@@ -28,8 +32,10 @@ export class CopyCommand {
   readonly value = input.required<string>();
   readonly tone = input<CopyTone>('quiet');
   readonly size = input<'md' | 'sm'>('md');
+  readonly text = input<string | null>(null);
   private readonly destroyRef = inject(DestroyRef);
   readonly status = signal<'idle' | 'copied' | 'failed'>('idle');
+
   private timer = 0;
 
   constructor() {
@@ -45,6 +51,16 @@ export class CopyCommand {
     const verb = status === 'copied' ? 'Copied' : status === 'failed' ? 'Copy failed' : 'Copy';
     return `${verb}: ${this.value()}`;
   });
+
+  protected readonly liveText = computed(() => {
+    const status = this.status();
+    return status === 'copied' ? 'Copied' : status === 'failed' ? 'Copy failed' : '';
+  });
+
+  protected statusText(defaultText: string): string {
+    const status = this.status();
+    return status === 'copied' ? 'Copied' : status === 'failed' ? 'Copy failed' : defaultText;
+  }
 
   protected async copy(): Promise<void> {
     try {

@@ -35,7 +35,7 @@ Durable constraints:
 
 ## Brand Commitments
 
-Name: Angular Doctor. Footer states MIT license. Angie, the Angular mascot, is planned for the footer but the asset does not exist yet — future work must not fabricate it. No other logo, voice, or brand asset beyond the existing brand mark is confirmed.
+Name: Angular Doctor. Footer states MIT license. Angie, the Angular mascot, ships as supplied artwork on the 404 page only, with provenance recorded at `public/angie.provenance.md`; do not reuse the mascot as a logo or across other surfaces. No other logo, voice, or brand asset beyond the scan-trace brand mark is confirmed.
 
 ## Evidence on Hand
 
@@ -43,9 +43,10 @@ Name: Angular Doctor. Footer states MIT license. Angie, the Angular mascot, is p
 - `packages/angular-doctor` — CLI binary and command surface.
 - `fixtures/sample-app` — Angular 22 sample workspace the site's sample output and timings are drawn from; the site's "299 ms / 76 checks" sample is presented as a real scan of this fixture.
 - `skills/angular-doctor` — agent skill and triage playbook.
+- `public/angie.svg` — supplied Angie artwork, used only on the 404 page.
 - Root `README.md` — the rule tables and flag reference the site's docs mirror.
 
-Absences future work must not fill in: no testimonials, customer logos, press coverage, benchmarks against named competitors, published-package confirmation, or Angie artwork.
+Absences future work must not fill in: no testimonials, customer logos, press coverage, benchmarks against named competitors, or published-package confirmation. Angie artwork exists only as the supplied 404 asset; do not invent additional poses or mascot variants.
 
 ## Product Principles
 

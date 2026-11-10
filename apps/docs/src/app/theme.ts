@@ -45,7 +45,7 @@ export class Theme {
     root.style.colorScheme = this.mode();
     const meta = this.document.querySelector('meta[name="theme-color"]');
     if (meta) {
-      meta.setAttribute('content', dark ? '#0C0B0E' : '#F7F5F1');
+      meta.setAttribute('content', dark ? '#1A1A1A' : '#E3CFAA');
     }
   }
 }

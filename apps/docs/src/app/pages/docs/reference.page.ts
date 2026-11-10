@@ -10,7 +10,7 @@ import { commandGroups, commandsIntro, flags } from '../../home/landing-content'
   template: `
     <docs-page
       [title]="'Reference'"
-      [lede]="'The published commands, the flags they accept, and how the score is calculated.'"
+      [lede]="'The pre-release commands, the flags they accept, and how the score is calculated.'"
     >
       <p>{{ commandsIntro }}</p>
 

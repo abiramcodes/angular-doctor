@@ -1,5 +1,6 @@
 import { Location } from '@angular/common';
-import { Component, ViewChild, inject, input } from '@angular/core';
+import { Component, ViewChild, effect, inject, input } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { DocToc } from './doc-toc';
 
@@ -29,6 +30,7 @@ interface NavGroup {
                 class="nav-link"
                 [routerLink]="item.href"
                 routerLinkActive="is-active"
+                ariaCurrentWhenActive="page"
                 [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
               >
                 {{ item.label }}
@@ -40,7 +42,6 @@ interface NavGroup {
 
       <article class="docs-main">
         <header class="docs-header">
-          <p class="docs-breadcrumb">docs / {{ title().toLowerCase() }}</p>
           <h1 class="docs-title">{{ title() }}</h1>
           @if (lede(); as text) {
             <p class="docs-lede">{{ text }}</p>
@@ -92,6 +93,11 @@ interface NavGroup {
 })
 export class DocPage {
   private readonly location = inject(Location);
+  private readonly titleService = inject(Title);
+
+  constructor() {
+    effect(() => this.titleService.setTitle(`${this.title()} — Angular Doctor`));
+  }
 
   readonly title = input.required<string>();
   readonly lede = input<string | null>(null);

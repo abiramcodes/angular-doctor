@@ -25,13 +25,14 @@ import { Callout } from '../../callout';
 
       <h2 id="this-site">This site</h2>
       <p>
-        The public site will live at angular.doctor. The domain is not registered yet. The official
-        Angular logo and Angie, the Angular mascot, will be added to this site later.
+        The site is built with Analog and Angular. The source is on
+        <a href="https://github.com/abiramcodes/angular-doctor">GitHub</a>, under the MIT license.
+        Angie, the Angular mascot, appears on the 404 page.
       </p>
-      <docs-callout variant="note" label="The Angular logo is not here yet">
+      <docs-callout variant="note" label="The mark is not the Angular shield">
         <p>
-          The brand mark on this site is a pulse trace, not the Angular shield. Replace it when the
-          official artwork is available.
+          The brand mark on this site is a scan trace, not the Angular shield. Angie is used only on
+          the 404 page, with the supplied artwork.
         </p>
       </docs-callout>
     </docs-page>

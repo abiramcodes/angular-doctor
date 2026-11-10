@@ -17,8 +17,9 @@ type CalloutVariant = 'note' | 'tip' | 'warning' | 'error';
     provideIcons({ lucideInfo, lucideLightbulb, lucideOctagonAlert, lucideTriangleAlert }),
   ],
   template: `
-    <aside
+    <div
       class="callout"
+      role="note"
       [class.callout-note]="variant() === 'note'"
       [class.callout-tip]="variant() === 'tip'"
       [class.callout-warning]="variant() === 'warning'"
@@ -31,7 +32,7 @@ type CalloutVariant = 'note' | 'tip' | 'warning' | 'error';
         }
         <ng-content />
       </div>
-    </aside>
+    </div>
   `,
 })
 export class Callout {

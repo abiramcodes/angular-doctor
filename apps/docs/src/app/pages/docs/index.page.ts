@@ -6,7 +6,7 @@ import { steps, whatItIs } from '../../home/landing-content';
 const quickstartSteps: QuickstartStep[] = [
   {
     title: 'Run the scan',
-    body: 'One command in your project root. No install, no config.',
+    body: 'One command in your project root once the package is published. No install, no config.',
     command: 'npx angular-doctor@latest',
   },
   {
@@ -16,7 +16,7 @@ const quickstartSteps: QuickstartStep[] = [
   },
   {
     title: 'Fix what changed',
-    body: 'Re-scan after edits. The report lists each finding with a suggested fix.',
+    body: 'Re-scan after edits. The report lists each finding with a suggested fix when the rule has one.',
     command: 'npx angular-doctor@latest --scope changed',
   },
 ];
@@ -38,7 +38,7 @@ const quickstartSteps: QuickstartStep[] = [
       <ol class="list-decimal space-y-4 pl-5">
         @for (step of steps; track step.title) {
           <li>
-            <p class="font-semibold">{{ step.title }}</p>
+            <h3 class="font-semibold">{{ step.title }}</h3>
             <p>{{ step.body }}</p>
           </li>
         }

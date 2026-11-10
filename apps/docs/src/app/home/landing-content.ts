@@ -49,8 +49,31 @@ export interface PaletteSpec {
 export const hero = {
   title: 'Your Angular codebase, diagnosed.',
   lede: 'Angular Doctor scans your Angular or Nx workspace, scores it from 0 to 100, and writes a report you can fix from.',
-  note: 'A real scan of the sample workspace. Angular 22.2, 299 ms, 76 checks.',
+  note: 'A real scan of the sample workspace.',
 };
+
+export const facts = [
+  {
+    value: '20.19+',
+    label: 'Node.js',
+    detail: 'The package requires this runtime or newer.',
+  },
+  {
+    value: '12',
+    label: 'Parents',
+    detail: 'How far it walks looking for angular.json or nx.json.',
+  },
+  {
+    value: '4',
+    label: 'Scopes',
+    detail: 'full, changed, files, and contextual.',
+  },
+  {
+    value: 'Once',
+    label: 'Per rule',
+    detail: 'An error costs 1.5, a warning 0.75, a note nothing.',
+  },
+];
 
 export interface DiagnosticCategory {
   category: string;
@@ -63,8 +86,8 @@ export const diagnostics: DiagnosticCategory[] = [
   {
     category: 'correctness',
     count: 13,
-    body: 'Does the code do what it says? Control flow, host bindings, subscriptions, strict mode.',
-    examples: ['prefer-host-bindings', 'takeUntilDestroyed', 'typescript-strict'],
+    body: 'Does the code do what it says? Control flow, subscriptions, strict mode, templates.',
+    examples: ['prefer-take-until-destroyed', 'typescript-strict', 'strict-templates'],
   },
   {
     category: 'performance',
@@ -75,8 +98,8 @@ export const diagnostics: DiagnosticCategory[] = [
   {
     category: 'maintainability',
     count: 34,
-    body: 'The style guide, enforced. Naming, file sets, lifecycle, signals, templates.',
-    examples: ['one-concept-per-file', 'prefer-inject', 'prefer-signal-forms'],
+    body: 'The style guide, enforced. Naming, file sets, host bindings, lifecycle, signals.',
+    examples: ['one-concept-per-file', 'prefer-host-bindings', 'prefer-signal-forms'],
   },
   {
     category: 'security',
@@ -98,27 +121,8 @@ export const diagnostics: DiagnosticCategory[] = [
   },
 ];
 
-export const pipeline = [
-  {
-    title: 'Find the workspace',
-    body: 'Walks up to 12 parents looking for angular.json or nx.json. No workspace, no scan.',
-  },
-  {
-    title: 'Choose files',
-    body: 'Full, changed, files, or contextual scope. Skips node_modules, dist, and specs.',
-  },
-  {
-    title: 'Check and score',
-    body: '76 built-in checks plus Oxlint. Starts at 100, subtracts once per rule.',
-  },
-  {
-    title: 'Print, then write',
-    body: 'A terminal summary, plus angular-doctor-report.md when anything is found.',
-  },
-];
-
 export const reportCopy = [
-  'When a scan finds something, it writes a self-contained Markdown report: the score, official migrations, a fix order, and every finding with its location and a suggested fix.',
+  'When a scan finds something, it writes a self-contained Markdown report: the score, official migrations, a fix order, and every finding with its location and, where the rule provides one, a suggested fix.',
   'The report is written for you or your agent. Re-run with --verbose --scope changed after edits and it covers only what changed.',
 ];
 
@@ -130,17 +134,13 @@ export const finding = {
   fixLabel: 'suggested fix',
   fix: 'Move the binding into the host object of @Component or @Directive.',
   before: `@HostListener('keydown', ['$event'])
-onKeydown(event: KeyboardEvent) {}`,
+updateValue(event: KeyboardEvent) {}`,
   after: `host: {
-  '(keydown)': 'onKeydown($event)',
+  '(keydown)': 'updateValue($event)',
 }`,
 };
 
 export const quickCommands = [
-  {
-    command: 'npx angular-doctor@latest',
-    detail: 'Scan the current directory.',
-  },
   {
     command: 'npx angular-doctor@latest --verbose --scope changed',
     detail: 'Scan what git shows as changed. The command to run after an edit.',
@@ -166,7 +166,7 @@ export const quickCommands = [
 export const ciCommand = 'npx angular-doctor@latest ci install';
 
 export const ciCopy =
-  'Write a GitHub Actions workflow that scans on every push and pull request. Add --scope changed to report only what a branch introduced, or --json to feed another job.';
+  'Write a GitHub Actions workflow that scans pushes to main and every pull request. Add --scope changed to report local working-tree changes, or --json to feed another job.';
 
 /* ------------------------------------------------------------------ *
  * Docs content
@@ -315,7 +315,7 @@ export const commandGroups = [
 ];
 
 export const commandsIntro =
-  'These are the published commands. --colors works on all of them. Anything other than default, pastel, or velvet exits with an error that names those three.';
+  'These are the pre-release commands. --colors works on all of them. Anything other than default, pastel, or velvet exits with an error that names those three.';
 
 export const flags = [
   {
@@ -553,8 +553,6 @@ export const markdownExcerpt = `# Angular Doctor report
 - **Project:** angular-doctor (angular-cli)
 - **Angular:** 22.2.0
 - **Scan duration:** 299ms
-
-## maintainability
 
 ### angular-doctor/prefer-host-bindings (error)
 

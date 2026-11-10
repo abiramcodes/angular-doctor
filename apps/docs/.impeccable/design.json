@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-10T17:35:00.000Z",
+  "title": "Design System: Angular Doctor",
+  "extensions": {
+    "paletteNote": "Signal Room. Night: broadcast black #1A1A1A, metal #D2D4E1 and #EDEDED, signal blue #698BD3 (reference #3366CC lifted 34% toward metal; raw blue is 3.24:1 on black), lamp red #FF3036, cursor gold #E0AF46. Day: cream #E3CFAA, burgundy #5E292F for secondary text, paper inks #2D54A1, #962B31, #5F4E29. Hazard orange #F55B1D is a lamp-ramp step, not a fourth ink. Panels, borders, dim text, and meter-off are derived tints.",
+    "colorMeta": {
+      "signal-blue": {
+        "role": "primary",
+        "displayName": "Signal Blue",
+        "canonical": "#3366CC",
+        "tonalRamp": ["#142448", "#1E3A78", "#2D54A1", "#3366CC", "#4F78CC", "#698BD3", "#9BB4E4", "#D2D4E1"]
+      },
+      "lamp-red": {
+        "role": "secondary",
+        "displayName": "Lamp Red",
+        "canonical": "#FF3036",
+        "tonalRamp": ["#3A1619", "#5E292F", "#962B31", "#C4452A", "#FF3036", "#F55B1D", "#FF8A86", "#FFD0CE"]
+      },
+      "cursor-gold": {
+        "role": "tertiary",
+        "displayName": "Cursor Gold",
+        "canonical": "#E0AF46",
+        "tonalRamp": ["#2A220F", "#3F3418", "#5F4E29", "#8A7030", "#B48F3A", "#E0AF46", "#E8C97A", "#F4E6B8"]
+      },
+      "broadcast-black": {
+        "role": "neutral",
+        "displayName": "Broadcast Black",
+        "canonical": "#1A1A1A",
+        "tonalRamp": ["#0E0E0E", "#1A1A1A", "#221C1D", "#2A2224", "#343434", "#666666", "#8C8D95", "#D2D4E1"]
+      },
+      "metal": {
+        "role": "neutral",
+        "displayName": "Metal",
+        "canonical": "#D2D4E1",
+        "tonalRamp": ["#666666", "#767778", "#8C8D95", "#A6A7B1", "#D2D4E1", "#EDEDED", "#F4F5F8", "#FBFBFD"]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Cream",
+        "canonical": "#E3CFAA",
+        "tonalRamp": ["#1A1A1A", "#5E292F", "#634E50", "#9B7568", "#C2A68B", "#D8C2A0", "#E3CFAA", "#E8DECC"]
+      }
+    },
+    "typographyMeta": {
+      "root": { "displayName": "Document Scale", "purpose": "Fluid root size, 1rem to 1.125rem." },
+      "display": { "displayName": "Buffer Display", "purpose": "Landing headline only; two lines maximum." },
+      "body": { "displayName": "Reading Sans", "purpose": "Docs and landing prose at a 40rem measure." },
+      "label": { "displayName": "Stage Label", "purpose": "Line numbers, counts, metadata, controls." }
+    },
+    "shadows": [
+      {
+        "name": "mascot-depth",
+        "value": "drop-shadow(0 18px 30px rgb(0 0 0 / 0.28))",
+        "purpose": "404 mascot only; the system is otherwise flat."
+      }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.23, 1, 0.32, 1)", "purpose": "Default state transition and scan entrance." },
+      { "name": "dur-fast", "value": "120ms", "purpose": "Hover and press." },
+      { "name": "dur-mid", "value": "180ms", "purpose": "Theme and background transitions." },
+      { "name": "scan", "value": "240ms line entrance, 420ms meter fill, 20ms per bar", "purpose": "The one authored moment, replayed from the meter." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "640px" },
+      { "name": "floor", "value": "980px" },
+      { "name": "docs", "value": "1024px" },
+      { "name": "toc", "value": "1200px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Build-from-source and recovery action; solid signal blue with black mono label.",
+      "html": "<button class=\"ds-btn-primary\">BUILD FROM SOURCE</button>",
+      "css": ".ds-btn-primary { min-height: 2.6rem; padding: 0 1rem; border: 1px solid var(--green); border-radius: 2px; background: var(--green); color: var(--background); font-family: var(--font-mono); font-size: .75rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; } .ds-btn-primary:hover { background: color-mix(in srgb, var(--green) 85%, var(--heading)); } .ds-btn-primary:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action beside the primary; 1px strong line, no fill.",
+      "html": "<button class=\"ds-btn-outline\">OPEN THE DOCS</button>",
+      "css": ".ds-btn-outline { min-height: 2.6rem; padding: 0 1rem; border: 1px solid var(--line-strong); border-radius: 2px; background: transparent; color: var(--heading); font-family: var(--font-mono); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; } .ds-btn-outline:hover { border-color: var(--green); color: var(--green); } .ds-btn-outline:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }"
+    },
+    {
+      "name": "Copy Command",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Wide preview-command control with a visible label and state text.",
+      "html": "<button class=\"ds-copy\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"9\" y=\"9\" width=\"12\" height=\"12\" rx=\"2\"/><path d=\"M5 15V5a2 2 0 0 1 2-2h10\"/></svg>COPY PREVIEW COMMAND</button>",
+      "css": ".ds-copy { display: inline-flex; align-items: center; gap: .4rem; min-height: 2rem; padding: 0 .75rem; border: 1px solid var(--line-strong); border-radius: 2px; background: transparent; color: var(--heading); font-family: var(--font-mono); font-size: .6875rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; } .ds-copy:hover { border-color: var(--green); color: var(--green); } .ds-copy:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }"
+    },
+    {
+      "name": "Master Meter",
+      "kind": "card",
+      "refersTo": "meter-panel",
+      "description": "The hero score panel: 85/100, 20-cell bar row, three counts, first finding, pre-release action.",
+      "html": "<aside class=\"ds-meter\"><div class=\"ds-meter-head\"><span>MASTER METER</span><span>0—100</span></div><p class=\"ds-score\">85<small> / 100</small></p><div class=\"ds-bars\" aria-hidden=\"true\"></div><div class=\"ds-counts\"><span>3 ERRORS</span><span>27 WARNINGS</span><span>6 NOTES</span></div><code>npx angular-doctor@latest</code></aside>",
+      "css": ".ds-meter { border: 1px solid var(--line-strong); background: var(--card); padding: 1rem 1.1rem; color: var(--foreground); font-family: var(--font-mono); } .ds-meter-head { display: flex; justify-content: space-between; padding-bottom: .6rem; border-bottom: 1px solid var(--border); color: var(--dim); font-size: .5625rem; letter-spacing: .08em; text-transform: uppercase; } .ds-score { margin: .65rem 0 0; color: var(--green); font-size: 5.5rem; font-weight: 700; line-height: .82; letter-spacing: -.06em; } .ds-score small { color: var(--dim); font-size: .9rem; letter-spacing: 0; } .ds-bars { height: .55rem; margin-top: .85rem; background: repeating-linear-gradient(90deg, var(--green) 0 12px, transparent 12px 15px); } .ds-counts { display: flex; justify-content: space-between; margin-top: .85rem; padding-top: .65rem; border-top: 1px solid var(--border); color: var(--dim); font-size: .625rem; letter-spacing: .1em; } .ds-meter code { display: block; margin-top: 1rem; padding: .55rem .6rem; border: 1px solid var(--border); color: var(--magenta); font-size: .72rem; }"
+    },
+    {
+      "name": "Buffer Line",
+      "kind": "custom",
+      "description": "The stage line: gutter number, syntax inks, one gold hot line with cursor.",
+      "html": "<div class=\"ds-line is-hot\"><span class=\"n\">03</span><span><span class=\"kw\">if</span> (hostBindings) <span class=\"kw\">throw</span> <span class=\"str keep\">'prefer-host-bindings'</span>;<span class=\"cursor\"></span></span></div>",
+      "css": ".ds-line { display: grid; grid-template-columns: 2.35rem 1fr; gap: 1rem; padding: .28rem 0; border-bottom: 1px solid var(--border); color: var(--body); font-family: var(--font-mono); font-size: .8125rem; line-height: 1.55; white-space: nowrap; } .ds-line .n { color: var(--dim); font-size: .6875rem; text-align: right; } .ds-line.is-hot { background: color-mix(in srgb, var(--amber) 9%, transparent); box-shadow: inset 2px 0 0 var(--amber); } .ds-line.is-hot .n { color: var(--amber); } .kw, .str { color: var(--magenta); } .str.keep { white-space: nowrap; } .cursor { display: inline-block; width: .55rem; height: 1em; margin-left: .25rem; background: var(--amber); vertical-align: -.12em; }"
+    },
+    {
+      "name": "Docs Nav Link",
+      "kind": "nav",
+      "refersTo": "nav-link-active",
+      "description": "Sidebar link; active page gets a lamp-red wash and text, no radius.",
+      "html": "<a class=\"ds-nav is-active\" href=\"/docs\" aria-current=\"page\">Overview</a>",
+      "css": ".ds-nav { display: block; padding: .3rem .55rem; color: var(--muted-foreground); font-family: var(--font-sans); font-size: .875rem; line-height: 1.5; } .ds-nav:hover { color: var(--heading); background: color-mix(in srgb, var(--green) 6%, transparent); } .ds-nav.is-active { color: var(--magenta); background: color-mix(in srgb, var(--magenta) 8%, transparent); } .ds-nav:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Live Buffer",
+    "overview": "The site is a code buffer at stage scale. Source enters, findings come out, and the score sits on a master meter. The six families are listed once, under the floor. Nothing is dressed as a marketing page: the file tab, line numbers, syntax colour, cursor, and meter are the page's actual parts, and they keep working as navigation, copy controls, and reading structure.\n\nThe system is flat, square, and high-contrast. Broadcast black is the room. Exactly three inks carry meaning — signal blue for health and primary action, lamp red for strings, active state, and errors, cursor gold for warnings and the cursor. Running prose switches to a workhorse sans so the Read surfaces stay comfortable; code, numbers, and labels stay monospaced because they are code, numbers, and labels, not costume.\n\nThe light theme is the same buffer on cream paper: black ink, burgundy for secondary text, the same three hues darkened for contrast, while code and instrument panels stay on the night palette.",
+    "keyCharacteristics": [
+      "Broadcast-black ground with hairline rules and square panels.",
+      "Three functional inks: signal blue, lamp red, cursor gold. No gradients, no glow halos.",
+      "Monospace for stage lines and measurements; Public Sans for long reading.",
+      "The hero is a working code buffer plus a score meter, not a headline over a screenshot.",
+      "Angie appears only on the 404, as a stage character."
+    ],
+    "rules": [
+      { "name": "The Three Inks Rule", "body": "Signal blue, lamp red, and cursor gold are the only chromatic inks. Hazard orange stays inside the lamp ramp. Neutrals, borders, and dim text are derived tints. A fourth hue is a bug.", "section": "colors" },
+      { "name": "The No Glow Rule", "body": "Nothing glows. Emphasis comes from solid fill, a hard 1px rule, or a scale step.", "section": "colors" },
+      { "name": "The House Lights Rule", "body": "Light mode is not an inversion. It is cream paper. Code and instrument panels stay on the night palette.", "section": "colors" },
+      { "name": "The Mono-For-Data Rule", "body": "Monospace is used for code, commands, counts, scores, line numbers, and labels. It never sets a paragraph of prose.", "section": "typography" },
+      { "name": "The One Display Rule", "body": "Only the landing headline uses the display step. Docs titles step down to the headline size.", "section": "typography" },
+      { "name": "The Border-Not-Shadow Rule", "body": "If a surface needs separation, add a 1px hairline or move it one tonal step. Do not add a shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep exactly three chromatic inks and derive every other surface from the reference metal, black, burgundy, and cream. Borders, dim text, and meter-off are tints, not new hues.",
+      "Do use JetBrains Mono for code, commands, counts, and labels, and Public Sans for running prose.",
+      "Do put the score and the command in the first desktop viewport. State each sample number once.",
+      "Do keep docs prose near 40rem and align header, quickstart, pager, and prose to it.",
+      "Do preserve the pre-release status: build-from-source is the primary action, the npx command is labelled preview.",
+      "Do confine Angie to the 404 and keep the rest of the site mascot-free."
+    ],
+    "donts": [
+      "Don't add gradients, glow shadows, glass, blurred panels, or colored halos.",
+      "Don't use radii above 2px on controls or any rounded cards.",
+      "Don't use monospace for paragraphs or sans for code.",
+      "Don't put an eyebrow or kicker above a heading; the buffer tab and line numbers are chrome, not labels.",
+      "Don't introduce a fourth accent for a new feature; give the feature a job inside the three inks.",
+      "Don't let the light theme invert code panels; instruments stay dark."
+    ]
+  }
+}

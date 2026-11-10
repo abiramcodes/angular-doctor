@@ -21,8 +21,9 @@ npx angular-doctor@latest --score-only`;
       <h2 id="pull-requests">Pull requests</h2>
       <p>
         The workflow checks out the repository and runs Angular Doctor. Use
-        <code>--scope changed</code> when you want a pull request to report only what that branch
-        introduced. <code>--json</code> prints a single object for another job to read.
+        <code>--scope changed</code> to report files that differ from <code>HEAD</code> in the
+        working tree; a clean CI checkout falls back to a full scan. <code>--json</code> prints a
+        single object for another job to read.
       </p>
       <p>
         <code>--score-only</code> prints the number and nothing else, which is enough for a status

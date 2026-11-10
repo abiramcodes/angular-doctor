@@ -4,7 +4,7 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideClientHydration } from '@angular/platform-browser';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 import { withViewTransitions } from '@angular/router';
 
@@ -14,6 +14,6 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideFileRouter(withViewTransitions({ skipInitialTransition: true })),
     provideHttpClient(withInterceptors([requestContextInterceptor])),
-    provideClientHydration(withEventReplay()),
+    provideClientHydration(),
   ],
 };
