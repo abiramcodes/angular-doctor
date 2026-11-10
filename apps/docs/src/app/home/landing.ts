@@ -29,13 +29,19 @@ import {
           <div class="min-w-0">
             <h1 id="hero-title" class="hero-title">{{ hero.title }}</h1>
             <p class="hero-lede">{{ hero.lede }}</p>
+            <p class="hero-meta">
+              <span>76 checks</span>
+              <span>6 categories</span>
+            </p>
             <div class="hero-actions">
               <div class="hero-command">
-                <span class="hero-command-prompt" aria-hidden="true">$</span>
-                <span class="hero-command-text">{{ runCommand }}</span>
+                <div>
+                  <span class="hero-command-prompt" aria-hidden="true">$</span>
+                  <span class="hero-command-text">{{ runCommand }}</span>
+                </div>
                 <docs-copy-command tone="ghost" [value]="runCommand" />
               </div>
-              <a class="btn btn-outline" routerLink="/docs">Read the docs</a>
+              <a class="btn btn-solid" routerLink="/docs">Docs</a>
             </div>
             <p class="hero-note">{{ hero.note }}</p>
           </div>
@@ -191,8 +197,10 @@ import {
           <a class="section-link" routerLink="/docs/ci">Set up CI</a>
         </div>
         <div class="hero-command">
-          <span class="hero-command-prompt" aria-hidden="true">$</span>
-          <span class="hero-command-text">{{ ciCommand }}</span>
+          <div>
+            <span class="hero-command-prompt" aria-hidden="true">$</span>
+            <span class="hero-command-text">{{ ciCommand }}</span>
+          </div>
           <docs-copy-command tone="ghost" [value]="ciCommand" />
         </div>
       </div>

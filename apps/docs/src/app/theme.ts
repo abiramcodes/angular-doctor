@@ -25,12 +25,27 @@ export class Theme {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, next);
     }
-    this.apply();
+    const reduce =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const doc = this.document as Document & {
+      startViewTransition?: (callback: () => void) => unknown;
+    };
+    if (!reduce && typeof doc.startViewTransition === 'function') {
+      doc.startViewTransition(() => this.apply());
+    } else {
+      this.apply();
+    }
   }
 
   private apply(): void {
     const root = this.document.documentElement;
-    root.classList.toggle('dark', this.mode() === 'dark');
+    const dark = this.mode() === 'dark';
+    root.classList.toggle('dark', dark);
     root.style.colorScheme = this.mode();
+    const meta = this.document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute('content', dark ? '#0C0B0E' : '#F7F5F1');
+    }
   }
 }

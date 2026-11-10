@@ -51,17 +51,6 @@ import { commandGroups, commandsIntro, flags } from '../../home/landing-content'
           }
         </tbody>
       </table>
-
-      <h2 id="score">Score</h2>
-      <p>
-        Start at 100. Subtract 1.5 for each error rule and 0.75 for each warning rule. A note costs
-        nothing. Each rule counts once, at its strongest severity.
-      </p>
-      <docs-callout variant="tip" label="Repeating a rule does not cost more">
-        <p>
-          The same rule in ten files costs the same as in one file. The score never goes below 0.
-        </p>
-      </docs-callout>
     </docs-page>
   `,
 })

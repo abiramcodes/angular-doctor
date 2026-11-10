@@ -24,7 +24,6 @@ import {
         <button
           type="button"
           class="terminal-replay"
-          [disabled]="scanning()"
           aria-label="Replay the scan"
           (click)="replay()"
         >

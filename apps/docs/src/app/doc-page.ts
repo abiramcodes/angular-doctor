@@ -40,6 +40,7 @@ interface NavGroup {
 
       <article class="docs-main">
         <header class="docs-header">
+          <p class="docs-breadcrumb">docs / {{ title().toLowerCase() }}</p>
           <h1 class="docs-title">{{ title() }}</h1>
           @if (lede(); as text) {
             <p class="docs-lede">{{ text }}</p>
@@ -51,6 +52,23 @@ interface NavGroup {
         <div class="doc-prose" docToc>
           <ng-content />
         </div>
+
+        <nav class="docs-pager" aria-label="Docs pages">
+          @if (prevLink; as prev) {
+            <a class="pager-link" [routerLink]="prev.href">
+              <span class="pager-dir">Previous</span>
+              <span class="pager-label">{{ prev.label }}</span>
+            </a>
+          } @else {
+            <span></span>
+          }
+          @if (nextLink; as next) {
+            <a class="pager-link pager-next" [routerLink]="next.href">
+              <span class="pager-dir">Next</span>
+              <span class="pager-label">{{ next.label }}</span>
+            </a>
+          }
+        </nav>
       </article>
 
       <aside class="doc-toc" aria-label="On this page">
@@ -58,7 +76,13 @@ interface NavGroup {
           @if (tocRef.items().length) {
             <p class="doc-toc-title">On this page</p>
             @for (item of tocRef.items(); track item.id) {
-              <a [attr.href]="tocHref(item.id)">{{ item.label }}</a>
+              <a
+                [attr.href]="tocHref(item.id)"
+                [class.is-active]="tocRef.active() === item.id"
+                [attr.aria-current]="tocRef.active() === item.id ? 'location' : null"
+              >
+                {{ item.label }}
+              </a>
             }
           }
         }
@@ -78,6 +102,25 @@ export class DocPage {
   protected tocHref(id: string): string {
     const path = this.location.path().split('#')[0] || '/';
     return `${path}#${id}`;
+  }
+
+  private get flatItems(): NavItem[] {
+    return this.groups.flatMap((group) => group.items);
+  }
+
+  private get currentIndex(): number {
+    const path = (this.location.path().split('#')[0] || '/').replace(/\/$/, '') || '/';
+    return this.flatItems.findIndex((item) => item.href === path);
+  }
+
+  protected get prevLink(): NavItem | null {
+    const index = this.currentIndex;
+    return index > 0 ? this.flatItems[index - 1] : null;
+  }
+
+  protected get nextLink(): NavItem | null {
+    const index = this.currentIndex;
+    return index >= 0 && index < this.flatItems.length - 1 ? this.flatItems[index + 1] : null;
   }
 
   readonly groups: NavGroup[] = [

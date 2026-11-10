@@ -48,7 +48,7 @@ export interface PaletteSpec {
 
 export const hero = {
   title: 'Your Angular codebase, diagnosed.',
-  lede: 'Angular Doctor scans your Angular or Nx workspace, scores it from 0 to 100, and writes a report you can fix from. One command, about 300 ms.',
+  lede: 'Angular Doctor scans your Angular or Nx workspace, scores it from 0 to 100, and writes a report you can fix from.',
   note: 'A real scan of the sample workspace. Angular 22.2, 299 ms, 76 checks.',
 };
 

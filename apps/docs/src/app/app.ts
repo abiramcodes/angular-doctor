@@ -11,7 +11,11 @@ import { Theme } from './theme';
   imports: [RouterOutlet, RouterLink, RouterLinkActive, NgIcon, BrandMark],
   providers: [provideIcons({ lucideMoon, lucideSun })],
   template: `
-    <div class="flex min-h-screen flex-col">
+    <div class="ambient" aria-hidden="true">
+      <span class="glow glow-a"></span>
+    </div>
+
+    <div class="app-shell flex min-h-screen flex-col">
       <a
         class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground"
         [attr.href]="skipHref"
@@ -62,7 +66,6 @@ import { Theme } from './theme';
             Angular Doctor
           </span>
           <p class="site-footer-meta">MIT license</p>
-          <p class="site-footer-note">Angie, the Angular mascot, will be added here.</p>
         </div>
       </footer>
     </div>
