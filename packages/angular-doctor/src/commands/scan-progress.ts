@@ -70,6 +70,17 @@ export function formatScoreSummary(result: ScanResult): string {
   return `${header}\n${formatScoreMeter(result.score)}\n${counts.join(pc.dim('   '))}`;
 }
 
+export function formatSkippedChecks(checks: string[], projectRoot: string): string {
+  if (checks.length === 0) {
+    return '';
+  }
+  const lines = checks.map(
+    (check) =>
+      `  ${check.startsWith(projectRoot) ? check.slice(projectRoot.length).replace(/^\//, '') : check}`,
+  );
+  return ['Skipped checks', ...lines].join('\n');
+}
+
 export function formatReportLine(reportPath: string): string {
   return colorize(
     `Report: ${reportPath} (Cmd+click / Ctrl+click to open the file)`,

@@ -38,7 +38,7 @@ import {
   ruleMissingSpecFile,
   ruleNamingConventionMix,
 } from './naming/naming-rules.js';
-import { definePipeline, executeStep, step } from './pipeline.js';
+import { definePipeline, executeStep, step, type PipelineStep } from './pipeline.js';
 import { ruleEffectWritesState } from './preferences/effects.js';
 import {
   ruleFormFieldOwnedAttrs,
@@ -537,10 +537,12 @@ export function runBuiltinRules(
   files: string[],
   config?: AngularDoctorConfig,
   onFile?: (completed: number, file: string, diagnostics: Diagnostic[]) => void,
+  onStepError?: (message: string) => void,
 ): Diagnostic[] {
   const naming = inferNamingConvention(files);
   const diagnostics: Diagnostic[] = [];
   const seenMessages = new Map<PipelineStepKey, Set<string>>();
+  const reported = new Set<string>();
   const projectCtx: RuleContext = {
     project,
     file: project.root,
@@ -549,11 +551,30 @@ export function runBuiltinRules(
     config,
     naming,
   };
+  const collect = (item: PipelineStep, ctx: RuleContext): void => {
+    try {
+      diagnostics.push(...executeStep(item, ctx, config, dedupeSet(seenMessages, item)));
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      const line =
+        detail.startsWith('/') || /^[A-Za-z]:[\\/]/.test(detail)
+          ? detail
+          : `${ctx.file}: ${detail}`;
+      if (!onStepError) {
+        throw error;
+      }
+      if (reported.has(line)) {
+        return;
+      }
+      reported.add(line);
+      onStepError(line);
+    }
+  };
   for (const item of builtinPipeline) {
     if (item.reach !== 'project') {
       continue;
     }
-    diagnostics.push(...executeStep(item, projectCtx, config, dedupeSet(seenMessages, item)));
+    collect(item, projectCtx);
   }
   let completed = 0;
   for (const file of files) {
@@ -570,7 +591,7 @@ export function runBuiltinRules(
       if (item.reach !== 'file') {
         continue;
       }
-      diagnostics.push(...executeStep(item, ctx, config, dedupeSet(seenMessages, item)));
+      collect(item, ctx);
     }
     onFile?.(completed, file, diagnostics);
   }

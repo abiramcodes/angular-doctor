@@ -29,7 +29,7 @@ Confirmed product surface: 76 built-in checks across six categories (correctness
 Durable constraints:
 
 - Every factual claim on the site — counts, timings, rule names, sample output, severity behavior — must be reproducible from the repository's real CLI output. No invented benchmarks, testimonials, customer stories, or adoption numbers.
-- `@abiramcodes/angular-doctor` 0.1.0 is published on npm. Install copy uses `npx @abiramcodes/angular-doctor@latest`.
+- `@abiramcodes/angular-doctor` 0.1.1 is the current package. Install copy uses `npx @abiramcodes/angular-doctor@latest`.
 - The product is MIT-licensed open source; do not imply pricing, hosted accounts, or a paid tier.
 - Do not position it as replacing builds, tests, or the user's current lint setup.
 

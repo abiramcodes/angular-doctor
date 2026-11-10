@@ -1,4 +1,5 @@
 import { diag, lineFromIndex, type RuleContext } from '../diag-helpers.js';
+import { escapeRegExp } from '../match.js';
 import type { Diagnostic } from '../../types.js';
 
 const IMAGE_DOCS = 'https://angular.dev/guide/image-optimization';
@@ -22,7 +23,7 @@ function imgTags(content: string): ImgTag[] {
 
 function hasAttr(tag: string, name: string): boolean {
   const re = new RegExp(
-    `(?:^|[\\s/])(?:\\[attr\\.${name}\\]|\\[${name}\\]|${name})(?:=|[\\s/>])`,
+    `(?:^|[\\s/])(?:\\[attr\\.${escapeRegExp(name)}\\]|\\[${escapeRegExp(name)}\\]|${escapeRegExp(name)})(?:=|[\\s/>])`,
     'i',
   );
   return re.test(tag);

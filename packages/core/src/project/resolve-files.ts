@@ -3,7 +3,8 @@ import { relative } from 'node:path';
 import fg from 'fast-glob';
 import type { ScanOptions } from '../types.js';
 
-const SOURCE_GLOBS = ['**/*.{ts,tsx,js,mjs,cjs}', '**/*.html'] satisfies string[];
+const SOURCE_GLOBS = ['**/*.ts', '**/*.html'] satisfies string[];
+const SOURCE_EXTENSION = /\.(ts|html)$/;
 
 const IGNORE = [
   '**/node_modules/**',
@@ -41,13 +42,13 @@ export async function resolveScanFiles(
   const extraIgnore = options.config?.ignore ?? [];
 
   if (options.scope === 'files' && options.files?.length) {
-    return options.files.map((f) => (f.startsWith('/') ? f : `${projectRoot}/${f}`));
+    return options.files
+      .map((f) => (f.startsWith('/') ? f : `${projectRoot}/${f}`))
+      .filter(isSourceFile);
   }
 
   if (options.scope === 'changed') {
-    const changed = gitChangedFiles(projectRoot).filter(
-      (f) => /\.(ts|html|js|mjs|cjs)$/.test(f) && !f.endsWith('.spec.ts'),
-    );
+    const changed = gitChangedFiles(projectRoot).filter(isSourceFile);
     if (changed.length > 0) {
       return changed.map((f) => `${projectRoot}/${f}`);
     }
@@ -84,9 +85,13 @@ export function partitionByExtension(files: string[]): {
   for (const file of files) {
     if (file.endsWith('.html')) {
       html.push(file);
-    } else if (/\.(ts|tsx|js|mjs|cjs)$/.test(file)) {
+    } else if (file.endsWith('.ts')) {
       typescript.push(file);
     }
   }
   return { typescript, html };
+}
+
+function isSourceFile(file: string): boolean {
+  return SOURCE_EXTENSION.test(file) && !file.endsWith('.spec.ts');
 }

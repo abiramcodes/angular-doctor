@@ -87,7 +87,7 @@ pnpm docs:build
 
 ## Lint stack (hybrid)
 
-- **TypeScript / JavaScript:** [Oxlint](https://oxc.rs/docs/guide/usage/linter) (primary, fast path).
+- **TypeScript:** [Oxlint](https://oxc.rs/docs/guide/usage/linter) (primary, fast path). The scan reads `.ts` and `.html` only.
 - **HTML templates:** ESLint + `@angular-eslint` template rules only (Angular still needs a template parser). Stub runner in v0.1. Install peers to enable the next phase.
 - **Angular Doctor rules:** Built-in high-leverage checks (control flow, `inject()`, `@for` track, NgModule in modern apps, sanitizer bypass).
 
@@ -105,6 +105,27 @@ pnpm docs:build
 When violations exist, **`angular-doctor-report.md`** is written for agents. Clean scans print only the score.
 
 The score counts each rule once. An error costs 1.5 points and a warning costs 0.75. Info findings do not lower the score, and repeating one rule does not lower it again. `--category` filters the findings list. The score stays the full scan. `rules list` and `rules explain` show the built-in rules grouped by category.
+
+## When a check is skipped
+
+The scan reads source as text, including strings, comments, and generated code. A check that cannot finish on one file is skipped. The rest of the scan still runs.
+
+The summary lists each skip as a path and a reason:
+
+```text
+Skipped checks
+  scripts/lib/emit.ts: Invalid regular expression: /\b${names.join('\b/g: Unterminated group
+```
+
+Open that path. The same lines are under **Skipped checks** in `angular-doctor-report.md`, and in the `skippedChecks` array when you pass `--json`.
+
+One shape that hits this is a string that looks like an import whose names are not identifiers:
+
+```js
+`import { ${names.join(", ")} } from '${pkg}';`;
+```
+
+Search the reported file for `import {` inside a quote or a comment. The scan does not list every string that can do this. The path in the message is the file to open.
 
 ## Style guide rules
 

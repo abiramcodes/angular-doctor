@@ -1,3 +1,8 @@
+/** Escape text that will be placed inside a RegExp. File contents are not patterns. */
+export function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 /**
  * Scan with a new RegExp on every call.
  * A shared /g regexp keeps lastIndex, so the next shorter file can be skipped.

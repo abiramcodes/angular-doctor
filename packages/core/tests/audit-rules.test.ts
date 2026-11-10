@@ -153,6 +153,24 @@ describe('dead code', () => {
     expect(exports.map((item) => item.file)).toEqual([orphan]);
     expect(exports[0]?.severity).toBe('warning');
   });
+
+  it('ignores an import written as a template string', () => {
+    const root = join(tmpdir(), `ng-doctor-dead-template-${Date.now()}`);
+    const src = join(root, 'src');
+    mkdirSync(src, { recursive: true });
+    const emit = join(src, 'emit.ts');
+    writeFileSync(
+      emit,
+      "export const build = ([pkg, names]) => `import { ${names.join(', ')} } from '${pkg}';`;\n",
+    );
+    const found = runDeadCodeCheck({
+      project: { ...project, root, workspaceRoots: [root] },
+      file: root,
+      content: '',
+      files: [emit],
+    });
+    expect(found.some((item) => item.message.includes('join'))).toBe(false);
+  });
 });
 
 describe('rule catalog', () => {

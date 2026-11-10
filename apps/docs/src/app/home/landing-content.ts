@@ -175,7 +175,7 @@ export const ciCopy =
 export const whatItIs = [
   'Angular Doctor is a command-line health scan for an Angular CLI or Nx workspace. Run it in the project and it reads the source, prints a score from 0 to 100, and lists what it found.',
   'Each rule counts once, at its strongest severity. An error costs 1.5 points, a warning costs 0.75, and a note costs nothing. The same rule in ten files costs the same as in one file. The score never goes below 0.',
-  'TypeScript and JavaScript go through Oxlint. Built-in rules cover Angular habits those linters do not: inject(), host bindings, control flow, secrets in client code, accessibility gaps, and similar checks. An HTML template ESLint runner is wired and currently skipped until its peers are enabled. The scan sits next to the lint setup you already run. It does not replace a build or your tests.',
+  'TypeScript goes through Oxlint. Built-in rules cover Angular habits those linters do not: inject(), host bindings, control flow, secrets in client code, accessibility gaps, and similar checks. An HTML template ESLint runner is wired and currently skipped until its peers are enabled. The scan sits next to the lint setup you already run. It does not replace a build or your tests.',
 ];
 
 export const steps = [
@@ -185,7 +185,7 @@ export const steps = [
   },
   {
     title: 'Choose files',
-    body: 'Full scope reads TypeScript, JavaScript, and HTML, skipping node_modules, dist, .angular, coverage, and spec files. Changed scope uses git diff against HEAD, then staged files, and scans the whole project when nothing changed. Files scope reads only the paths you pass. Contextual scope keeps files under the same top-level folder as each seed, so a seed in src/ keeps the src tree.',
+    body: 'Full scope reads TypeScript and HTML, skipping node_modules, dist, .angular, coverage, and spec files. Changed scope uses git diff against HEAD, then staged files, and scans the whole project when nothing changed. Files scope reads only the TypeScript and HTML paths you pass. Contextual scope keeps files under the same top-level folder as each seed, so a seed in src/ keeps the src tree.',
   },
   {
     title: 'Check and score',
@@ -538,6 +538,7 @@ export const reportSections = [
   'Official Angular migrations, then the ng generate @angular/core commands that match this scan. Each command is shown with --dry-run first.',
   'A short fix order: migrations, style-guide findings, everything else, then a re-scan.',
   'Every finding under its category, with location, message, and a suggested fix when the rule has one.',
+  'Skipped checks, when a check could not finish. Each line starts with the file path to open.',
   'A JSON block at the end with the score, totals, and the recommended commands.',
 ];
 

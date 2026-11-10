@@ -5,6 +5,7 @@ import {
   createScanView,
   formatReportLine,
   formatScoreSummary,
+  formatSkippedChecks,
   printGroupedFindings,
 } from './scan-progress.js';
 
@@ -56,6 +57,11 @@ export async function runScanCommand(options: ScanCommandOptions): Promise<void>
   }
 
   console.log(formatScoreSummary(result));
+
+  const skipped = formatSkippedChecks(result.skippedChecks, options.cwd);
+  if (skipped) {
+    console.log(`\n${skipped}`);
+  }
 
   printGroupedFindings(diagnostics, options.cwd);
 

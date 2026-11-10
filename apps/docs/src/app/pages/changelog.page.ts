@@ -14,6 +14,24 @@ import { Title } from '@angular/platform-browser';
           <li class="changelog-entry">
             <span class="changelog-marker" aria-hidden="true"></span>
             <div class="changelog-body">
+              <h2 class="changelog-version">0.1.1</h2>
+              <p class="changelog-status">Current package</p>
+              <ul>
+                <li>Scan .ts and .html only. .js, .mjs, .cjs, and .tsx are no longer read.</li>
+                <li>
+                  A check that cannot finish on a file is skipped. The summary names that file, and
+                  the rest of the scan still runs.
+                </li>
+                <li>
+                  Import text copied from a file is treated as an identifier, so a string that looks
+                  like an import no longer stops the run.
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="changelog-entry">
+            <span class="changelog-marker" aria-hidden="true"></span>
+            <div class="changelog-body">
               <h2 class="changelog-version">0.1.0</h2>
               <p class="changelog-status">Released on npm</p>
               <ul>

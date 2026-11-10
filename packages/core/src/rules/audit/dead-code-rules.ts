@@ -3,7 +3,7 @@ import { basename } from 'node:path';
 import fg from 'fast-glob';
 import type { Diagnostic } from '../../types.js';
 import { diag, lineFromIndex, type RuleContext } from '../diag-helpers.js';
-import { execAll } from '../match.js';
+import { escapeRegExp, execAll } from '../match.js';
 
 const MIGRATION_DOCS = 'https://angular.dev/reference/migrations/cleanup-unused-imports';
 
@@ -31,7 +31,11 @@ export function runDeadCodeCheck(ctx: RuleContext): Diagnostic[] {
 
   const importedByOthers = new Map<string, Set<string>>();
   for (const [file, content] of contents) {
-    importedByOthers.set(file, importedExportNames(content));
+    try {
+      importedByOthers.set(file, importedExportNames(content));
+    } catch (error) {
+      throw fileFailure(file, error);
+    }
   }
 
   const findings: Diagnostic[] = [];
@@ -40,12 +44,21 @@ export function runDeadCodeCheck(ctx: RuleContext): Diagnostic[] {
     if (!content) {
       continue;
     }
-    findings.push(...unusedImports(file, content, findings.length));
-    if (!isEntryFile(file)) {
-      findings.push(...unusedExports(file, content, importedByOthers, findings.length));
+    try {
+      findings.push(...unusedImports(file, content, findings.length));
+      if (!isEntryFile(file)) {
+        findings.push(...unusedExports(file, content, importedByOthers, findings.length));
+      }
+    } catch (error) {
+      throw fileFailure(file, error);
     }
   }
   return findings;
+}
+
+function fileFailure(file: string, error: unknown): Error {
+  const detail = error instanceof Error ? error.message : String(error);
+  return new Error(detail.startsWith(`${file}:`) ? detail : `${file}: ${detail}`);
 }
 
 function unusedImports(file: string, content: string, start: number): Diagnostic[] {
@@ -152,12 +165,15 @@ function splitBindings(clause: string): { local: string; exported: string }[] {
   const braceAt = rest.indexOf('{');
   const head = (braceAt === -1 ? rest : rest.slice(0, braceAt)).replace(/,\s*$/, '').trim();
   if (head.startsWith('* as ')) {
-    const local = head.slice('* as '.length).trim();
+    const local = identifier(head.slice('* as '.length));
     if (local) {
       bindings.push({ local, exported: '' });
     }
   } else if (head && !head.startsWith('{')) {
-    bindings.push({ local: head, exported: '' });
+    const local = identifier(head);
+    if (local) {
+      bindings.push({ local, exported: '' });
+    }
   }
   if (braceAt === -1) {
     return bindings;
@@ -169,16 +185,24 @@ function splitBindings(clause: string): { local: string; exported: string }[] {
       continue;
     }
     const [exported, alias] = bit.split(/\s+as\s+/);
-    const local = (alias ?? exported).trim();
+    const local = identifier(alias ?? exported);
+    const exportedName = identifier(exported);
     if (local) {
-      bindings.push({ local, exported: exported.trim() });
+      bindings.push({ local, exported: exportedName });
     }
   }
   return bindings;
 }
 
+const IDENTIFIER = /^[$A-Za-z_][\w$]*$/;
+
+function identifier(value: string | undefined): string {
+  const name = value?.trim() ?? '';
+  return IDENTIFIER.test(name) ? name : '';
+}
+
 function countIdent(content: string, name: string): number {
-  return execAll(content, new RegExp(`\\b${name}\\b`, 'g')).length;
+  return execAll(content, new RegExp(`\\b${escapeRegExp(name)}\\b`, 'g')).length;
 }
 
 function isEntryFile(file: string): boolean {

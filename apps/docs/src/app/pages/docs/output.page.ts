@@ -39,6 +39,14 @@ import {
       </docs-callout>
       <docs-code-block [code]="markdownExcerpt" label="angular-doctor-report.md" lang="md" />
 
+      <h2 id="skipped-checks">Skipped checks</h2>
+      <p>
+        A check that cannot finish on one file is skipped. The summary still prints, and the other
+        files are still scanned. Each skip is a path in your project, then the reason:
+      </p>
+      <docs-code-block [code]="skippedExample" label="terminal" lang="text" />
+      <p>{{ skippedHelp }}</p>
+
       <h2 id="where-the-file-goes">Where the file goes</h2>
       <p>{{ configHelp }}</p>
       <docs-code-block [code]="configExample" label="angular-doctor.config.json" lang="json" />
@@ -52,4 +60,8 @@ export default class DocsOutput {
   protected readonly markdownExcerpt = markdownExcerpt;
   protected readonly configExample = configExample;
   protected readonly configHelp = configHelp;
+  protected readonly skippedExample = `Skipped checks
+  scripts/lib/emit.ts: Invalid regular expression: /\\b\${names.join('\\b/g: Unterminated group`;
+  protected readonly skippedHelp =
+    "Open that path. The same lines are under Skipped checks in the report, and in the skippedChecks array when you pass --json. The scan reads strings and comments as text. Search the reported file for import { inside a quote or a comment. A name that is not an identifier, such as ${names.join(', ')}, is one shape that does this. The path in the message is the file to open.";
 }

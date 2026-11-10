@@ -9,8 +9,8 @@ overrides:
 allowBuilds:
   "@parcel/watcher": true
   esbuild: true
-  lmdb: set this to true or false
-  msgpackr-extract: set this to true or false
+  lmdb: false
+  msgpackr-extract: false
 minimumReleaseAgeExclude:
   - "@oxlint/binding-android-arm-eabi@1.93.0"
   - "@oxlint/binding-android-arm64@1.93.0"

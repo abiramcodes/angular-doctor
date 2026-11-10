@@ -53,17 +53,25 @@ export async function runScan(options: ScanOptions): Promise<ScanResult> {
     findings: 0,
     score: null,
   });
-  const builtin = runBuiltinRules(project, allFiles, config, (completed, file, partial) => {
-    report(options, {
-      phase: 'rules',
-      message: 'Checking components and templates',
-      completed,
-      total: allFiles.length,
-      file,
-      findings: partial.length,
-      score: calculateScore(partial),
-    });
-  });
+  const builtin = runBuiltinRules(
+    project,
+    allFiles,
+    config,
+    (completed, file, partial) => {
+      report(options, {
+        phase: 'rules',
+        message: 'Checking components and templates',
+        completed,
+        total: allFiles.length,
+        file,
+        findings: partial.length,
+        score: calculateScore(partial),
+      });
+    },
+    (message) => {
+      skippedChecks.push(message);
+    },
+  );
 
   report(options, {
     phase: 'typescript',

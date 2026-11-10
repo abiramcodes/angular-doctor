@@ -1,4 +1,5 @@
 import { diag, lineFromIndex, type RuleContext } from '../diag-helpers.js';
+import { escapeRegExp } from '../match.js';
 import type { Diagnostic } from '../../types.js';
 
 const LIFECYCLE_HOOKS = [
@@ -66,7 +67,7 @@ export function ruleLifecycleInterface(ctx: RuleContext): Diagnostic[] {
   const findings = [];
   let i = 0;
   for (const hook of LIFECYCLE_HOOKS) {
-    if (!new RegExp(`\\b${hook}\\s*\\(`).test(ctx.content)) {
+    if (!new RegExp(`\\b${escapeRegExp(hook)}\\s*\\(`).test(ctx.content)) {
       continue;
     }
     const iface = LIFECYCLE_INTERFACE[hook];
@@ -101,7 +102,7 @@ export function ruleLifecycleHookComplexity(ctx: RuleContext): Diagnostic[] {
   const findings = [];
   let i = 0;
   for (const hook of LIFECYCLE_HOOKS) {
-    const re = new RegExp(`${hook}\\s*\\([^)]*\\)\\s*\\{`, 'g');
+    const re = new RegExp(`${escapeRegExp(hook)}\\s*\\([^)]*\\)\\s*\\{`, 'g');
     const match = re.exec(ctx.content);
     if (!match) {
       continue;

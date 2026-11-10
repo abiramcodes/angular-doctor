@@ -1,6 +1,6 @@
 import type { Diagnostic } from '../../types.js';
 import { diag, lineFromIndex, type RuleContext } from '../diag-helpers.js';
-import { execAll } from '../match.js';
+import { escapeRegExp, execAll } from '../match.js';
 
 const DOCS_URL = 'https://angular.dev/api/core/rxjs-interop/takeUntilDestroyed';
 
@@ -122,7 +122,9 @@ function teardownPattern(name: string, methods: string[]): RegExp {
 }
 
 function methodBody(content: string, name: string): Span | null {
-  const match = new RegExp(`\\b${name}\\s*\\([^)]*\\)\\s*(?::[^{]+)?\\{`).exec(content);
+  const match = new RegExp(`\\b${escapeRegExp(name)}\\s*\\([^)]*\\)\\s*(?::[^{]+)?\\{`).exec(
+    content,
+  );
   if (!match) {
     return null;
   }
@@ -168,6 +170,3 @@ function sliceDelimited(content: string, open: number, start: string, end: strin
   return null;
 }
 
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}

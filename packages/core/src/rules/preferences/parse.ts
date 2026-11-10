@@ -1,6 +1,6 @@
 import type { Diagnostic } from '../../types.js';
 import { diag, lineFromIndex, type RuleContext } from '../diag-helpers.js';
-import { execAll } from '../match.js';
+import { escapeRegExp, execAll } from '../match.js';
 
 export interface Span {
   text: string;
@@ -105,7 +105,12 @@ export function constructorParams(content: string): Span | null {
 
 export function elementTags(content: string, names: string): Array<{ tag: string; index: number }> {
   const tags: Array<{ tag: string; index: number }> = [];
-  const re = new RegExp(`<(?:${names})\\b[^>]*>`, 'gi');
+  let re: RegExp;
+  try {
+    re = new RegExp(`<(?:${names})\\b[^>]*>`, 'gi');
+  } catch {
+    return tags;
+  }
   let match: RegExpExecArray | null;
   while ((match = re.exec(content)) !== null) {
     tags.push({ tag: match[0], index: match.index });
@@ -149,7 +154,9 @@ export function controlFlowSpans(content: string): Span[] {
 }
 
 export function methodBody(content: string, name: string): Span | null {
-  const match = new RegExp(`\\b${name}\\s*\\([^)]*\\)\\s*(?::[^{]+)?\\{`).exec(content);
+  const match = new RegExp(`\\b${escapeRegExp(name)}\\s*\\([^)]*\\)\\s*(?::[^{]+)?\\{`).exec(
+    content,
+  );
   if (!match) {
     return null;
   }
