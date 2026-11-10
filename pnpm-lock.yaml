@@ -238,9 +238,6 @@ importers:
       front-matter:
         specifier: ^4.0.2
         version: 4.0.2
-      h3:
-        specifier: ^1.13.0
-        version: 1.15.11
       marked:
         specifier: ^15.0.7
         version: 15.0.12
