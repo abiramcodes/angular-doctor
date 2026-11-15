@@ -27,8 +27,21 @@ export default defineConfig(() => ({
   ssr: {
     noExternal: ['@spartan-ng/**', '@angular/cdk/**'],
   },
+  // Angular 22 keeps `ngServerMode` checks in `@angular/core`'s
+  // `_debug_node-chunk.mjs`. Analog only rewrites `core.mjs`, and its
+  // production define reads `build.ssr`, which Vite 8's environment build
+  // leaves unset. The flag then stays false, `afterNextRender` runs during
+  // prerender, and browser globals throw.
+  environments: {
+    ssr: {
+      define: {
+        ngServerMode: 'true',
+      },
+    },
+  },
   plugins: [
     analog({
+      static: true,
       prerender: {
         routes: async () => routes,
       },
