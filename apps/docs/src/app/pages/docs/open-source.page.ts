@@ -35,12 +35,14 @@ export const routeMeta: RouteMeta = { title: 'Open source' };
 
       <h2 id="deploy">Deploy</h2>
       <p>
-        The site deploys as static files on Cloudflare Pages. Every route is prerendered, so no
-        server is needed.
+        The site deploys as static files on Cloudflare Workers. Every route is prerendered, so no
+        server is needed. <code>wrangler.jsonc</code> at the repository root publishes
+        <code>apps/docs/dist/analog/public</code>.
       </p>
       <ul>
+        <li>Root directory: <code>/</code></li>
         <li>Build command: <code>pnpm docs:build</code></li>
-        <li>Output directory: <code>apps/docs/dist/analog/public</code></li>
+        <li>Deploy command: <code>npx wrangler deploy</code></li>
         <li>Node version: 20.19 or newer</li>
       </ul>
       <p>

@@ -1,0 +1,10 @@
+{
+  // Cloudflare runs `wrangler deploy` from the repository root. This file
+  // names the docs app so Wrangler does not try to detect one inside the
+  // pnpm workspace.
+  "name": "angular-doctor",
+  "compatibility_date": "2026-11-16",
+  "assets": {
+    "directory": "./apps/docs/dist/analog/public"
+  }
+}
