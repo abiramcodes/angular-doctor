@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { basename } from 'node:path';
 import fg from 'fast-glob';
 import type { Diagnostic } from '../../types.js';
-import { diag, lineFromIndex, type RuleContext } from '../diag-helpers.js';
+import { diag, isDecoratedExport, lineFromIndex, type RuleContext } from '../diag-helpers.js';
 import { escapeRegExp, execAll } from '../match.js';
 
 const MIGRATION_DOCS = 'https://angular.dev/reference/migrations/cleanup-unused-imports';
@@ -107,7 +107,9 @@ function unusedExports(
     const name = match[1] ?? '';
     if (
       !name ||
+      FRAMEWORK_EXPORTS.has(name) ||
       countIdent(content, name) > 1 ||
+      isDecoratedExport(content, match.index) ||
       isImportedElsewhere(file, name, importedByOthers)
     ) {
       continue;
@@ -148,6 +150,23 @@ function importedExportNames(content: string): Set<string> {
   const names = new Set<string>();
   for (const match of execAll(content, /import\s+([\s\S]*?)\sfrom\s+['"][^'"]+['"]/g)) {
     for (const binding of splitBindings(match[1] ?? '')) {
+      if (binding.exported) {
+        names.add(binding.exported);
+      }
+    }
+  }
+  // Lazy routes: loadComponent: () => import('./x').then((m) => m.XComponent)
+  for (const match of execAll(
+    content,
+    /\.then\(\s*\(?\s*[A-Za-z_$][\w$]*\s*\)?\s*=>\s*[A-Za-z_$][\w$]*\.([A-Za-z_$][\w$]*)/g,
+  )) {
+    if (match[1]) {
+      names.add(match[1]);
+    }
+  }
+  // Barrels: export { Foo } from './foo' counts as a use of Foo.
+  for (const match of execAll(content, /export\s*\{([^}]*)\}(?:\s*from\s+['"][^'"]+['"])?/g)) {
+    for (const binding of splitBindings(`{${match[1] ?? ''}}`)) {
       if (binding.exported) {
         names.add(binding.exported);
       }
@@ -213,6 +232,12 @@ function isEntryFile(file: string): boolean {
     base === 'app.ts' ||
     base.endsWith('.routes.ts') ||
     base.endsWith('.config.ts') ||
+    // Analog routed pages: the router loads these, nobody imports them.
+    base.endsWith('.page.ts') ||
     base.startsWith('federation.config.')
   );
 }
+
+// `routeMeta` is consumed by Analog/router tooling by convention, never
+// imported by user code.
+const FRAMEWORK_EXPORTS = new Set(['routeMeta']);

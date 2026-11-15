@@ -8,15 +8,24 @@ const QUERIES_DOCS = 'https://angular.dev/guide/components/queries';
 const HOST_DOCS = 'https://angular.dev/guide/components/host-elements';
 
 export function rulePreferDocumentToken(ctx: RuleContext): Diagnostic[] {
-  if (!ctx.file.endsWith('.ts') || !isComponentOrDirective(ctx.content)) {
+  if (!ctx.file.endsWith('.ts') || ctx.file.endsWith('.spec.ts')) {
+    return [];
+  }
+  const ssr = ctx.project.hasSsr === true;
+  // Without SSR this stays a component/directive preference. With SSR or
+  // prerendering configured in angular.json, the global document is a
+  // server-render crash risk anywhere in app code, so it is a warning.
+  if (!ssr && !isComponentOrDirective(ctx.content)) {
     return [];
   }
   return identifierFindings(ctx, {
     ruleId: 'angular-doctor/prefer-document-token',
     pattern: /(?<![\w.])document\./g,
-    severity: 'info',
+    severity: ssr ? 'warning' : 'info',
     category: 'correctness',
-    message: 'Global document is used in a component or directive.',
+    message: ssr
+      ? 'Global document is used in an SSR/prerendered app, where document may not exist on the server.'
+      : 'Global document is used in a component or directive.',
     suggestion: 'Inject DOCUMENT from @angular/common instead of the global document.',
     docsUrl: SSR_DOCS,
   });

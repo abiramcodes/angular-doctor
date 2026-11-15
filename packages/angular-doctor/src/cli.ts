@@ -33,6 +33,7 @@ program
     '--category <category>',
     'Show findings from one category. The score stays the full scan.',
   )
+  .option('--html', 'Also write a self-contained angular-doctor-report.html')
   .option('--files <paths...>', 'Files for --scope files or contextual seeds')
   .argument('[path]', 'Project directory', process.cwd())
   .action(async (path, opts) => {
@@ -43,6 +44,7 @@ program
       scoreOnly: Boolean(opts.scoreOnly),
       scope: opts.scope,
       category: opts.category as string | undefined,
+      html: Boolean(opts.html),
       files: opts.files as string[] | undefined,
     });
   });

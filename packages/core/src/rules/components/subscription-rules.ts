@@ -59,6 +59,11 @@ export function ruleComponentSubjects(ctx: RuleContext): Diagnostic[] {
     if (isCleanedUp(ngOnDestroy, destroyCallbacks, field.name)) {
       continue;
     }
+    if (tornDown) {
+      // No .complete()/.unsubscribe() yet, but ngOnDestroy already signals:
+      // the teardown rule above owns this field. One problem, one error.
+      continue;
+    }
     const pos = lineFromIndex(ctx.content, field.index);
     findings.push(
       diag(

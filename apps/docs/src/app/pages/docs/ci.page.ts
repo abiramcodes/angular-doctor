@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { DocPage } from '../../doc-page';
 import { CodeBlock } from '../../code-block';
 import { Callout } from '../../callout';
+import type { RouteMeta } from '@analogjs/router';
+
+export const routeMeta: RouteMeta = { title: 'CI' };
 
 const installCommand = 'npx @abiramcodes/angular-doctor@latest ci install';
 const scanCommands = `npx @abiramcodes/angular-doctor@latest --scope changed --json

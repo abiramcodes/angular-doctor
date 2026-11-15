@@ -1,4 +1,5 @@
 import { runScan } from '@angular-doctor/core/scan/run-scan';
+import { summarizeDiagnostics } from '@angular-doctor/core/score/calculate-score';
 import type { ScanScope } from '@angular-doctor/core/types';
 import { parseCategory } from './categories.js';
 import {
@@ -16,6 +17,7 @@ export interface ScanCommandOptions {
   scoreOnly: boolean;
   scope: string;
   category?: string;
+  html?: boolean;
   files?: string[];
 }
 
@@ -38,6 +40,7 @@ export async function runScanCommand(options: ScanCommandOptions): Promise<void>
     scope,
     files: options.files,
     verbose: options.verbose,
+    htmlReport: Boolean(options.html),
     onProgress: (progress) => view?.update(progress),
   });
   await view?.finish(result);
@@ -47,12 +50,19 @@ export async function runScanCommand(options: ScanCommandOptions): Promise<void>
     : result.diagnostics;
 
   if (options.scoreOnly) {
-    console.log(result.score);
+    console.log(Math.round(result.score));
     return;
   }
 
   if (options.json) {
-    console.log(JSON.stringify({ ...result, diagnostics }, null, 2));
+    const payload = category
+      ? {
+          ...result,
+          diagnostics,
+          filtered: { category, totals: summarizeDiagnostics(diagnostics) },
+        }
+      : { ...result, diagnostics };
+    console.log(JSON.stringify(payload, null, 2));
     return;
   }
 
@@ -63,9 +73,12 @@ export async function runScanCommand(options: ScanCommandOptions): Promise<void>
     console.log(`\n${skipped}`);
   }
 
-  printGroupedFindings(diagnostics, options.cwd);
+  printGroupedFindings(diagnostics, options.cwd, options.verbose);
 
   if (result.reportPath) {
     console.log(`\n${formatReportLine(result.reportPath)}`);
+  }
+  if (result.htmlReportPath) {
+    console.log(formatReportLine(result.htmlReportPath));
   }
 }

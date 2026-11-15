@@ -33,11 +33,54 @@ export function diag(partial: Omit<Diagnostic, 'id' | 'source'>, index = 0): Dia
 
 export function majorVersion(project: ProjectInfo): number {
   if (!project.angularVersion) {
-    return 99;
+    // Unknown version: stay conservative. Version-gated rules all guard with
+    // `majorVersion(...) < N`, so 0 disables them instead of assuming latest.
+    return 0;
   }
   return Number.parseInt(project.angularVersion.split('.')[0] ?? '0', 10);
 }
 
 export function isUnderSrc(file: string): boolean {
   return /\/src\//.test(file) || file.includes('/src/');
+}
+
+const DECLARATION_DECORATORS = [
+  'Component',
+  'Directive',
+  'Pipe',
+  'Injectable',
+  'Service',
+  'NgModule',
+];
+const TESTABLE_DECORATORS = ['Component', 'Directive', 'Pipe', 'Injectable', 'Service'];
+
+/** True when the file declares any Angular-decorated class. */
+export function hasAngularDeclaration(content: string): boolean {
+  return new RegExp(`@(?:${DECLARATION_DECORATORS.join('|')})\\s*\\(`).test(content);
+}
+
+/** True when the file declares a testable Angular class (not NgModule). */
+export function hasTestableDeclaration(content: string): boolean {
+  return new RegExp(`@(?:${TESTABLE_DECORATORS.join('|')})\\s*\\(`).test(content);
+}
+
+/**
+ * True when the class exported at `exportIndex` carries an Angular decorator.
+ * Such classes are used through selectors, routes, or DI, so dead-code checks
+ * must not report them just because nothing imports the class by name.
+ */
+export function isDecoratedExport(content: string, exportIndex: number): boolean {
+  const before = content.slice(Math.max(0, exportIndex - 4000), exportIndex);
+  const decoratorRe = new RegExp(`@(?:${DECLARATION_DECORATORS.join('|')})\\s*\\(`, 'g');
+  const classRe = /\bclass\s+\w+/g;
+  let lastDecorator = -1;
+  let lastClass = -1;
+  let match: RegExpExecArray | null;
+  while ((match = decoratorRe.exec(before)) !== null) {
+    lastDecorator = match.index;
+  }
+  while ((match = classRe.exec(before)) !== null) {
+    lastClass = match.index;
+  }
+  return lastDecorator >= 0 && lastDecorator > lastClass;
 }

@@ -60,11 +60,22 @@ export function formatRuleExplanation(rule: ListedRule): string {
     `${pc.dim('Severity')}  ${colorize(rule.defaultSeverity, tone)}`,
     `${pc.dim('Category')}  ${colorize(rule.category, rule.category)}`,
   ];
+  if (rule.minAngular !== undefined) {
+    lines.push(`${pc.dim('Angular')}  ${colorize(`≥${rule.minAngular}`, 'info')}`);
+  }
   if (rule.summary) {
     lines.push(pc.dim(rule.summary));
   }
   if (rule.docsUrl) {
     lines.push(`${pc.dim('Docs')}  ${colorize(rule.docsUrl, 'info')}`);
   }
+  if (rule.relatedErrors && rule.relatedErrors.length > 0) {
+    lines.push(
+      `${pc.dim('Related')}  ${rule.relatedErrors
+        .map((code) => colorize(`https://angular.dev/errors/${code}`, 'info'))
+        .join('  ')}`,
+    );
+  }
+  lines.push(`${pc.dim('Rule page')}  ${colorize(rule.rulePageUrl, 'info')}`);
   return lines.join('\n');
 }

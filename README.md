@@ -7,6 +7,7 @@ Deterministic, fast health scans for Angular codebases and coding agents. Ships 
 ```bash
 npx @abiramcodes/angular-doctor@latest
 npx @abiramcodes/angular-doctor@latest --verbose --scope changed
+npx @abiramcodes/angular-doctor@latest --html
 npx @abiramcodes/angular-doctor@latest --category security
 npx @abiramcodes/angular-doctor@latest rules list
 npx @abiramcodes/angular-doctor@latest --colors pastel
@@ -14,7 +15,7 @@ npx @abiramcodes/angular-doctor@latest rules explain angular-doctor/client-secre
 npx @abiramcodes/angular-doctor@latest install
 ```
 
-Requires Node.js 20.19 or newer. Run it in an Angular or Nx workspace.
+Requires Node.js 20.19 or newer and Angular 15 or newer. Angular 17+ gets every check; Angular 15–16 run in compat mode with modern checks off. Run it in an Angular or Nx workspace.
 
 Develop this repo:
 
@@ -73,7 +74,7 @@ pnpm docs:dev
 pnpm docs:build
 ```
 
-`pnpm docs:dev` serves the public website. `pnpm docs:build` prerenders each page to HTML.
+`pnpm docs:dev` serves the public website. `pnpm docs:build` prerenders each page to HTML. After changing rules, regenerate the docs rule catalog with `node scripts/generate-rule-docs.mjs`.
 
 ## Monorepo layout
 
@@ -93,16 +94,19 @@ pnpm docs:build
 
 ## Configuration
 
-`angular-doctor.config.json`, `angular-doctor.config.ts`, or `package.json#angularDoctor`:
+`angular-doctor.config.json` or `package.json#angularDoctor` (a leftover `angular-doctor.config.ts` is reported as a skipped check instead of being loaded):
 
 ```json
 {
   "reportPath": "reports/angular-doctor-report.md",
-  "ignore": ["**/legacy/**"]
+  "ignore": ["**/legacy/**"],
+  "reportFormats": ["markdown", "html"]
 }
 ```
 
-When violations exist, **`angular-doctor-report.md`** is written for agents. Clean scans print only the score.
+When violations exist, **`angular-doctor-report.md`** is written for agents, with findings grouped once per rule. `--html` (or `"html"` in `reportFormats`) also writes a self-contained **`angular-doctor-report.html`** with category tabs. Clean scans print only the score.
+
+Severities are strict by default: correctness, security, and accessibility warnings count as errors, and style-guide infos count as warnings. There is no level switch; soften or silence a rule per rule under `rules` (for example `"angular-doctor/ng-model-name": "info"` or `"off"`).
 
 An error costs 1.5 points in each file where that rule fires. Repeating it in the same file does not cost more. A warning costs 0.75 once per rule, no matter how many files repeat it. Info findings do not lower the score. The score starts at 100 and does not go below 0. `--category` filters the findings list. The score stays the full scan. `rules list` and `rules explain` show the built-in rules grouped by category.
 
@@ -129,7 +133,7 @@ Search the reported file for `import {` inside a quote or a comment. The scan do
 
 ## Style guide rules
 
-Built-in rules map to the [Angular coding style guide](https://angular.dev/style-guide). Naming and project-layout findings are **warning/info only** (they do not use error severity).
+Built-in rules map to the [Angular coding style guide](https://angular.dev/style-guide). Naming and project-layout findings are **warning only** (style-guide infos are promoted to warning; they do not use error severity).
 
 | Rule ID                                      | Style guide area                                                                                                                                 |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -162,11 +166,15 @@ Static checks for [NgOptimizedImage](https://angular.dev/guide/image-optimizatio
 | `angular-doctor/ng-src-fill-dimensions`          | warning  | `fill` is combined with `width` or `height`                                                                                                    |
 | `angular-doctor/ng-src-placeholder-size`         | info     | `placeholder` data URL decodes to more than 4KB                                                                                                |
 | `angular-doctor/explicit-eager-change-detection` | info     | `ChangeDetectionStrategy.Default` or `Eager` is set explicitly                                                                                 |
+| `angular-doctor/template-for-allocation`         | info     | `@for` iterates a method (not a signal read) that returns a new array/object per call                                                          |
+| `angular-doctor/getter-in-template`              | error    | A template reads a class getter, which re-runs on every change detection cycle                                                                 |
+| `angular-doctor/defer-missing-trigger`           | warning  | `@defer` without an `on`/`when`/prefetch trigger                                                                                               |
+| `angular-doctor/prefer-inject-async`             | info     | A root service is only used inside handlers and could load lazily with `injectAsync()` (Angular 22+)                                           |
 | `angular-doctor/deprecated-animations`           | error    | `package.json` still lists `@angular/animations` ([legacy animations guide](https://angular.dev/guide/legacy-animations))                      |
 | `angular-doctor/zone-js`                         | warning  | `zone.js` is still a dependency or import on Angular 20+ ([zoneless](https://angular.dev/guide/zoneless))                                      |
 | `angular-doctor/ng-deep`                         | warning  | `::ng-deep`, `/deep/`, or `>>>` pierces view encapsulation                                                                                     |
-| `angular-doctor/typescript-strict`               | warning  | `compilerOptions.strict` is not true                                                                                                           |
-| `angular-doctor/strict-templates`                | warning  | `angularCompilerOptions.strictTemplates` is not true                                                                                           |
+| `angular-doctor/typescript-strict`               | error    | `compilerOptions.strict` is not true                                                                                                           |
+| `angular-doctor/strict-templates`                | error    | `angularCompilerOptions.strictTemplates` is not true                                                                                           |
 | `angular-doctor/prefer-take-until-destroyed`     | error    | `Subject` or `BehaviorSubject` torn down in `ngOnDestroy` ([takeUntilDestroyed](https://angular.dev/api/core/rxjs-interop/takeUntilDestroyed)) |
 | `angular-doctor/subject-not-cleaned-up`          | error    | Used `Subject` or `BehaviorSubject` in a component or directive is never completed or unsubscribed                                             |
 
@@ -180,31 +188,33 @@ Static checks for [NgOptimizedImage](https://angular.dev/guide/image-optimizatio
 
 Warnings are syntax the Angular skill treats as the wrong tool. Info findings are preferences that existing code can still justify. Complex-component and repeated-template checks compare text fingerprints. They do not parse the Angular template AST.
 
-| Rule ID                                           | Severity | What it checks                                                                     |
-| ------------------------------------------------- | -------- | ---------------------------------------------------------------------------------- |
-| `angular-doctor/effect-writes-state`              | warning  | `effect()` calls `.set()` or `.update()`                                           |
-| `angular-doctor/impure-pipe`                      | warning  | `@Pipe({ pure: false })`                                                           |
-| `angular-doctor/pipe-name-hyphen`                 | warning  | Pipe `name` contains a hyphen                                                      |
-| `angular-doctor/inject-pipe`                      | warning  | A pipe class is injected                                                           |
-| `angular-doctor/prefer-provide-http-client`       | warning  | `HttpClientModule`                                                                 |
-| `angular-doctor/prefer-functional-interceptor`    | warning  | `HTTP_INTERCEPTORS` or `implements HttpInterceptor`                                |
-| `angular-doctor/deprecated-incremental-hydration` | warning  | `withIncrementalHydration()` on Angular 22+                                        |
-| `angular-doctor/form-field-owned-attrs`           | warning  | `[disabled]`, `[readonly]`, or `[value]` on `[formField]`                          |
-| `angular-doctor/ng-model-name`                    | warning  | `[(ngModel)]` without `name`                                                       |
-| `angular-doctor/ng-content-in-control-flow`       | warning  | `<ng-content>` inside `@if`, `@for`, `@switch`, or `<ng-template>`                 |
-| `angular-doctor/template-arrow-not-called`        | warning  | Event binding is an arrow function or uses a block body                            |
-| `angular-doctor/tailwind-v3-syntax`               | warning  | Tailwind v3 `@tailwind` or `tailwind.config` when Tailwind 4 is installed          |
-| `angular-doctor/prefer-signal-forms`              | info     | `FormControl`, `FormGroup`, `FormArray`, `FormBuilder`, `NgForm`, or `FormsModule` |
-| `angular-doctor/output-name`                      | info     | Output named `on…` or `click`, `submit`, `change`, `input`, `focus`                |
-| `angular-doctor/input-dom-name`                   | info     | Input named `id`, `title`, `role`, `tabIndex`, or `lang`                           |
-| `angular-doctor/prefer-http-resource`             | info     | `http.get()` in a component or directive                                           |
-| `angular-doctor/prefer-document-token`            | info     | Global `document.` in a component or directive                                     |
-| `angular-doctor/prefer-is-dev-mode`               | info     | `environment.production`                                                           |
-| `angular-doctor/query-in-lifecycle`               | info     | Signal query read in `ngAfterViewInit` or `ngAfterContentInit`                     |
-| `angular-doctor/host-via-element-ref`             | info     | `nativeElement` sets `classList`, `style`, or `setAttribute`                       |
-| `angular-doctor/complex-component`                | info     | Template over 80 lines, more than 12 methods, or more than 8 control-flow blocks   |
-| `angular-doctor/repeated-template`                | info     | The same 6-tag or 15-line template block appears in another component              |
-| `angular-doctor/repeated-component-logic`         | info     | A method body of at least 8 lines matches a method in another component            |
+| Rule ID                                           | Severity | What it checks                                                                                                |
+| ------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------- |
+| `angular-doctor/effect-writes-state`              | error    | `effect()` calls `.set()` or `.update()`                                                                      |
+| `angular-doctor/impure-pipe`                      | error    | `@Pipe({ pure: false })`                                                                                      |
+| `angular-doctor/pipe-name-hyphen`                 | warning  | Pipe `name` contains a hyphen                                                                                 |
+| `angular-doctor/inject-pipe`                      | warning  | A pipe class is injected                                                                                      |
+| `angular-doctor/prefer-provide-http-client`       | warning  | `HttpClientModule`                                                                                            |
+| `angular-doctor/prefer-functional-interceptor`    | warning  | `HTTP_INTERCEPTORS` or `implements HttpInterceptor`                                                           |
+| `angular-doctor/deprecated-incremental-hydration` | warning  | `withIncrementalHydration()` on Angular 22+                                                                   |
+| `angular-doctor/form-field-owned-attrs`           | error    | `[disabled]`, `[readonly]`, or `[value]` on `[formField]`                                                     |
+| `angular-doctor/ng-model-name`                    | error    | `[(ngModel)]` without `name`                                                                                  |
+| `angular-doctor/ng-content-in-control-flow`       | error    | `<ng-content>` inside `@if`, `@for`, `@switch`, or `<ng-template>`                                            |
+| `angular-doctor/template-arrow-not-called`        | error    | Event binding is an arrow function or uses a block body                                                       |
+| `angular-doctor/tailwind-v3-syntax`               | warning  | Tailwind v3 `@tailwind` or `tailwind.config` when Tailwind 4 is installed                                     |
+| `angular-doctor/prefer-signal-forms`              | info     | `FormControl`, `FormGroup`, `FormArray`, `FormBuilder`, `NgForm`, or `FormsModule`                            |
+| `angular-doctor/prefer-signal-query`              | warning  | `@ViewChild`, `@ViewChildren`, `@ContentChild`, or `@ContentChildren` instead of signal queries (Angular 19+) |
+| `angular-doctor/output-name`                      | info     | Output named `on…` or `click`, `submit`, `change`, `input`, `focus`                                           |
+| `angular-doctor/input-dom-name`                   | info     | Input named `id`, `title`, `role`, `tabIndex`, or `lang`                                                      |
+| `angular-doctor/prefer-http-resource`             | info     | `http.get()` in a component or directive                                                                      |
+| `angular-doctor/prefer-document-token`            | info     | Global `document.` in a component or directive; a warning when SSR/prerender is configured in `angular.json`  |
+| `angular-doctor/inject-async-target`              | error    | `injectAsync()` loads a class that is not auto-provided (`@Service` / `providedIn: 'root'`)                   |
+| `angular-doctor/prefer-is-dev-mode`               | info     | `environment.production`                                                                                      |
+| `angular-doctor/query-in-lifecycle`               | info     | Signal query read in `ngAfterViewInit` or `ngAfterContentInit`                                                |
+| `angular-doctor/host-via-element-ref`             | info     | `nativeElement` sets `classList`, `style`, or `setAttribute`                                                  |
+| `angular-doctor/complex-component`                | info     | Template over 80 lines, more than 12 methods, or more than 8 control-flow blocks                              |
+| `angular-doctor/repeated-template`                | info     | The same 6-tag or 15-line template block appears in another component                                         |
+| `angular-doctor/repeated-component-logic`         | info     | A method body of at least 8 lines matches a method in another component                                       |
 
 ## Security, accessibility, and dead code
 
@@ -214,12 +224,12 @@ Static text checks. They do not call a secret scanner or a template parser.
 | -------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
 | `angular-doctor/client-secret`               | error    | A string literal in client code looks like a secret                                                   |
 | `angular-doctor/env-file`                    | error    | `.env`, `.env.local`, `.env.development`, `.env.production`, or `.env.*.local` is in the project tree |
-| `angular-doctor/inner-html`                  | warning  | `[innerHTML]`, `bind-innerHTML`, or `.innerHTML =`                                                    |
-| `angular-doctor/target-blank`                | warning  | `target="_blank"` without `rel="noopener"` or `rel="noreferrer"`                                      |
-| `angular-doctor/img-alt`                     | warning  | `<img>` has neither `alt` nor `aria-hidden="true"`                                                    |
-| `angular-doctor/click-without-keyboard`      | warning  | `(click)` on `div`, `span`, `section`, or `article` without a key handler                             |
-| `angular-doctor/positive-tabindex`           | warning  | `tabindex` greater than 0                                                                             |
-| `angular-doctor/control-missing-label`       | warning  | `input`, `textarea`, or `select` has no label                                                         |
+| `angular-doctor/inner-html`                  | error    | `[innerHTML]`, `bind-innerHTML`, or `.innerHTML =`                                                    |
+| `angular-doctor/target-blank`                | error    | `target="_blank"` without `rel="noopener"` or `rel="noreferrer"`                                      |
+| `angular-doctor/img-alt`                     | error    | `<img>` has neither `alt` nor `aria-hidden="true"`                                                    |
+| `angular-doctor/click-without-keyboard`      | error    | `(click)` on `div`, `span`, `section`, or `article` without a key handler                             |
+| `angular-doctor/positive-tabindex`           | error    | `tabindex` greater than 0                                                                             |
+| `angular-doctor/control-missing-label`       | error    | `input`, `textarea`, or `select` has no label                                                         |
 | `angular-doctor/cleanup-unused-imports-hint` | info     | A named import is never used again in the file                                                        |
 | `angular-doctor/unused-export`               | warning  | An exported class, function, or const is never used. Specs count as use. Entry files are skipped      |
 

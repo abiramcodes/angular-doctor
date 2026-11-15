@@ -18,6 +18,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@angular-eslint/eslint-plugin-template": "^22.6.0",
+    "@angular-eslint/template-parser": "^22.6.0",
+    "eslint": "^10.14.0",
     "fast-glob": "^3.3.3",
     "oxlint": "^1.93.0",
     "picocolors": "^1.1.1",
@@ -26,6 +29,7 @@
   "devDependencies": {
     "@types/node": "^22.15.0",
     "@types/semver": "^7.7.0",
+    "@typescript-eslint/parser": "^8.72.2",
     "tsdown": "^0.23.7",
     "typescript": "^6.0.3",
     "vitest": "catalog:"

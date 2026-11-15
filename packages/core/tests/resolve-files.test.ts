@@ -16,6 +16,7 @@ describe('resolveScanFiles', () => {
     writeFileSync(join(root, 'script.js'), 'export {}\n');
     writeFileSync(join(root, 'script.cjs'), 'module.exports = {};\n');
     writeFileSync(join(root, 'view.tsx'), 'export {}\n');
+    writeFileSync(join(root, 'angular-doctor-report.html'), '<p>report</p>\n');
 
     const files = await resolveScanFiles(root, { cwd: root, scope: 'full' });
     const names = files.map((file) => file.slice(root.length + 1)).sort();

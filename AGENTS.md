@@ -1,5 +1,12 @@
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 
+## Verification Boundaries
+
+- Do NOT verify visual or interactive work with headless Chrome, browser screenshots, `--screenshot`, CDP/Remote Debugging, or browser automation unless the user explicitly asks for browser verification in that turn.
+- Do NOT start any server (`docs:dev`, `docs:preview`, `node …/index.mjs`, `ng serve`, or similar) unless the user explicitly asks. The user already runs the docs server for this repo and verifies manually.
+- Verify with builds, typechecks, unit/integration tests, and non-browser CLI output only. If a visual check the user asked for cannot run without a server, say so in one line instead of starting one.
+- These boundaries apply to all agent sessions in this repo (Muse, Claude Code, Codex, Cursor, and any other tool that reads this file). They stay until the user lifts them in-session.
+
 ## Project agent skills
 
 Use the skills in this repo when the user asks or the task clearly fits.

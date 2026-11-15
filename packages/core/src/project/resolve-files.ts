@@ -12,26 +12,53 @@ const IGNORE = [
   '**/.angular/**',
   '**/coverage/**',
   '**/*.spec.ts',
+  // Generated reports quote rule text and sample markup; never scan them.
+  '**/angular-doctor-report.html',
 ] as const;
 
-function gitChangedFiles(cwd: string): string[] {
+interface GitChanges {
+  repoRoot: string;
+  files: string[];
+}
+
+function gitChangedFiles(cwd: string): GitChanges {
   try {
-    const out = execSync('git diff --name-only HEAD', {
+    const repoRoot = execSync('git rev-parse --show-toplevel', {
       cwd,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
     }).trim();
-    if (!out) {
-      const staged = execSync('git diff --cached --name-only', {
-        cwd,
+    // Porcelain status covers staged, unstaged, and untracked files, so a
+    // brand-new component is scanned and a clean tree scans nothing. Paths
+    // are repo-root relative so subdirectory scans resolve correctly.
+    const out = execSync(
+      'git -c status.relativePaths=false status --porcelain --untracked-files=normal',
+      {
+        cwd: repoRoot,
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore'],
-      }).trim();
-      return staged ? staged.split('\n').filter(Boolean) : [];
+      },
+    );
+    const files: string[] = [];
+    for (const line of out.split('\n')) {
+      if (line.length < 4) {
+        continue;
+      }
+      let path = line.slice(3).trim();
+      const renameAt = path.indexOf(' -> ');
+      if (renameAt >= 0) {
+        path = path.slice(renameAt + 4);
+      }
+      if (path.startsWith('"') && path.endsWith('"')) {
+        path = path.slice(1, -1);
+      }
+      if (path && !path.endsWith('/')) {
+        files.push(path);
+      }
     }
-    return out.split('\n').filter(Boolean);
+    return { repoRoot, files };
   } catch {
-    return [];
+    return { repoRoot: cwd, files: [] };
   }
 }
 
@@ -48,10 +75,11 @@ export async function resolveScanFiles(
   }
 
   if (options.scope === 'changed') {
-    const changed = gitChangedFiles(projectRoot).filter(isSourceFile);
-    if (changed.length > 0) {
-      return changed.map((f) => `${projectRoot}/${f}`);
-    }
+    const { repoRoot, files } = gitChangedFiles(projectRoot);
+    return files
+      .filter(isSourceFile)
+      .map((f) => `${repoRoot}/${f}`)
+      .filter((f) => f.startsWith(`${projectRoot}/`));
   }
 
   const files = await fg(SOURCE_GLOBS, {

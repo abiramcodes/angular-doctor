@@ -208,7 +208,13 @@ function templateKeys(template: string): string[] {
   const tags = tagTokens(template);
   if (tags.length >= MIN_SHARED_TAGS) {
     for (let i = 0; i <= tags.length - MIN_SHARED_TAGS; i += 1) {
-      keys.push(tags.slice(i, i + MIN_SHARED_TAGS).join('>'));
+      const window = tags.slice(i, i + MIN_SHARED_TAGS);
+      // Generic div/span chains repeat everywhere by accident; only treat a
+      // tag window as a fingerprint when it mixes at least three tag names.
+      if (new Set(window).size < 3) {
+        continue;
+      }
+      keys.push(window.join('>'));
     }
   }
   return keys;

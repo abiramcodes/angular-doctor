@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { DocPage } from '../../doc-page';
 import { Quickstart, type QuickstartStep } from '../../quickstart';
 import { steps, whatItIs } from '../../home/landing-content';
+import type { RouteMeta } from '@analogjs/router';
+
+export const routeMeta: RouteMeta = { title: 'Overview' };
 
 const quickstartSteps: QuickstartStep[] = [
   {

@@ -2,19 +2,26 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { AngularDoctorConfig } from '../types.js';
 
-const CONFIG_NAMES = ['angular-doctor.config.json', 'angular-doctor.config.ts'] as const;
+const CONFIG_NAME = 'angular-doctor.config.json';
+const UNSUPPORTED_CONFIG_NAME = 'angular-doctor.config.ts';
+
+function mergeConfig(base: AngularDoctorConfig, next: AngularDoctorConfig): AngularDoctorConfig {
+  return {
+    ...base,
+    ...next,
+    rules: { ...base.rules, ...next.rules },
+    ignore: next.ignore ?? base.ignore,
+  };
+}
 
 export function loadConfig(projectRoot: string): AngularDoctorConfig {
-  const merged: AngularDoctorConfig = {};
+  let merged: AngularDoctorConfig = {};
 
-  for (const name of CONFIG_NAMES) {
-    const path = join(projectRoot, name);
-    if (!existsSync(path) || name.endsWith('.ts')) {
-      continue;
-    }
+  const jsonPath = join(projectRoot, CONFIG_NAME);
+  if (existsSync(jsonPath)) {
     try {
-      const raw = JSON.parse(readFileSync(path, 'utf8')) as AngularDoctorConfig;
-      Object.assign(merged, raw);
+      const raw = JSON.parse(readFileSync(jsonPath, 'utf8')) as AngularDoctorConfig;
+      merged = mergeConfig(merged, raw);
     } catch {
       // ignore malformed config
     }
@@ -27,7 +34,7 @@ export function loadConfig(projectRoot: string): AngularDoctorConfig {
         angularDoctor?: AngularDoctorConfig;
       };
       if (pkg.angularDoctor) {
-        Object.assign(merged, pkg.angularDoctor);
+        merged = mergeConfig(merged, pkg.angularDoctor);
       }
     } catch {
       // ignore
@@ -37,10 +44,22 @@ export function loadConfig(projectRoot: string): AngularDoctorConfig {
   return merged;
 }
 
+export function findUnsupportedConfig(projectRoot: string): string | null {
+  return existsSync(join(projectRoot, UNSUPPORTED_CONFIG_NAME)) ? UNSUPPORTED_CONFIG_NAME : null;
+}
+
 export function resolveReportPath(projectRoot: string, config: AngularDoctorConfig): string {
   if (config.reportPath) {
     return join(projectRoot, config.reportPath);
   }
   const dir = config.reportDirectory ?? '.';
   return join(projectRoot, dir, 'angular-doctor-report.md');
+}
+
+export function resolveHtmlReportPath(projectRoot: string, config: AngularDoctorConfig): string {
+  if (config.reportPath) {
+    return join(projectRoot, config.reportPath.replace(/\.md$/i, '.html'));
+  }
+  const dir = config.reportDirectory ?? '.';
+  return join(projectRoot, dir, 'angular-doctor-report.html');
 }

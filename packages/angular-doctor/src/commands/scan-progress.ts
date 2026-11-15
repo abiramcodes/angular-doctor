@@ -1,5 +1,6 @@
 import { relative } from 'node:path';
 import { createColors } from 'picocolors';
+import { groupDiagnostics } from '@angular-doctor/core/report/group-diagnostics';
 import type { Diagnostic, ScanProgress, ScanResult, Severity } from '@angular-doctor/core/types';
 import { colorize, type ColorRole } from './palette.js';
 
@@ -17,7 +18,7 @@ export function formatProgressLine(progress: ScanProgress, projectRoot: string):
   const score =
     progress.score === null
       ? 'score …'
-      : colorize(`score ${progress.score}`, toneFor(progress.score));
+      : colorize(`score ${Math.round(progress.score)}`, toneFor(progress.score));
   const findings = progress.findings === 1 ? '1 finding' : `${progress.findings} findings`;
   return `${colorize(bar, 'progress')}  ${count}  ${progress.message}  ${findings}  ${score}${file}`;
 }
@@ -105,7 +106,7 @@ async function animateScore(result: ScanResult): Promise<void> {
 
 function formatScoreMeter(score: number): string {
   const tone = toneFor(score);
-  return `${pc.dim('Health')}  ${colorize(scoreBar(score), tone)}  ${colorize(String(score), tone)}${pc.dim(' / 100')}`;
+  return `${pc.dim('Health')}  ${colorize(scoreBar(score), tone)}  ${colorize(String(Math.round(score)), tone)}${pc.dim(' / 100')}`;
 }
 
 function scoreBar(score: number): string {
@@ -129,24 +130,46 @@ const GROUPS: { severity: Severity; title: string; role: ColorRole }[] = [
   { severity: 'info', title: 'Info', role: 'info' },
 ];
 
-export function printGroupedFindings(diagnostics: Diagnostic[], projectRoot: string): void {
+const LOCATION_CAP = 5;
+
+export function printGroupedFindings(
+  diagnostics: Diagnostic[],
+  projectRoot: string,
+  verbose = false,
+): void {
+  const groups = groupDiagnostics(diagnostics);
   for (const group of GROUPS) {
-    const items = diagnostics.filter((item) => item.severity === group.severity);
-    if (items.length === 0) {
+    const inGroup = groups.filter((item) => item.severity === group.severity);
+    if (inGroup.length === 0) {
       continue;
     }
+    const total = inGroup.reduce((sum, item) => sum + item.items.length, 0);
     console.log('');
-    console.log(colorize(group.title.toLowerCase(), group.role) + pc.dim(`  ${items.length}`));
-    for (const item of items) {
-      console.log(formatFinding(item, projectRoot, group.role));
+    console.log(
+      colorize(group.title.toLowerCase(), group.role) +
+        pc.dim(`  ${total} in ${inGroup.length} rule${inGroup.length === 1 ? '' : 's'}`),
+    );
+    for (const item of inGroup) {
+      const rule = item.ruleId.replace(/^angular-doctor\//, '');
+      const count =
+        item.items.length === 1
+          ? ''
+          : pc.dim(
+              `  ×${item.items.length} in ${item.fileCount} file${item.fileCount === 1 ? '' : 's'}`,
+            );
+      console.log(`  ${colorize(rule, group.role)}${count}`);
+      console.log(`  ${pc.dim(item.message)}`);
+      const shown = verbose ? item.items : item.items.slice(0, LOCATION_CAP);
+      for (const d of shown) {
+        const where = `${shortPath(d.file, projectRoot)}:${d.line}`;
+        const detail = item.messagesVary && d.message !== item.message ? `  ${d.message}` : '';
+        console.log(`    ${pc.dim(where + detail)}`);
+      }
+      if (!verbose && item.items.length > LOCATION_CAP) {
+        console.log(pc.dim(`    +${item.items.length - LOCATION_CAP} more in the report`));
+      }
     }
   }
-}
-
-function formatFinding(item: Diagnostic, projectRoot: string, role: ColorRole): string {
-  const rule = item.ruleId.replace(/^angular-doctor\//, '');
-  const where = `${shortPath(item.file, projectRoot)}:${item.line}`;
-  return `  ${colorize(rule, role)}  ${pc.dim(where)}\n  ${pc.dim(item.message)}`;
 }
 
 function formatDuration(durationMs: number): string {

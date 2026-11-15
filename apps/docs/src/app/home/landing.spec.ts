@@ -16,10 +16,10 @@ describe('Landing', () => {
 
     expect(text).toContain('Check Angular code.');
     expect(text).toContain('npx @abiramcodes/angular-doctor@latest');
-    expect(text).toContain('85');
+    expect(text).toContain('81');
     expect(text).toContain('suggested fix');
     expect(text).toContain('angular-doctor-report.md');
-    expect(text).toContain('76 built-in checks');
+    expect(text).toContain('81 built-in checks');
     expect(text).not.toContain('What it is');
   });
 });

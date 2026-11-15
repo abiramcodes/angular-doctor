@@ -85,13 +85,13 @@ export interface DiagnosticCategory {
 export const diagnostics: DiagnosticCategory[] = [
   {
     category: 'correctness',
-    count: 13,
+    count: 14,
     body: 'Does the code do what it says? Control flow, subscriptions, strict mode, templates.',
     examples: ['prefer-take-until-destroyed', 'typescript-strict', 'strict-templates'],
   },
   {
     category: 'performance',
-    count: 10,
+    count: 14,
     body: "Angular's runtime budget. Change detection, images, zone.js, routing.",
     examples: ['missing-for-track', 'zone-js', 'prefer-ng-optimized-image'],
   },
@@ -175,17 +175,17 @@ export const ciCopy =
 export const whatItIs = [
   'Angular Doctor is a command-line health scan for an Angular CLI or Nx workspace. Run it in the project and it reads the source, prints a score from 0 to 100, and lists what it found.',
   'An error costs 1.5 points in each file where that rule fires. The same error twice in one file still costs 1.5. A warning costs 0.75 once per rule, even when it appears in many files. A note costs nothing. The score starts at 100 and does not go below 0.',
-  'TypeScript goes through Oxlint. Built-in rules cover Angular habits those linters do not: inject(), host bindings, control flow, secrets in client code, accessibility gaps, and similar checks. An HTML template ESLint runner is wired and currently skipped until its peers are enabled. The scan sits next to the lint setup you already run. It does not replace a build or your tests.',
+  'TypeScript goes through Oxlint. Built-in rules cover Angular habits those linters do not: inject(), host bindings, control flow, secrets in client code, accessibility gaps, and similar checks. A curated set of Angular template rules runs over standalone and inline templates. The scan sits next to the lint setup you already run. It does not replace a build or your tests.',
 ];
 
 export const steps = [
   {
     title: 'Find the workspace',
-    body: 'It starts in the directory you pass, or the current directory, and walks up to 12 parents looking for angular.json or nx.json. If it finds neither, it stops and says no Angular workspace was detected.',
+    body: 'It starts in the directory you pass, or the current directory, and walks up to 12 parents looking for angular.json or nx.json. If it finds neither, it stops and says no Angular workspace was detected. Angular 17 and newer get every check. Angular 15 and 16 scan in compat mode, with rules that need newer Angular switched off. Older than 15 stops with a clear message.',
   },
   {
     title: 'Choose files',
-    body: 'Full scope reads TypeScript and HTML, skipping node_modules, dist, .angular, coverage, and spec files. Changed scope uses git diff against HEAD, then staged files, and scans the whole project when nothing changed. Files scope reads only the TypeScript and HTML paths you pass. Contextual scope keeps files under the same top-level folder as each seed, so a seed in src/ keeps the src tree.',
+    body: 'Full scope reads TypeScript and HTML, skipping node_modules, dist, .angular, coverage, and spec files. Changed scope reads git status, so staged, unstaged, and untracked files count, and a clean tree scans nothing. Files scope reads only the TypeScript and HTML paths you pass. Contextual scope keeps files under the same top-level folder as each seed, so a seed in src/ keeps the src tree.',
   },
   {
     title: 'Check and score',
@@ -193,7 +193,7 @@ export const steps = [
   },
   {
     title: 'Print, then write',
-    body: 'In a terminal, a progress line runs on stderr and clears before the summary. You then get the project, the Angular version, the duration, a health meter, and findings grouped into errors, warnings, and info. Each finding has the rule, file, line, and message. If anything was found, including a note that does not lower the score, it writes angular-doctor-report.md. A scan with no findings prints the summary and does not write that file.',
+    body: 'In a terminal, a progress line runs on stderr and clears before the summary. You then get the project, the Angular version, the duration, a health meter, and findings grouped once per rule under errors, warnings, and info. If anything was found, including a note that does not lower the score, it writes angular-doctor-report.md. With --html it also writes a self-contained angular-doctor-report.html with category tabs and a severity filter. A scan with no findings prints the summary and does not write those files.',
   },
 ];
 
@@ -208,6 +208,11 @@ export const requirements = [
       'angular.json or nx.json in the directory you scan, or in a parent, up to 12 levels up.',
   },
   {
+    need: 'Angular 15+',
+    detail:
+      'Angular 17 and newer get every check. Angular 15 and 16 scan in compat mode, with checks that need newer Angular switched off instead of flagging old code. Older than 15 stops with a clear message.',
+  },
+  {
     need: 'A terminal',
     detail:
       'npx @abiramcodes/angular-doctor@latest runs a one-off scan without adding a dependency. Pass a path to scan another folder.',
@@ -215,7 +220,7 @@ export const requirements = [
   {
     need: 'No extra install',
     detail:
-      'Config is optional. Add angular-doctor.config.json, or an angularDoctor field in package.json, only when you want to change the report path, ignore files, or set a rule level.',
+      'Config is optional. Add angular-doctor.config.json, or an angularDoctor field in package.json, only when you want to change the report path, ignore files, or override a rule.',
   },
 ];
 
@@ -340,6 +345,11 @@ export const flags = [
     detail: 'Limits the printed findings. Does not change the score.',
   },
   {
+    flag: '--html',
+    detail:
+      'Also write angular-doctor-report.html: one self-contained file with category tabs and grouped findings.',
+  },
+  {
     flag: '--json',
     detail: 'Print the scan result as JSON. Skips the progress line and the text summary.',
   },
@@ -355,6 +365,29 @@ export const flags = [
   {
     flag: '--force',
     detail: 'On install, overwrite a skill that is already present.',
+  },
+];
+
+export const templateLintRows = [
+  {
+    name: 'button-has-type',
+    detail: 'A <button> without a type attribute. Clicks submit by default in a form.',
+  },
+  {
+    name: 'label-has-associated-control',
+    detail: 'A <label> with no control assigned to it.',
+  },
+  {
+    name: 'no-any',
+    detail: 'The any type in a template expression.',
+  },
+  {
+    name: 'eqeqeq',
+    detail: 'Loose equality (== or !=) in a template expression.',
+  },
+  {
+    name: 'no-autofocus',
+    detail: 'The autofocus attribute, which steals focus on load.',
   },
 ];
 
@@ -482,37 +515,34 @@ export function paletteById(id: PaletteId): PaletteSpec {
 }
 
 export const sampleCaption =
-  'Sample from this repo’s sample workspace, not a live scan. Angular 22.2, score 85, 3 errors, 27 warnings, 6 notes, 299 ms. One of the three errors is shown.';
+  'Sample from this repo’s sample workspace, not a live scan. Angular 22.2, score 81, 9 errors, 15 warnings, 5 notes, 299 ms. One of the nine errors is shown.';
 
 export const summaryLines: TerminalLine[] = [
   { tokens: [{ text: 'angular-doctor  ·  Angular 22.2  ·  299 ms', dim: true }] },
   { tokens: [{ text: '' }] },
   {
     tokens: [],
-    meter: { fill: 85, score: '85', tone: 'success' },
+    meter: { fill: 81, score: '81', tone: 'success' },
   },
   { tokens: [{ text: '' }] },
   {
     tokens: [
-      { text: '3 errors', role: 'error' },
+      { text: '9 errors', role: 'error' },
       { text: '   ', dim: true },
-      { text: '27 warnings', role: 'warning' },
+      { text: '15 warnings', role: 'warning' },
       { text: '   ', dim: true },
-      { text: '6 notes', role: 'info' },
+      { text: '5 notes', role: 'info' },
     ],
   },
   { tokens: [{ text: '' }] },
   {
     tokens: [
       { text: 'errors', role: 'error' },
-      { text: '  3', dim: true },
+      { text: '  9 in 8 rules', dim: true },
     ],
   },
   {
-    tokens: [
-      { text: '  prefer-host-bindings', role: 'error' },
-      { text: '  src/app/style-violations/host-slider.ts:8', dim: true },
-    ],
+    tokens: [{ text: '  prefer-host-bindings', role: 'error' }],
   },
   {
     tokens: [
@@ -522,6 +552,9 @@ export const summaryLines: TerminalLine[] = [
       },
     ],
   },
+  {
+    tokens: [{ text: '    src/app/style-violations/host-slider.ts:8', dim: true }],
+  },
   { tokens: [{ text: '' }] },
   {
     tokens: [{ text: 'Report: angular-doctor-report.md', role: 'report', strong: true }],
@@ -530,14 +563,14 @@ export const summaryLines: TerminalLine[] = [
 
 export const outputIntro = [
   'A normal scan prints a text summary. --json and --score-only replace that summary. Color is added only when stdout or stderr is a terminal. A pipe, a redirect, or a CI log stays plain text.',
-  'The text summary has a dim header (project, Angular major.minor, duration), a health meter, then errors, warnings, and notes. Findings follow, grouped errors, then warnings, then info. The rule id is printed without the angular-doctor/ prefix, then the file and line, then the message. When a report file was written, the last line is its path.',
+  'The text summary has a dim header (project, Angular major.minor, duration), a health meter, then errors, warnings, and notes. Findings follow, grouped once per rule: the rule id without the angular-doctor/ prefix, the shared message, then up to five locations. When a report file was written, the last line is its path.',
 ];
 
 export const reportSections = [
   'Summary: score, error count, warning count, info count, project name and kind, Angular version, and duration.',
   'Official Angular migrations, then the ng generate @angular/core commands that match this scan. Each command is shown with --dry-run first.',
   'A short fix order: migrations, style-guide findings, everything else, then a re-scan.',
-  'Every finding under its category, with location, message, and a suggested fix when the rule has one.',
+  'Findings grouped once per rule under their category, with every location, the shared message, and a suggested fix when the rule has one.',
   'Skipped checks, when a check could not finish. Each line starts with the file path to open.',
   'A JSON block at the end with the score, totals, and the recommended commands.',
 ];
@@ -548,22 +581,23 @@ export const markdownExcerpt = `# Angular Doctor report
 
 ## Summary
 
-- **Health score:** 85/100
-- **Errors:** 3
-- **Warnings:** 27
-- **Infos:** 6
+- **Health score:** 81/100
+- **Errors:** 9
+- **Warnings:** 15
+- **Infos:** 5
 - **Project:** angular-doctor (angular-cli)
 - **Angular:** 22.2.0
 - **Scan duration:** 299ms
 
-### angular-doctor/prefer-host-bindings (error)
+### angular-doctor/prefer-host-bindings (error) — 1 occurrence
 
-- **Location:** \`src/app/style-violations/host-slider.ts:8:3\`
 - **Message:** @HostListener is backwards-compatible. Use the host option instead.
-- **Suggested fix:** Move the binding into the host object of @Component or @Directive.`;
+- **Suggested fix:** Move the binding into the host object of @Component or @Directive.
+- **Locations:**
+  - \`src/app/style-violations/host-slider.ts:8:3\``;
 
 export const excerptNote =
-  'Excerpt from the sample workspace. The real file stores an absolute location, lists every finding, and includes the migration commands. A clean scan does not write this file.';
+  'Excerpt from the sample workspace. The real file groups findings once per rule with relative locations, and includes the migration commands. A clean scan does not write this file.';
 
 export const configExample = `{
   "reportPath": "reports/angular-doctor-report.md",

@@ -2,14 +2,13 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
-import { fileURLToPath } from 'node:url';
+import { tmpdir } from 'node:os';
 import type { Diagnostic } from '../types.js';
 
 const require = createRequire(import.meta.url);
 
 function defaultOxlintConfigPath(): string {
-  const here = dirname(fileURLToPath(import.meta.url));
-  const configDir = join(here, '..', 'config', 'assets');
+  const configDir = join(tmpdir(), 'angular-doctor');
   mkdirSync(configDir, { recursive: true });
   const configPath = join(configDir, 'oxlintrc.json');
   if (!existsSync(configPath)) {
@@ -35,10 +34,17 @@ function defaultOxlintConfigPath(): string {
 
 function resolveOxlintBinary(): string {
   try {
-    return require.resolve('oxlint/bin/oxlint');
+    // The oxlint package exports map blocks the `oxlint/bin/oxlint` subpath,
+    // so resolve the package root and join the known bin location.
+    const packageJson = require.resolve('oxlint/package.json');
+    const bin = join(dirname(packageJson), 'bin', 'oxlint');
+    if (existsSync(bin)) {
+      return bin;
+    }
   } catch {
-    return 'oxlint';
+    // fall through to PATH lookup
   }
+  return 'oxlint';
 }
 
 interface OxlintSpan {
@@ -94,11 +100,18 @@ export function runOxlint(
   const configPath = defaultOxlintConfigPath();
   const args = ['--format', 'json', '-c', configPath, ...files];
 
-  const result = spawnSync(oxlint, args, {
-    cwd: projectRoot,
-    encoding: 'utf8',
-    maxBuffer: 20 * 1024 * 1024,
-  });
+  // The resolved bin is a Node script (`#!/usr/bin/env node`); run it through
+  // the current Node binary so path/exec-bit differences cannot break it.
+  const isScriptPath = oxlint.includes('/') || oxlint.includes('\\');
+  const result = spawnSync(
+    isScriptPath ? process.execPath : oxlint,
+    isScriptPath ? [oxlint, ...args] : args,
+    {
+      cwd: projectRoot,
+      encoding: 'utf8',
+      maxBuffer: 20 * 1024 * 1024,
+    },
+  );
 
   if (result.error) {
     return {

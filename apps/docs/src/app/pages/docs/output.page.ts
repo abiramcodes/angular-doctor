@@ -11,6 +11,9 @@ import {
   outputIntro,
   reportSections,
 } from '../../home/landing-content';
+import type { RouteMeta } from '@analogjs/router';
+
+export const routeMeta: RouteMeta = { title: 'Output' };
 
 @Component({
   selector: 'docs-output',
@@ -18,7 +21,7 @@ import {
   template: `
     <docs-page
       [title]="'Output'"
-      [lede]="'The terminal summary, the Markdown report, and how color and config change what you see.'"
+      [lede]="'The terminal summary, the Markdown and HTML reports, and how color and config change what you see.'"
     >
       @for (paragraph of outputIntro; track paragraph) {
         <p>{{ paragraph }}</p>
@@ -38,6 +41,15 @@ import {
         <p>{{ excerptNote }}</p>
       </docs-callout>
       <docs-code-block [code]="markdownExcerpt" label="angular-doctor-report.md" lang="md" />
+
+      <h2 id="html-report">HTML report</h2>
+      <p>
+        Pass <code>--html</code>, or add <code>"html"</code> to <code>reportFormats</code> in
+        config, and the scan also writes <code>angular-doctor-report.html</code> next to the
+        Markdown report. One self-contained file: score, severity totals, and findings grouped once
+        per rule. Category tabs switch views. The Show select filters to errors, warnings, or info,
+        and tab counts update to match. Reference links open in a new tab.
+      </p>
 
       <h2 id="skipped-checks">Skipped checks</h2>
       <p>

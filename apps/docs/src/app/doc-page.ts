@@ -1,8 +1,7 @@
 import { Location } from '@angular/common';
-import { Component, ViewChild, effect, inject, input } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { Component, ViewChild, inject, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { DocToc } from './doc-toc';
+import { DocToc, type TocItem } from './doc-toc';
 
 interface NavItem {
   href: string;
@@ -73,14 +72,14 @@ interface NavGroup {
       </article>
 
       <aside class="doc-toc" aria-label="On this page">
-        @if (toc; as tocRef) {
-          @if (tocRef.items().length) {
+        @if (tocItems() ?? toc?.items(); as entries) {
+          @if (entries.length) {
             <p class="doc-toc-title">On this page</p>
-            @for (item of tocRef.items(); track item.id) {
+            @for (item of entries; track item.id) {
               <a
                 [attr.href]="tocHref(item.id)"
-                [class.is-active]="tocRef.active() === item.id"
-                [attr.aria-current]="tocRef.active() === item.id ? 'location' : null"
+                [class.is-active]="toc?.active() === item.id"
+                [attr.aria-current]="toc?.active() === item.id ? 'location' : null"
               >
                 {{ item.label }}
               </a>
@@ -93,14 +92,11 @@ interface NavGroup {
 })
 export class DocPage {
   private readonly location = inject(Location);
-  private readonly titleService = inject(Title);
-
-  constructor() {
-    effect(() => this.titleService.setTitle(`${this.title()} — Angular Doctor`));
-  }
 
   readonly title = input.required<string>();
   readonly lede = input<string | null>(null);
+  /** Explicit TOC entries. When set, they win over the headings the directive collects. */
+  readonly tocItems = input<TocItem[] | null>(null);
 
   @ViewChild(DocToc)
   protected toc?: DocToc;
@@ -136,6 +132,7 @@ export class DocPage {
         { href: '/docs', label: 'Overview', exact: true },
         { href: '/docs/run', label: 'Run' },
         { href: '/docs/reference', label: 'Reference' },
+        { href: '/docs/rules', label: 'Rules' },
       ],
     },
     {

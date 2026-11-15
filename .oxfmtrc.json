@@ -1,4 +1,4 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": [".agents/skills/**"]
+  "ignorePatterns": [".agents/skills/**", "apps/docs/src/app/home/rules-content.ts"]
 }

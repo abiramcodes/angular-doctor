@@ -1,11 +1,16 @@
 import { existsSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { isNonRenderingFile } from '../../project/infer-naming-convention.js';
-import { diag, isUnderSrc, type RuleContext } from '../diag-helpers.js';
+import { diag, hasTestableDeclaration, isUnderSrc, type RuleContext } from '../diag-helpers.js';
 import type { Diagnostic } from '../../types.js';
 
 const GENERIC = new Set(['helpers', 'utils', 'common']);
-const SKIPPED_SPEC = /(?:^|\/)(?:main|routes|.*\.config|.*\.routes)\.ts$/;
+// Entry, wiring, and framework-routed files that never have a sibling spec.
+// Plain entry names (main, bootstrap, index routes) plus every config/routes
+// file. Analog `*.page.ts` files are routed entry points, so they skip too.
+const SKIPPED_SPEC = /(?:^|\/)(?:main|bootstrap|routes|.*\.config|.*\.routes|.*\.page)\.ts$/;
+const SKIPPED_FILENAME =
+  /(?:^|\/)(?:main|bootstrap|app|index|routes|.*\.config|.*\.routes|.*\.page)\.ts$/;
 
 function pascalToKebab(name: string): string {
   return name
@@ -73,7 +78,7 @@ export function ruleMissingSpecFile(ctx: RuleContext): Diagnostic[] {
   if (!ctx.file.endsWith('.ts') || SKIPPED_SPEC.test(ctx.file) || !isUnderSrc(ctx.file)) {
     return [];
   }
-  if (!/@Component\s*\(|@Directive\s*\(|@Pipe\s*\(/.test(ctx.content)) {
+  if (!hasTestableDeclaration(ctx.content)) {
     return [];
   }
   const specPath = ctx.file.replace(/\.ts$/, '.spec.ts');
@@ -95,7 +100,7 @@ export function ruleMissingSpecFile(ctx: RuleContext): Diagnostic[] {
 }
 
 export function ruleFilenameClassMismatch(ctx: RuleContext): Diagnostic[] {
-  if (!ctx.file.endsWith('.ts') || !isUnderSrc(ctx.file)) {
+  if (!ctx.file.endsWith('.ts') || !isUnderSrc(ctx.file) || SKIPPED_FILENAME.test(ctx.file)) {
     return [];
   }
   const classMatch = ctx.content.match(/export\s+(?:default\s+)?class\s+(\w+)/);

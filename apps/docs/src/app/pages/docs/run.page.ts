@@ -3,6 +3,9 @@ import { DocPage } from '../../doc-page';
 import { CodeBlock } from '../../code-block';
 import { Callout } from '../../callout';
 import { configExample, configNote, requirements } from '../../home/landing-content';
+import type { RouteMeta } from '@analogjs/router';
+
+export const routeMeta: RouteMeta = { title: 'Run' };
 
 @Component({
   selector: 'docs-run',

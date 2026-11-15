@@ -15,7 +15,7 @@ export function ruleImpurePipe(ctx: RuleContext): Diagnostic[] {
       diag(
         {
           ruleId: 'angular-doctor/impure-pipe',
-          severity: 'warning',
+          severity: 'error',
           category: 'performance',
           message: 'Impure pipe (pure: false) runs on every change detection.',
           file: ctx.file,

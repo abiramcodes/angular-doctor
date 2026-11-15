@@ -1,5 +1,5 @@
 import type { AngularDoctorConfig, Category, Diagnostic, Severity } from '../types.js';
-import type { RuleContext } from './diag-helpers.js';
+import { majorVersion, type RuleContext } from './diag-helpers.js';
 import { resolveRuleSeverity } from './rule-config.js';
 
 export const PIPELINE_KINDS = [
@@ -23,6 +23,8 @@ export interface RuleCard {
   docsUrl?: string;
   styleGuideUrl?: string;
   migrationId?: string;
+  /** First Angular major where the checked API exists. Older projects skip it. */
+  minAngular?: number;
 }
 
 export interface PipelineStep {
@@ -79,6 +81,10 @@ export function executeStep(
     if (!allowed.has(diagnostic.ruleId)) {
       throw new Error(`Step ${item.kind} emitted ${diagnostic.ruleId}, which is not on its cards.`);
     }
+    const gate = cards.get(diagnostic.ruleId)?.minAngular;
+    if (gate !== undefined && majorVersion(ctx.project) < gate) {
+      continue;
+    }
     if (item.dedupe === 'message') {
       if (seenMessages.has(diagnostic.message)) {
         continue;
@@ -86,7 +92,15 @@ export function executeStep(
       seenMessages.add(diagnostic.message);
     }
     const card = cards.get(diagnostic.ruleId)!;
-    const severity = resolveRuleSeverity(diagnostic.ruleId, card.defaultSeverity, config);
+    // Base severity comes from the diagnostic itself so rules whose severity
+    // depends on project facts (for example SSR configuration) can vary it;
+    // in the common case rules emit exactly the card default.
+    const severity = resolveRuleSeverity(
+      diagnostic.ruleId,
+      diagnostic.severity,
+      config,
+      card.category,
+    );
     if (severity === null) {
       continue;
     }

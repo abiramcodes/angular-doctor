@@ -73,6 +73,7 @@ describe('skill preference rules', () => {
   it('flags impure and hyphenated pipes', () => {
     const source = "@Pipe({ name: 'legacy-date', pure: false })";
     expect(scan(ruleImpurePipe, source)[0]?.ruleId).toBe('angular-doctor/impure-pipe');
+    expect(scan(ruleImpurePipe, source)[0]?.severity).toBe('error');
     expect(scan(rulePipeNameHyphen, source)[0]?.ruleId).toBe('angular-doctor/pipe-name-hyphen');
     expect(scan(ruleImpurePipe, "@Pipe({ name: 'legacyDate' })")).toHaveLength(0);
     expect(scan(rulePipeNameHyphen, "@Pipe({ name: 'legacyDate' })")).toHaveLength(0);

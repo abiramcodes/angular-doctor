@@ -39,6 +39,8 @@ import {
   ruleNamingConventionMix,
 } from './naming/naming-rules.js';
 import { definePipeline, executeStep, step, type PipelineStep } from './pipeline.js';
+import { RULE_RELATED_ERRORS, RULE_SUMMARIES } from './summaries.js';
+import { resolveRuleSeverity } from './rule-config.js';
 import { ruleEffectWritesState } from './preferences/effects.js';
 import {
   ruleFormFieldOwnedAttrs,
@@ -73,6 +75,10 @@ import {
   ruleNgSrcPlaceholderSize,
   rulePreferNgOptimizedImage,
 } from './templates/performance-rules.js';
+import { ruleTemplateForAllocation } from './templates/for-allocation.js';
+import { ruleGetterInTemplate } from './templates/getter-in-template.js';
+import { ruleDeferWithoutTrigger } from './templates/defer-in-template.js';
+import { ruleInjectAsyncTarget, rulePreferInjectAsync } from './preferences/inject-async.js';
 import {
   ruleClickWithoutKeyboard,
   ruleControlMissingLabel,
@@ -99,7 +105,13 @@ const card = (
   title: string,
   defaultSeverity: Diagnostic['severity'],
   category: Diagnostic['category'],
-  extra?: { summary?: string; docsUrl?: string; styleGuideUrl?: string; migrationId?: string },
+  extra?: {
+    summary?: string;
+    docsUrl?: string;
+    styleGuideUrl?: string;
+    migrationId?: string;
+    minAngular?: number;
+  },
 ) => ({ id, title, defaultSeverity, category, ...extra });
 
 export const builtinPipeline = definePipeline([
@@ -194,20 +206,25 @@ export const builtinPipeline = definePipeline([
         'Built-in control flow',
         'warning',
         'correctness',
-        { migrationId: 'control-flow' },
+        { migrationId: 'control-flow', minAngular: 17 },
       ),
-      card('angular-doctor/missing-for-track', 'Track in @for', 'error', 'performance'),
+      card('angular-doctor/missing-for-track', 'Track in @for', 'error', 'performance', {
+        minAngular: 17,
+      }),
       card('angular-doctor/prefer-inject', 'inject()', 'warning', 'maintainability', {
         migrationId: 'inject',
       }),
       card('angular-doctor/prefer-standalone', 'Standalone', 'warning', 'correctness', {
         migrationId: 'standalone',
+        minAngular: 17,
       }),
       card('angular-doctor/standalone-false', 'standalone: false', 'warning', 'correctness', {
         migrationId: 'standalone',
+        minAngular: 17,
       }),
       card('angular-doctor/prefer-common-imports', 'Explicit imports', 'info', 'maintainability', {
         migrationId: 'common-to-standalone',
+        minAngular: 17,
       }),
       card('angular-doctor/prefer-class-binding', 'Class bindings', 'info', 'maintainability', {
         migrationId: 'ngclass-to-class',
@@ -217,12 +234,15 @@ export const builtinPipeline = definePipeline([
       }),
       card('angular-doctor/prefer-signal-input', 'Signal inputs', 'info', 'maintainability', {
         migrationId: 'signal-input',
+        minAngular: 19,
       }),
       card('angular-doctor/prefer-output-fn', 'output()', 'info', 'maintainability', {
         migrationId: 'output',
+        minAngular: 19,
       }),
-      card('angular-doctor/prefer-signal-query', 'Signal queries', 'info', 'maintainability', {
+      card('angular-doctor/prefer-signal-query', 'Signal queries', 'warning', 'maintainability', {
         migrationId: 'signal-queries',
+        minAngular: 19,
       }),
       card(
         'angular-doctor/prefer-router-module-testing',
@@ -233,9 +253,11 @@ export const builtinPipeline = definePipeline([
       ),
       card('angular-doctor/prefer-service-decorator', '@Service', 'info', 'maintainability', {
         migrationId: 'service',
+        minAngular: 22,
       }),
       card('angular-doctor/prefer-lazy-routes', 'Lazy routes', 'info', 'performance', {
         migrationId: 'route-lazy-loading',
+        minAngular: 19,
       }),
       card('angular-doctor/security-bypass', 'Security bypass', 'error', 'security'),
     ],
@@ -271,6 +293,22 @@ export const builtinPipeline = definePipeline([
         'info',
         'performance',
       ),
+      card('angular-doctor/template-for-allocation', '@for allocation', 'info', 'performance', {
+        summary: '@for iterates a method that returns a new array or object each call.',
+        minAngular: 17,
+      }),
+      card('angular-doctor/getter-in-template', 'Getter in template', 'error', 'performance', {
+        summary: 'A template reads a class getter, which re-runs on every change detection cycle.',
+      }),
+      card(
+        'angular-doctor/defer-missing-trigger',
+        '@defer without a trigger',
+        'warning',
+        'performance',
+        {
+          summary: '@defer has no on/when/prefetch trigger, so the split buys nothing.',
+        },
+      ),
     ],
     run: (ctx) => [
       ...rulePreferNgOptimizedImage(ctx),
@@ -278,6 +316,9 @@ export const builtinPipeline = definePipeline([
       ...ruleNgSrcFillDimensions(ctx),
       ...ruleNgSrcPlaceholderSize(ctx),
       ...ruleExplicitEagerChangeDetection(ctx),
+      ...ruleTemplateForAllocation(ctx),
+      ...ruleGetterInTemplate(ctx),
+      ...ruleDeferWithoutTrigger(ctx),
     ],
   }),
   step({
@@ -289,6 +330,7 @@ export const builtinPipeline = definePipeline([
         'takeUntilDestroyed',
         'error',
         'correctness',
+        { minAngular: 16 },
       ),
       card('angular-doctor/subject-not-cleaned-up', 'Subject cleanup', 'error', 'correctness'),
     ],
@@ -342,8 +384,16 @@ export const builtinPipeline = definePipeline([
     kind: 'skill-preference',
     reach: 'file',
     rules: [
-      card('angular-doctor/effect-writes-state', 'effect() writes state', 'warning', 'correctness'),
-      card('angular-doctor/impure-pipe', 'Impure pipe', 'warning', 'performance'),
+      card(
+        'angular-doctor/effect-writes-state',
+        'effect() writes state',
+        'warning',
+        'correctness',
+        {
+          minAngular: 16,
+        },
+      ),
+      card('angular-doctor/impure-pipe', 'Impure pipe', 'error', 'performance'),
       card('angular-doctor/pipe-name-hyphen', 'Pipe name hyphen', 'warning', 'maintainability'),
       card('angular-doctor/inject-pipe', 'Injected pipe', 'warning', 'maintainability'),
       card(
@@ -363,6 +413,7 @@ export const builtinPipeline = definePipeline([
         'Incremental hydration',
         'warning',
         'maintainability',
+        { minAngular: 22 },
       ),
       card(
         'angular-doctor/form-field-owned-attrs',
@@ -378,14 +429,28 @@ export const builtinPipeline = definePipeline([
         'correctness',
       ),
       card('angular-doctor/template-arrow-not-called', 'Template arrow', 'warning', 'correctness'),
-      card('angular-doctor/prefer-signal-forms', 'Signal forms', 'info', 'maintainability'),
+      card('angular-doctor/prefer-signal-forms', 'Signal forms', 'info', 'maintainability', {
+        minAngular: 22,
+      }),
       card('angular-doctor/output-name', 'Output name', 'info', 'maintainability'),
       card('angular-doctor/input-dom-name', 'Input DOM name', 'info', 'maintainability'),
-      card('angular-doctor/prefer-http-resource', 'httpResource', 'info', 'performance'),
+      card('angular-doctor/prefer-http-resource', 'httpResource', 'info', 'performance', {
+        minAngular: 19,
+      }),
       card('angular-doctor/prefer-document-token', 'DOCUMENT token', 'info', 'correctness'),
       card('angular-doctor/prefer-is-dev-mode', 'isDevMode', 'info', 'maintainability'),
-      card('angular-doctor/query-in-lifecycle', 'Query in lifecycle', 'info', 'maintainability'),
+      card('angular-doctor/query-in-lifecycle', 'Query in lifecycle', 'info', 'maintainability', {
+        minAngular: 17,
+      }),
       card('angular-doctor/host-via-element-ref', 'Host via ElementRef', 'info', 'maintainability'),
+      card('angular-doctor/inject-async-target', 'injectAsync target', 'error', 'correctness', {
+        summary: 'injectAsync loads a service that is not auto-provided.',
+        minAngular: 22,
+      }),
+      card('angular-doctor/prefer-inject-async', 'injectAsync', 'info', 'performance', {
+        summary: 'A root service is only used inside handlers and could load lazily.',
+        minAngular: 22,
+      }),
     ],
     run: (ctx) => [
       ...ruleEffectWritesState(ctx),
@@ -407,6 +472,8 @@ export const builtinPipeline = definePipeline([
       ...rulePreferIsDevMode(ctx),
       ...ruleQueryInLifecycle(ctx),
       ...ruleHostViaElementRef(ctx),
+      ...ruleInjectAsyncTarget(ctx),
+      ...rulePreferInjectAsync(ctx),
     ],
   }),
   step({
@@ -426,6 +493,7 @@ export const builtinPipeline = definePipeline([
         summary: 'An exported class, function, or const is never used.',
       }),
       card('angular-doctor/zone-js', 'zone.js runtime', 'warning', 'performance', {
+        minAngular: 20,
         summary: 'zone.js is still installed or imported on Angular 20+.',
         docsUrl: 'https://angular.dev/guide/zoneless',
       }),
@@ -508,6 +576,13 @@ export interface ListedRule {
   defaultSeverity: Severity;
   category: Category;
   docsUrl?: string;
+  rulePageUrl: string;
+  relatedErrors?: string[];
+  minAngular?: number;
+}
+
+export function ruleSlug(id: string): string {
+  return id.replace(/^angular-doctor\//, '');
 }
 
 export function listRuleCards(category?: Category): ListedRule[] {
@@ -515,10 +590,16 @@ export function listRuleCards(category?: Category): ListedRule[] {
     item.rules.map((rule) => ({
       id: rule.id,
       title: rule.title,
-      summary: rule.summary,
-      defaultSeverity: rule.defaultSeverity,
+      summary: rule.summary ?? RULE_SUMMARIES[rule.id],
+      // Listed severity is the effective strict severity a scan emits.
+      defaultSeverity:
+        resolveRuleSeverity(rule.id, rule.defaultSeverity, undefined, rule.category) ??
+        rule.defaultSeverity,
       category: rule.category,
       docsUrl: rule.docsUrl ?? rule.styleGuideUrl,
+      rulePageUrl: `https://angular.doctor/docs/rules#${ruleSlug(rule.id)}`,
+      relatedErrors: RULE_RELATED_ERRORS[rule.id],
+      minAngular: rule.minAngular,
     })),
   );
   return category ? cards.filter((rule) => rule.category === category) : cards;

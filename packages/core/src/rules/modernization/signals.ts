@@ -56,27 +56,41 @@ export function ruleLegacyOutput(ctx: RuleContext): Diagnostic[] {
   ];
 }
 
+const SIGNAL_QUERY_FN: Record<string, string> = {
+  ViewChild: 'viewChild',
+  ViewChildren: 'viewChildren',
+  ContentChild: 'contentChild',
+  ContentChildren: 'contentChildren',
+};
+
 export function ruleLegacyQuery(ctx: RuleContext): Diagnostic[] {
   if (majorVersion(ctx.project) < 19 || !ctx.file.endsWith('.ts')) {
     return [];
   }
-  const re = /@(ViewChild|ViewChildren|ContentChild|ContentChildren)\b/;
-  const match = re.exec(ctx.content);
-  if (!match) {
-    return [];
+  const findings: Diagnostic[] = [];
+  const re = /@(ViewChild|ViewChildren|ContentChild|ContentChildren)\b/g;
+  let match: RegExpExecArray | null;
+  let i = 0;
+  while ((match = re.exec(ctx.content)) !== null) {
+    const decorator = match[1] ?? '';
+    const fn = SIGNAL_QUERY_FN[decorator] ?? 'viewChild';
+    const pos = lineFromIndex(ctx.content, match.index);
+    findings.push(
+      diag(
+        {
+          ruleId: 'angular-doctor/prefer-signal-query',
+          migrationId: 'signal-queries',
+          severity: 'warning',
+          category: 'maintainability',
+          message: `Decorator-based query @${decorator} found. Prefer the ${fn}() signal query.`,
+          file: ctx.file,
+          line: pos.line,
+          column: pos.column,
+          suggestion: 'Run signal-queries-migration and re-run tests.',
+        },
+        i++,
+      ),
+    );
   }
-  const pos = lineFromIndex(ctx.content, match.index);
-  return [
-    diag({
-      ruleId: 'angular-doctor/prefer-signal-query',
-      migrationId: 'signal-queries',
-      severity: 'info',
-      category: 'maintainability',
-      message: 'Decorator-based query found. Prefer signal query APIs.',
-      file: ctx.file,
-      line: pos.line,
-      column: pos.column,
-      suggestion: 'Run signal-queries-migration and re-run tests.',
-    }),
-  ];
+  return findings;
 }

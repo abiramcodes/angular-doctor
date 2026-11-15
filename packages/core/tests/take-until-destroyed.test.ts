@@ -92,6 +92,28 @@ describe('component subjects', () => {
     expect(found).toHaveLength(0);
   });
 
+  it('still flags a subject that only signals in ngOnDestroy (both rules, distinct subjects)', () => {
+    const found = scan(
+      component(`
+        private readonly destroy$ = new Subject<void>();
+        private readonly clicks$ = new Subject<void>();
+        record(): void {
+          this.clicks$.next();
+        }
+        ngOnDestroy(): void {
+          this.destroy$.next();
+        }
+      `),
+    );
+    // destroy$ signals but never completes: teardown rule fires.
+    // clicks$: used, never completed: cleanup rule fires.
+    // Two fields, one error each. No single subject flagged twice.
+    expect(found.map((d) => d.ruleId)).toEqual([
+      'angular-doctor/prefer-take-until-destroyed',
+      'angular-doctor/subject-not-cleaned-up',
+    ]);
+  });
+
   it('ignores an unused subject field', () => {
     expect(scan(component(`private readonly destroy$ = new Subject<void>();`))).toHaveLength(0);
   });

@@ -2041,6 +2041,51 @@ html.can-scroll .scroll-fade--bottom {
   text-wrap: pretty;
 }
 
+.rule-filter {
+  margin: 1.25rem 0 0.5rem;
+}
+
+.rule-filter .palette-switch-btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.rule-cat-count {
+  color: var(--muted-foreground);
+  font-size: var(--text-base, 1rem);
+  font-weight: 400;
+}
+
+.rule-sev {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rule-sev-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.rule-sev-error {
+  color: var(--magenta);
+}
+
+.rule-sev-warning {
+  color: var(--amber);
+}
+
+.rule-sev-info {
+  color: var(--green);
+}
+
 .doc-prose > *:first-child {
   margin-top: 0;
 }

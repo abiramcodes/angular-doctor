@@ -1,6 +1,8 @@
-import { Component, inject } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import type { RouteMeta } from '@analogjs/router';
+
+export const routeMeta: RouteMeta = { title: 'Page not found' };
 
 @Component({
   selector: 'docs-not-found',
@@ -34,8 +36,4 @@ import { RouterLink } from '@angular/router';
     </div>
   `,
 })
-export default class NotFound {
-  constructor() {
-    inject(Title).setTitle('Page not found — Angular Doctor');
-  }
-}
+export default class NotFound {}

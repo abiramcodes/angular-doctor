@@ -39,7 +39,7 @@ import {
             <li class="line">
               <span class="n">02</span>
               <span
-                >doctor.<span class="fn">rules</span> = <span class="num">76</span>;
+                >doctor.<span class="fn">rules</span> = <span class="num">81</span>;
                 <span class="com">// six families</span></span
               >
             </li>
@@ -54,7 +54,7 @@ import {
             </li>
             <li class="line">
               <span class="n">04</span>
-              <span>doctor.<span class="fn">score</span> = <span class="num">85</span>;</span>
+              <span>doctor.<span class="fn">score</span> = <span class="num">81</span>;</span>
             </li>
             <li class="line">
               <span class="n">05</span>
@@ -100,7 +100,7 @@ import {
               Replay
             </button>
           </div>
-          <p class="meter-score"><span>85</span><small> / 100</small></p>
+          <p class="meter-score"><span>81</span><small> / 100</small></p>
           <div class="meter-bars" aria-hidden="true">
             @for (bar of bars; track $index) {
               <i [class.is-on]="$index < 17" [style.animation-delay.ms]="$index * 20"></i>
@@ -109,20 +109,20 @@ import {
           <dl class="meter-counts">
             <div>
               <dt>errors</dt>
-              <dd class="ink-magenta">3</dd>
+              <dd class="ink-magenta">9</dd>
             </div>
             <div>
               <dt>warnings</dt>
-              <dd class="ink-amber">27</dd>
+              <dd class="ink-amber">15</dd>
             </div>
             <div>
               <dt>notes</dt>
-              <dd class="ink-green">6</dd>
+              <dd class="ink-green">5</dd>
             </div>
           </dl>
-          <p class="meter-meta">76 checks · 299 ms · Angular 22.2</p>
+          <p class="meter-meta">81 checks · 299 ms · Angular 22.2</p>
           <div class="meter-finding">
-            <span class="meter-finding-k">Sample error · 1 of 3</span>
+            <span class="meter-finding-k">Sample error · 1 of 9</span>
             <code>{{ finding.rule }}</code>
             <p>{{ finding.location }}</p>
           </div>
@@ -150,7 +150,7 @@ import {
           <div class="section-head">
             <h2 id="diagnostics-title" class="section-title">Six families, one meter.</h2>
             <p class="section-lede">
-              76 built-in checks in six categories. Each family is a kind of Angular habit the scan
+              81 built-in checks in six categories. Each family is a kind of Angular habit the scan
               looks for.
             </p>
           </div>

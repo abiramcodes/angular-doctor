@@ -1,6 +1,6 @@
 {
   "name": "@abiramcodes/angular-doctor",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Deterministic health scans for Angular codebases and coding agents.",
   "keywords": [
     "accessibility",
@@ -37,6 +37,7 @@
   },
   "scripts": {
     "build": "tsdown && node ./scripts/copy-skill.mjs",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "pnpm -w --filter @angular-doctor/core build && pnpm run build"
   },
@@ -52,7 +53,8 @@
     "@types/node": "^22.15.0",
     "@types/semver": "^7.7.0",
     "tsdown": "^0.23.7",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=20.19.0"

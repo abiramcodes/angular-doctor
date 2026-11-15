@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { DocPage } from '../../doc-page';
 import { Callout } from '../../callout';
+import type { RouteMeta } from '@analogjs/router';
+
+export const routeMeta: RouteMeta = { title: 'Open source' };
 
 @Component({
   selector: 'docs-open-source',
@@ -28,6 +31,21 @@ import { Callout } from '../../callout';
         The site is built with Analog and Angular. The source is on
         <a href="https://github.com/abiramcodes/angular-doctor">GitHub</a>, under the MIT license.
         Angie, the Angular mascot, appears on the 404 page.
+      </p>
+
+      <h2 id="deploy">Deploy</h2>
+      <p>
+        The site deploys as static files on Cloudflare Pages. Every route is prerendered, so no
+        server is needed.
+      </p>
+      <ul>
+        <li>Build command: <code>pnpm docs:build</code></li>
+        <li>Output directory: <code>apps/docs/dist/analog/public</code></li>
+        <li>Node version: 20.19 or newer</li>
+      </ul>
+      <p>
+        When a docs page is added under <code>src/app/pages</code>, add its route to the prerender
+        list in <code>apps/docs/vite.config.ts</code>, or it will not exist in the static output.
       </p>
       <docs-callout variant="note" label="The mark is not the Angular shield">
         <p>

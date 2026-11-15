@@ -30,12 +30,30 @@ export interface Diagnostic {
   source: 'oxlint' | 'template-eslint' | 'angular-doctor';
 }
 
+export interface WorkspaceProject {
+  name: string;
+  /** Absolute project root directory. */
+  root: string;
+  /** Absolute source root directory (contains main.ts for applications). */
+  sourceRoot: string;
+  projectType?: string;
+}
+
+export type SupportTier = 'full' | 'compat' | 'unsupported';
+
 export interface ProjectInfo {
   root: string;
   name: string;
   kind: 'angular-cli' | 'nx' | 'unknown';
   angularVersion: string | null;
+  supportTier?: SupportTier;
   workspaceRoots: string[];
+  /** Projects parsed from angular.json / project.json, when available. */
+  projects?: WorkspaceProject[];
+  /** True when any project configures SSR or prerendering. */
+  hasSsr?: boolean;
+  /** Absolute path scans are limited to when invoked inside one project. */
+  focusRoot?: string;
 }
 
 export interface AngularDoctorConfig {
@@ -43,6 +61,7 @@ export interface AngularDoctorConfig {
   reportDirectory?: string;
   ignore?: string[];
   rules?: Record<string, 'off' | 'warn' | 'warning' | 'error' | 'info'>;
+  reportFormats?: ('markdown' | 'html')[];
   styleGuide?: {
     namingConvention?: 'detect';
   };
@@ -73,6 +92,7 @@ export interface ScanOptions {
   files?: string[];
   verbose?: boolean;
   config?: AngularDoctorConfig;
+  htmlReport?: boolean;
   onProgress?: (progress: ScanProgress) => void;
 }
 
@@ -85,10 +105,12 @@ export interface ScanTotals {
 
 export interface ScanResult {
   score: number;
+  supportTier?: SupportTier;
   diagnostics: Diagnostic[];
   totals: ScanTotals;
   project: ProjectInfo;
   reportPath: string | null;
+  htmlReportPath?: string | null;
   skippedChecks: string[];
   durationMs: number;
   filesScanned: number;

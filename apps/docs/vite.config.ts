@@ -9,6 +9,7 @@ const routes = [
   '/docs',
   '/docs/run',
   '/docs/reference',
+  '/docs/rules',
   '/docs/colors',
   '/docs/output',
   '/docs/ci',
