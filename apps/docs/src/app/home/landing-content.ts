@@ -59,9 +59,9 @@ export const facts = [
     detail: 'The package requires this runtime or newer.',
   },
   {
-    value: '12',
-    label: 'Parents',
-    detail: 'How far it walks looking for angular.json or nx.json.',
+    value: '15+',
+    label: 'Angular',
+    detail: 'Angular 17+ gets every check. 15 and 16 run in compat mode.',
   },
   {
     value: '4',
@@ -237,12 +237,12 @@ export const commandGroups = [
       },
       {
         command: 'npx @abiramcodes/angular-doctor@latest path/to/app',
-        detail: 'Scan that directory. Workspace detection still walks up to 12 parents.',
+        detail: 'Scan that directory. Workspace detection walks up to a parent workspace root.',
       },
       {
         command: 'npx @abiramcodes/angular-doctor@latest --verbose --scope changed',
         detail:
-          'Scan source files git shows as changed. This is the command to run after an edit. With no matching changes, it scans the whole project.',
+          'Scan source files git shows as changed. This is the command to run after an edit. With no changes, it scans nothing.',
       },
       {
         command: 'npx @abiramcodes/angular-doctor@latest --scope files --files src/app/app.ts',

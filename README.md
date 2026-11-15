@@ -89,7 +89,7 @@ pnpm docs:build
 ## Lint stack (hybrid)
 
 - **TypeScript:** [Oxlint](https://oxc.rs/docs/guide/usage/linter) (primary, fast path). The scan reads `.ts` and `.html` only.
-- **HTML templates:** ESLint + `@angular-eslint` template rules only (Angular still needs a template parser). Stub runner in v0.1. Install peers to enable the next phase.
+- **HTML templates:** ESLint + `@angular-eslint` template rules, bundled. A curated subset runs over standalone and inline component templates; no extra install needed.
 - **Angular Doctor rules:** Built-in high-leverage checks (control flow, `inject()`, `@for` track, NgModule in modern apps, sanitizer bypass).
 
 ## Configuration
