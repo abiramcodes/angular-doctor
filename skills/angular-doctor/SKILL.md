@@ -40,7 +40,7 @@ Follow `playbooks/triage.md` in this skill folder:
 
 - Prefer standalone components, `inject()`, signals/`input()`/`output()`, and built-in control flow (`@if`, `@for` with `track`, `@switch`, `@defer`).
 - Respect the project Angular version (OnPush defaults in v22+).
-- Hybrid lint stack: Oxlint for TypeScript, ESLint + `@angular-eslint` for HTML templates only.
+- Hybrid lint stack: Oxlint for TypeScript; a curated set of Angular template rules over standalone and inline templates.
 - Image and change-detection findings are static template and decorator checks. LCP `priority`, preconnect, and slow-computation advice stay manual.
 
 ## Install this skill locally
