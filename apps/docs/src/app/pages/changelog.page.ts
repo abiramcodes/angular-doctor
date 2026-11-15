@@ -16,7 +16,7 @@ export const routeMeta: RouteMeta = { title: 'Changelog' };
           <li class="changelog-entry">
             <span class="changelog-marker" aria-hidden="true"></span>
             <div class="changelog-body">
-              <h2 class="changelog-version">0.2.0</h2>
+              <h2 class="changelog-version">0.2.1</h2>
               <p class="changelog-status">Current package</p>
               <ul>
                 <li>

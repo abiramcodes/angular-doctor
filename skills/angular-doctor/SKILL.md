@@ -1,6 +1,11 @@
 ---
 name: angular-doctor
 description: Run Angular Doctor after Angular edits. Scan for correctness, performance, security, accessibility, and maintainability regressions; triage angular-doctor-report.md; fix without auto-committing.
+license: MIT
+compatibility: Requires an Angular CLI or Nx workspace (Angular 15+), Node.js 20.19+, and network access for npx.
+metadata:
+  project: angular-doctor
+  version: '0.2.1'
 ---
 
 # Angular Doctor (agent skill)
