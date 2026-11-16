@@ -33,8 +33,8 @@ export const routeMeta: RouteMeta = { title: 'Open source' };
         Angie, the Angular mascot, appears on the 404 page.
       </p>
       <p>
-        Built by <a href="https://www.abikb.xyz/" target="_blank" rel="noopener">Abiram</a>.
-        If Angular Doctor helped you, a
+        Built by <a href="https://www.abikb.xyz/" target="_blank" rel="noopener">Abiram</a>. If
+        Angular Doctor helped you, a
         <a href="https://github.com/abiramcodes/angular-doctor" target="_blank" rel="noopener"
           >star on GitHub</a
         >
