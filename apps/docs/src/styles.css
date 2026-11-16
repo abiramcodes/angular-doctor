@@ -349,6 +349,44 @@ html.can-scroll .scroll-fade--bottom {
   color: var(--heading);
 }
 
+.header-portfolio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: var(--dim);
+}
+
+.header-portfolio:hover {
+  color: var(--heading);
+}
+
+.header-star {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.header-star:hover {
+  color: var(--heading);
+  border-color: var(--line-strong);
+}
+
+.header-star:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
 @media (max-width: 700px) {
   .header-state {
     display: none;
@@ -362,7 +400,11 @@ html.can-scroll .scroll-fade--bottom {
     margin-left: 0;
   }
 
-  .site-header-aside span {
+  .site-header-aside > span {
+    display: none;
+  }
+
+  .header-star span {
     display: none;
   }
 }

@@ -3,14 +3,14 @@ import { afterNextRender, Component, DestroyRef, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideMoon, lucideSun } from '@ng-icons/lucide';
+import { lucideArrowUpRight, lucideMoon, lucideStar, lucideSun } from '@ng-icons/lucide';
 import { BrandMark } from './brand';
 import { Theme } from './theme';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, RouterLink, RouterLinkActive, NgIcon, BrandMark],
-  providers: [provideIcons({ lucideMoon, lucideSun })],
+  providers: [provideIcons({ lucideArrowUpRight, lucideMoon, lucideStar, lucideSun })],
   template: `
     <div class="app-shell flex min-h-screen flex-col">
       <a
@@ -51,6 +51,16 @@ import { Theme } from './theme';
                 />
               </svg>
             </a>
+            <a
+              class="header-star"
+              href="https://github.com/abiramcodes/angular-doctor"
+              target="_blank"
+              rel="noopener"
+              aria-label="Star Angular Doctor on GitHub"
+            >
+              <ng-icon name="lucideStar" size="14" aria-hidden="true" />
+              <span>Star</span>
+            </a>
             <button
               type="button"
               class="btn btn-outline btn-sm"
@@ -82,6 +92,10 @@ import { Theme } from './theme';
           </span>
           <p class="site-footer-meta">
             <a href="https://github.com/abiramcodes/angular-doctor">MIT license · open source</a>
+          </p>
+          <p class="site-footer-meta">
+            Built by
+            <a href="https://www.abikb.xyz/" target="_blank" rel="noopener">Abiram</a>
           </p>
           <p class="site-footer-meta">No build · no tests · no config</p>
         </div>
