@@ -94,4 +94,18 @@ describe('framework gaps React-style scanners miss', () => {
       }),
     ).toHaveLength(0);
   });
+
+  it('accepts strict flags inherited through array-form extends', () => {
+    const root = join(tmpdir(), `ng-doctor-strict-array-${Date.now()}`);
+    mkdirSync(root, { recursive: true });
+    writeFileSync(
+      join(root, 'tsconfig.base.json'),
+      JSON.stringify({
+        compilerOptions: { strict: true },
+        angularCompilerOptions: { strictTemplates: true },
+      }),
+    );
+    writeFileSync(join(root, 'tsconfig.json'), '{ "extends": ["./tsconfig.base.json"] }\n');
+    expect(runStrictCheck({ project: project(root), file: root, content: '' })).toHaveLength(0);
+  });
 });

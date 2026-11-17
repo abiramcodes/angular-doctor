@@ -1,11 +1,13 @@
 import type { Diagnostic } from '../../types.js';
 import { diag, lineFromIndex, majorVersion, type RuleContext } from '../diag-helpers.js';
+import { maskCommentsAndStrings } from '../preferences/parse.js';
 
 export function rulePreferInject(ctx: RuleContext): Diagnostic[] {
   if (!ctx.file.endsWith('.ts')) {
     return [];
   }
-  const ctorMatch = ctx.content.match(/constructor\s*\(([^)]*)\)/s);
+  const source = maskCommentsAndStrings(ctx.content);
+  const ctorMatch = source.match(/constructor\s*\(([^)]*)\)/s);
   if (!ctorMatch?.[1]?.trim()) {
     return [];
   }
@@ -13,7 +15,12 @@ export function rulePreferInject(ctx: RuleContext): Diagnostic[] {
   if (!/(private|protected|public|readonly)/.test(params)) {
     return [];
   }
-  const index = ctx.content.indexOf('constructor');
+  // A subclass that forwards constructor dependencies to super() cannot
+  // drop its constructor for inject() without changing the base class.
+  if (/\bextends\b/.test(source) && /\bsuper\s*\(/.test(source)) {
+    return [];
+  }
+  const index = source.indexOf('constructor');
   const pos = lineFromIndex(ctx.content, index);
   return [
     diag({
@@ -35,10 +42,11 @@ export function ruleNgModuleInModern(ctx: RuleContext): Diagnostic[] {
   if (majorVersion(ctx.project) < 17 || !ctx.file.endsWith('.ts')) {
     return [];
   }
-  if (!/@NgModule\s*\(/.test(ctx.content)) {
+  const source = maskCommentsAndStrings(ctx.content);
+  if (!/@NgModule\s*\(/.test(source)) {
     return [];
   }
-  const index = ctx.content.indexOf('@NgModule');
+  const index = source.indexOf('@NgModule');
   const pos = lineFromIndex(ctx.content, index);
   return [
     diag({
@@ -60,10 +68,11 @@ export function ruleStandaloneFalse(ctx: RuleContext): Diagnostic[] {
   if (majorVersion(ctx.project) < 17 || !ctx.file.endsWith('.ts')) {
     return [];
   }
-  if (!/standalone\s*:\s*false/.test(ctx.content)) {
+  const source = maskCommentsAndStrings(ctx.content);
+  if (!/standalone\s*:\s*false/.test(source)) {
     return [];
   }
-  const index = ctx.content.indexOf('standalone');
+  const index = source.indexOf('standalone');
   const pos = lineFromIndex(ctx.content, index);
   return [
     diag({
@@ -84,10 +93,11 @@ export function ruleCommonModule(ctx: RuleContext): Diagnostic[] {
   if (!ctx.file.endsWith('.ts')) {
     return [];
   }
-  if (!/CommonModule/.test(ctx.content)) {
+  const source = maskCommentsAndStrings(ctx.content);
+  if (!/CommonModule/.test(source)) {
     return [];
   }
-  const index = ctx.content.indexOf('CommonModule');
+  const index = source.indexOf('CommonModule');
   const pos = lineFromIndex(ctx.content, index);
   return [
     diag({

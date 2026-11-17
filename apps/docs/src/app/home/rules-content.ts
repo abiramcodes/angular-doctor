@@ -26,7 +26,7 @@ export const ruleCatalog: RuleDoc[] = [
     "id": "angular-doctor/effect-writes-state",
     "slug": "effect-writes-state",
     "title": "effect() writes state",
-    "summary": "effect() writes state with set() or update().",
+    "summary": "effect() writes a signal declared in the same file with set() or update().",
     "severity": "error",
     "category": "correctness",
     "minAngular": 16
@@ -60,8 +60,8 @@ export const ruleCatalog: RuleDoc[] = [
     "id": "angular-doctor/ng-model-name",
     "slug": "ng-model-name",
     "title": "ngModel name",
-    "summary": "[(ngModel)] without a name in a form.",
-    "severity": "error",
+    "summary": "[(ngModel)] inside a <form> without a name and without standalone options.",
+    "severity": "warning",
     "category": "correctness"
   },
   {
@@ -77,7 +77,7 @@ export const ruleCatalog: RuleDoc[] = [
     "id": "angular-doctor/prefer-document-token",
     "slug": "prefer-document-token",
     "title": "DOCUMENT token",
-    "summary": "The global document is used instead of injecting DOCUMENT.",
+    "summary": "The unresolved global document is used instead of injecting DOCUMENT. A local binding named document does not count.",
     "severity": "info",
     "category": "correctness"
   },
@@ -122,14 +122,6 @@ export const ruleCatalog: RuleDoc[] = [
     "slug": "subject-not-cleaned-up",
     "title": "Subject cleanup",
     "summary": "A Subject is used and never completed or unsubscribed.",
-    "severity": "error",
-    "category": "correctness"
-  },
-  {
-    "id": "angular-doctor/template-arrow-not-called",
-    "slug": "template-arrow-not-called",
-    "title": "Template arrow",
-    "summary": "A template event binding is an arrow function that never runs as a call.",
     "severity": "error",
     "category": "correctness"
   },
@@ -260,14 +252,6 @@ export const ruleCatalog: RuleDoc[] = [
     "category": "performance",
     "docsUrl": "https://angular.dev/guide/zoneless",
     "minAngular": 20
-  },
-  {
-    "id": "angular-doctor/complex-component",
-    "slug": "complex-component",
-    "title": "Complex component",
-    "summary": "A component exceeds template, method, or control-flow size limits.",
-    "severity": "info",
-    "category": "maintainability"
   },
   {
     "id": "angular-doctor/deprecated-animations",
@@ -511,22 +495,6 @@ export const ruleCatalog: RuleDoc[] = [
     "minAngular": 17
   },
   {
-    "id": "angular-doctor/repeated-component-logic",
-    "slug": "repeated-component-logic",
-    "title": "Repeated component logic",
-    "summary": "A method body matches a method in another component.",
-    "severity": "info",
-    "category": "maintainability"
-  },
-  {
-    "id": "angular-doctor/repeated-template",
-    "slug": "repeated-template",
-    "title": "Repeated template",
-    "summary": "The same template block appears in another component.",
-    "severity": "info",
-    "category": "maintainability"
-  },
-  {
     "id": "angular-doctor/tailwind-v3-syntax",
     "slug": "tailwind-v3-syntax",
     "title": "Tailwind v3 syntax",
@@ -535,36 +503,10 @@ export const ruleCatalog: RuleDoc[] = [
     "category": "maintainability"
   },
   {
-    "id": "angular-doctor/template-complexity",
-    "slug": "template-complexity",
-    "title": "Template complexity",
-    "summary": "A template expression is complex enough to move into computed().",
-    "severity": "warning",
-    "category": "maintainability"
-  },
-  {
-    "id": "angular-doctor/client-secret",
-    "slug": "client-secret",
-    "title": "Client secret",
-    "summary": "A string literal in client code looks like a secret.",
-    "severity": "error",
-    "category": "security",
-    "docsUrl": "https://angular.dev/best-practices/security"
-  },
-  {
-    "id": "angular-doctor/env-file",
-    "slug": "env-file",
-    "title": "Environment file",
-    "summary": "A .env file is present in the project tree.",
-    "severity": "error",
-    "category": "security",
-    "docsUrl": "https://angular.dev/best-practices/security"
-  },
-  {
     "id": "angular-doctor/inner-html",
     "slug": "inner-html",
     "title": "innerHTML",
-    "summary": "A binding or assignment uses innerHTML.",
+    "summary": "A direct innerHTML assignment, or an [innerHTML] binding fed by a sanitizer bypass.",
     "severity": "error",
     "category": "security",
     "docsUrl": "https://angular.dev/best-practices/security"
@@ -574,7 +516,7 @@ export const ruleCatalog: RuleDoc[] = [
     "slug": "security-bypass",
     "title": "Security bypass",
     "summary": "DomSanitizer bypass call such as bypassSecurityTrustHtml.",
-    "severity": "error",
+    "severity": "warning",
     "category": "security"
   },
   {
@@ -585,51 +527,6 @@ export const ruleCatalog: RuleDoc[] = [
     "severity": "error",
     "category": "security",
     "docsUrl": "https://angular.dev/best-practices/security"
-  },
-  {
-    "id": "angular-doctor/click-without-keyboard",
-    "slug": "click-without-keyboard",
-    "title": "Click keyboard path",
-    "summary": "A non-interactive element has click and no keyboard handler.",
-    "severity": "error",
-    "category": "accessibility",
-    "docsUrl": "https://angular.dev/guide/accessibility"
-  },
-  {
-    "id": "angular-doctor/control-missing-label",
-    "slug": "control-missing-label",
-    "title": "Control label",
-    "summary": "A form control has no accessible label.",
-    "severity": "error",
-    "category": "accessibility",
-    "docsUrl": "https://angular.dev/guide/accessibility"
-  },
-  {
-    "id": "angular-doctor/img-alt",
-    "slug": "img-alt",
-    "title": "Image alt text",
-    "summary": "An img has neither alt nor aria-hidden=\"true\".",
-    "severity": "error",
-    "category": "accessibility",
-    "docsUrl": "https://angular.dev/guide/accessibility"
-  },
-  {
-    "id": "angular-doctor/positive-tabindex",
-    "slug": "positive-tabindex",
-    "title": "Positive tabindex",
-    "summary": "tabindex is greater than 0.",
-    "severity": "error",
-    "category": "accessibility",
-    "docsUrl": "https://angular.dev/guide/accessibility"
-  },
-  {
-    "id": "angular-doctor/cleanup-unused-imports-hint",
-    "slug": "cleanup-unused-imports-hint",
-    "title": "Unused import",
-    "summary": "A named import is never used in the file.",
-    "severity": "info",
-    "category": "hygiene",
-    "docsUrl": "https://angular.dev/reference/migrations/cleanup-unused-imports"
   },
   {
     "id": "angular-doctor/component-file-set-mismatch",
@@ -692,14 +589,6 @@ export const ruleCatalog: RuleDoc[] = [
     "slug": "type-based-folder",
     "title": "Type-based folder",
     "summary": "Source lives in a components/ or services/ folder instead of a feature folder.",
-    "severity": "warning",
-    "category": "hygiene"
-  },
-  {
-    "id": "angular-doctor/unused-export",
-    "slug": "unused-export",
-    "title": "Unused export",
-    "summary": "An exported class, function, or const is never used.",
     "severity": "warning",
     "category": "hygiene"
   }

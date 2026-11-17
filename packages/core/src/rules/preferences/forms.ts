@@ -46,11 +46,11 @@ export function ruleNgModelName(ctx: RuleContext): Diagnostic[] {
   }
   const findings: Diagnostic[] = [];
   let i = 0;
-  for (const tag of elementTags(ctx.content, '[A-Za-z][\\w:-]*')) {
-    if (!/\[\(ngModel\)\]|\[ngModel\]|(?:^|[\s])ngModel(?:=|[\s/>])/.test(tag.tag)) {
+  for (const tag of ngModelTagsInForms(ctx.content)) {
+    if (/\[name\]|(?:^|[\s/])name\s*=/.test(tag.tag)) {
       continue;
     }
-    if (/\[name\]|(?:^|[\s/])name\s*=/.test(tag.tag)) {
+    if (/\[ngModelOptions\]\s*=\s*(['"])[^'"]*standalone\s*:\s*true/.test(tag.tag)) {
       continue;
     }
     const pos = lineFromIndex(ctx.content, tag.index);
@@ -60,11 +60,12 @@ export function ruleNgModelName(ctx: RuleContext): Diagnostic[] {
           ruleId: 'angular-doctor/ng-model-name',
           severity: 'warning',
           category: 'correctness',
-          message: '[(ngModel)] is missing a name attribute.',
+          message: '[(ngModel)] inside a form is missing a name attribute.',
           file: ctx.file,
           line: pos.line,
           column: pos.column,
-          suggestion: 'Add name or [name] so Angular can register the control on NgForm.',
+          suggestion:
+            'Add name or [name] so Angular can register the control on NgForm, or set [ngModelOptions]="{ standalone: true }".',
           docsUrl: TEMPLATE_FORMS_DOCS,
         },
         i++,
@@ -109,4 +110,34 @@ export function rulePreferSignalForms(ctx: RuleContext): Diagnostic[] {
       docsUrl: SIGNAL_FORMS_DOCS,
     }),
   ];
+}
+
+/**
+ * ngModel tags with a <form> ancestor. Angular only requires a name when
+ * the control registers on an NgForm, so formless ngModel never matches.
+ * Malformed templates simply yield fewer candidates instead of throwing.
+ */
+function ngModelTagsInForms(content: string): Array<{ tag: string; index: number }> {
+  const tags: Array<{ tag: string; index: number }> = [];
+  const re = /<\/?([A-Za-z][\w:-]*)\b[^>]*>/g;
+  let formDepth = 0;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(content)) !== null) {
+    const raw = match[0];
+    const name = (match[1] ?? '').toLowerCase();
+    if (raw.startsWith('</')) {
+      if (name === 'form' && formDepth > 0) {
+        formDepth -= 1;
+      }
+      continue;
+    }
+    if (name === 'form') {
+      formDepth += 1;
+      continue;
+    }
+    if (formDepth > 0 && /\[\(ngModel\)\]|\[ngModel\]|(?:^|[\s])ngModel(?:=|[\s/>])/.test(raw)) {
+      tags.push({ tag: raw, index: match.index });
+    }
+  }
+  return tags;
 }

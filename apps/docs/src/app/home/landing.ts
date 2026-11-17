@@ -39,7 +39,7 @@ import {
             <li class="line">
               <span class="n">02</span>
               <span
-                >doctor.<span class="fn">rules</span> = <span class="num">81</span>;
+                >doctor.<span class="fn">rules</span> = <span class="num">68</span>;
                 <span class="com">// six families</span></span
               >
             </li>
@@ -120,7 +120,7 @@ import {
               <dd class="ink-green">5</dd>
             </div>
           </dl>
-          <p class="meter-meta">81 checks · 299 ms · Angular 22.2</p>
+          <p class="meter-meta">68 built-in checks · 299 ms · Angular 22.2</p>
           <div class="meter-finding">
             <span class="meter-finding-k">Sample error · 1 of 9</span>
             <code>{{ finding.rule }}</code>
@@ -150,8 +150,8 @@ import {
           <div class="section-head">
             <h2 id="diagnostics-title" class="section-title">Six families, one meter.</h2>
             <p class="section-lede">
-              81 built-in checks in six categories. Each family is a kind of Angular habit the scan
-              looks for.
+              68 built-in Angular checks, plus bundled template accessibility rules, in six
+              categories. Each family is a kind of Angular habit the scan looks for.
             </p>
           </div>
           <ul class="setlist">

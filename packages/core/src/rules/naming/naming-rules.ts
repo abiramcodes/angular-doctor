@@ -14,6 +14,7 @@ const SKIPPED_FILENAME =
 
 function pascalToKebab(name: string): string {
   return name
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1-$2')
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
     .replace(/_/g, '-')
     .toLowerCase();
@@ -135,7 +136,7 @@ export function ruleComponentFileSetMismatch(ctx: RuleContext): Diagnostic[] {
   const dir = dirname(ctx.file);
   const stem = fileStem(ctx.file);
   const html = useSuffix ? join(dir, `${stem}.component.html`) : join(dir, `${stem}.html`);
-  const hasInline = /template\s*:\s*`/.test(ctx.content) || /template\s*:\s*'/.test(ctx.content);
+  const hasInline = /template\s*:\s*[`'"]/.test(ctx.content);
   if (hasInline) {
     return [];
   }

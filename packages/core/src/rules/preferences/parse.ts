@@ -20,6 +20,63 @@ export const SIGNAL_FORM_SYMBOLS = [
 
 export const PIPES_DOCS = 'https://angular.dev/guide/templates/pipes';
 
+/**
+ * Blank out comments and string/template literals with spaces, keeping
+ * length, offsets, and newlines intact so line/column math still points
+ * at the original source. TypeScript rules scan the masked text so a
+ * trigger word inside a comment or string never fires a finding.
+ */
+export function maskCommentsAndStrings(content: string): string {
+  const chars = content.split('');
+  const blank = (from: number, to: number): void => {
+    for (let i = from; i < to && i < chars.length; i++) {
+      if (chars[i] !== '\n' && chars[i] !== '\r') {
+        chars[i] = ' ';
+      }
+    }
+  };
+  let i = 0;
+  while (i < content.length) {
+    const ch = content[i] ?? '';
+    const next = content[i + 1] ?? '';
+    if (ch === '/' && next === '/') {
+      const end = content.indexOf('\n', i);
+      blank(i, end === -1 ? content.length : end);
+      i = end === -1 ? content.length : end;
+      continue;
+    }
+    if (ch === '/' && next === '*') {
+      const end = content.indexOf('*/', i + 2);
+      const stop = end === -1 ? content.length : end + 2;
+      blank(i, stop);
+      i = stop;
+      continue;
+    }
+    if (ch === "'" || ch === '"' || ch === '`') {
+      let j = i + 1;
+      while (j < content.length) {
+        if (content[j] === '\\') {
+          j += 2;
+          continue;
+        }
+        if (content[j] === ch) {
+          j += 1;
+          break;
+        }
+        if (ch !== '`' && content[j] === '\n') {
+          break;
+        }
+        j += 1;
+      }
+      blank(i, j);
+      i = j;
+      continue;
+    }
+    i += 1;
+  }
+  return chars.join('');
+}
+
 export function pipeInjection(
   ctx: RuleContext,
   index: number,
@@ -58,7 +115,8 @@ export function identifierFindings(
   if (!ctx.file.endsWith('.ts') && !ctx.file.endsWith('.html')) {
     return [];
   }
-  return execAll(ctx.content, options.pattern).map((match, index) => {
+  const source = ctx.file.endsWith('.ts') ? maskCommentsAndStrings(ctx.content) : ctx.content;
+  return execAll(source, options.pattern).map((match, index) => {
     const pos = lineFromIndex(ctx.content, match.index);
     return diag(
       {
@@ -184,15 +242,66 @@ export function sliceBraces(content: string, open: number): Span | null {
   return sliceDelimited(content, open, '{', '}');
 }
 
+/**
+ * Names of writable signals declared in this file: class fields and
+ * locals assigned signal(), model(), or linkedSignal(). Signals reached
+ * through injected services or imports are deliberately not included.
+ */
+export function declaredSignalNames(content: string): Set<string> {
+  const masked = maskCommentsAndStrings(content);
+  const names = new Set<string>();
+  const factory = '(?:signal|model|linkedSignal)';
+  const patterns = [
+    new RegExp(
+      `(?:^|[;{\\n])\\s*(?:(?:public|private|protected|readonly|static|declare)\\s+)*([A-Za-z_$][\\w$]*)\\s*(?::[^=;\\n]+)?=\\s*${factory}\\b`,
+      'g',
+    ),
+    new RegExp(
+      `\\b(?:const|let|var)\\s+([A-Za-z_$][\\w$]*)\\s*(?::[^=;]+)?=\\s*${factory}\\b`,
+      'g',
+    ),
+  ];
+  for (const re of patterns) {
+    for (const match of execAll(masked, re)) {
+      if (match[1]) {
+        names.add(match[1]);
+      }
+    }
+  }
+  return names;
+}
+
+/**
+ * True when `name` is declared in this file (variable, field, parameter,
+ * or destructuring), so uses of it do not resolve to a global.
+ */
+export function isDeclaredInFile(content: string, name: string): boolean {
+  const masked = maskCommentsAndStrings(content);
+  const escaped = escapeRegExp(name);
+  const patterns = [
+    new RegExp(`\\b(?:const|let|var)\\s+${escaped}\\b`),
+    new RegExp(
+      `(?:^|[;{\\n])\\s*(?:(?:public|private|protected|readonly|static|declare)\\s+)+${escaped}\\b`,
+    ),
+    new RegExp(`[(,]\\s*(?:(?:public|private|protected|readonly)\\s+)*${escaped}\\s*[?:,)=]`),
+    new RegExp(`\\{\\s*${escaped}\\b[^}]*\\}\\s*=`),
+    new RegExp(`\\b${escaped}\\s*=\\s*inject\\b`),
+  ];
+  return patterns.some((re) => re.test(masked));
+}
+
 export function sliceDelimited(
   content: string,
   open: number,
   start: string,
   end: string,
 ): Span | null {
+  // Count delimiters on masked text so brackets inside strings or
+  // comments do not truncate or overrun the span.
+  const masked = maskCommentsAndStrings(content);
   let depth = 0;
   for (let i = open; i < content.length; i++) {
-    const ch = content[i];
+    const ch = masked[i];
     if (ch === start) {
       depth++;
     } else if (ch === end) {

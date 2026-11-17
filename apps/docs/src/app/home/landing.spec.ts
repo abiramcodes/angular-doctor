@@ -19,7 +19,7 @@ describe('Landing', () => {
     expect(text).toContain('81');
     expect(text).toContain('suggested fix');
     expect(text).toContain('angular-doctor-report.md');
-    expect(text).toContain('81 built-in checks');
+    expect(text).toContain('68 built-in');
     expect(text).not.toContain('What it is');
   });
 });

@@ -1,18 +1,16 @@
 import type { Diagnostic } from '../../types.js';
 import { diag, lineFromIndex, majorVersion, type RuleContext } from '../diag-helpers.js';
+import { maskCommentsAndStrings } from '../preferences/parse.js';
 
 export function ruleLegacyInput(ctx: RuleContext): Diagnostic[] {
   if (majorVersion(ctx.project) < 19 || !ctx.file.endsWith('.ts')) {
     return [];
   }
-  if (
-    !/@Input\s*\(/.test(ctx.content) &&
-    !/@Input\s*\n/.test(ctx.content) &&
-    !/@Input\b/.test(ctx.content)
-  ) {
+  const source = maskCommentsAndStrings(ctx.content);
+  if (!/@Input\b/.test(source)) {
     return [];
   }
-  const index = ctx.content.search(/@Input\b/);
+  const index = source.search(/@Input\b/);
   if (index === -1) {
     return [];
   }
@@ -36,7 +34,8 @@ export function ruleLegacyOutput(ctx: RuleContext): Diagnostic[] {
   if (majorVersion(ctx.project) < 19 || !ctx.file.endsWith('.ts')) {
     return [];
   }
-  const index = ctx.content.search(/@Output\b/);
+  const source = maskCommentsAndStrings(ctx.content);
+  const index = source.search(/@Output\b/);
   if (index === -1) {
     return [];
   }
@@ -71,7 +70,7 @@ export function ruleLegacyQuery(ctx: RuleContext): Diagnostic[] {
   const re = /@(ViewChild|ViewChildren|ContentChild|ContentChildren)\b/g;
   let match: RegExpExecArray | null;
   let i = 0;
-  while ((match = re.exec(ctx.content)) !== null) {
+  while ((match = re.exec(maskCommentsAndStrings(ctx.content))) !== null) {
     const decorator = match[1] ?? '';
     const fn = SIGNAL_QUERY_FN[decorator] ?? 'viewChild';
     const pos = lineFromIndex(ctx.content, match.index);

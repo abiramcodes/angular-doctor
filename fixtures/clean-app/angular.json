@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "projects": {
+    "clean-app": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.json"
+          }
+        }
+      }
+    }
+  }
+}

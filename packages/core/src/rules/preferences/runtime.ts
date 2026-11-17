@@ -1,6 +1,11 @@
 import type { Diagnostic } from '../../types.js';
 import { diag, lineFromIndex, type RuleContext } from '../diag-helpers.js';
-import { identifierFindings, isComponentOrDirective, methodBody } from './parse.js';
+import {
+  identifierFindings,
+  isComponentOrDirective,
+  isDeclaredInFile,
+  methodBody,
+} from './parse.js';
 
 const SSR_DOCS = 'https://angular.dev/guide/ssr';
 const DEV_MODE_DOCS = 'https://angular.dev/api/core/isDevMode';
@@ -16,6 +21,11 @@ export function rulePreferDocumentToken(ctx: RuleContext): Diagnostic[] {
   // prerendering configured in angular.json, the global document is a
   // server-render crash risk anywhere in app code, so it is a warning.
   if (!ssr && !isComponentOrDirective(ctx.content)) {
+    return [];
+  }
+  // A local binding named `document` (typically inject(DOCUMENT)) shadows
+  // the global, so `document.` no longer resolves to the global object.
+  if (isDeclaredInFile(ctx.content, 'document')) {
     return [];
   }
   return identifierFindings(ctx, {

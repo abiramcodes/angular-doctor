@@ -8,7 +8,6 @@ import {
   rulePreferReadonlySignals,
 } from './components/component-class-rules.js';
 import { rulePreferHostBindings } from './components/host-rules.js';
-import { runSharedComponentCheck } from './components/shared-component-rules.js';
 import { ruleComponentSubjects } from './components/subscription-rules.js';
 import { runDeprecatedAnimationsCheck } from './dependencies/deprecated-animations.js';
 import type { RuleContext } from './diag-helpers.js';
@@ -62,7 +61,7 @@ import {
   ruleQueryInLifecycle,
 } from './preferences/runtime.js';
 import { runTailwindV3Check } from './preferences/tailwind.js';
-import { ruleNgContentInControlFlow, ruleTemplateArrowNotCalled } from './preferences/templates.js';
+import { ruleNgContentInControlFlow } from './preferences/templates.js';
 import {
   ruleOneConceptPerFile,
   ruleProjectLayout,
@@ -79,24 +78,9 @@ import { ruleTemplateForAllocation } from './templates/for-allocation.js';
 import { ruleGetterInTemplate } from './templates/getter-in-template.js';
 import { ruleDeferWithoutTrigger } from './templates/defer-in-template.js';
 import { ruleInjectAsyncTarget, rulePreferInjectAsync } from './preferences/inject-async.js';
-import {
-  ruleClickWithoutKeyboard,
-  ruleControlMissingLabel,
-  ruleImgAlt,
-  rulePositiveTabindex,
-} from './audit/accessibility-rules.js';
-import { runDeadCodeCheck } from './audit/dead-code-rules.js';
 import { ruleNgDeep, runStrictCheck, runZoneJsCheck } from './audit/framework-rules.js';
-import {
-  ruleClientSecret,
-  ruleInnerHtml,
-  ruleTargetBlank,
-  runEnvFileCheck,
-} from './audit/security-rules.js';
-import {
-  ruleGenericEventHandler,
-  ruleTemplateComplexity,
-} from './templates/template-style-rules.js';
+import { ruleInnerHtml, ruleTargetBlank } from './audit/security-rules.js';
+import { ruleGenericEventHandler } from './templates/template-style-rules.js';
 
 export type { RuleContext } from './diag-helpers.js';
 
@@ -179,7 +163,6 @@ export const builtinPipeline = definePipeline([
         'info',
         'maintainability',
       ),
-      card('angular-doctor/template-complexity', 'Template complexity', 'info', 'maintainability'),
     ],
     run: (ctx) => [
       ...ruleFileHyphenCase(ctx),
@@ -194,7 +177,6 @@ export const builtinPipeline = definePipeline([
       ...ruleLifecycleHookComplexity(ctx),
       ...ruleMemberOrder(ctx),
       ...ruleGenericEventHandler(ctx),
-      ...ruleTemplateComplexity(ctx),
     ],
   }),
   step({
@@ -259,7 +241,7 @@ export const builtinPipeline = definePipeline([
         migrationId: 'route-lazy-loading',
         minAngular: 19,
       }),
-      card('angular-doctor/security-bypass', 'Security bypass', 'error', 'security'),
+      card('angular-doctor/security-bypass', 'Security bypass', 'warning', 'security'),
     ],
     run: (ctx) => [
       ...ruleLegacyStructuralDirectives(ctx),
@@ -367,21 +349,6 @@ export const builtinPipeline = definePipeline([
   }),
   step({
     kind: 'skill-preference',
-    reach: 'project',
-    rules: [
-      card('angular-doctor/complex-component', 'Complex component', 'info', 'maintainability'),
-      card('angular-doctor/repeated-template', 'Repeated template', 'info', 'maintainability'),
-      card(
-        'angular-doctor/repeated-component-logic',
-        'Repeated component logic',
-        'info',
-        'maintainability',
-      ),
-    ],
-    run: runSharedComponentCheck,
-  }),
-  step({
-    kind: 'skill-preference',
     reach: 'file',
     rules: [
       card(
@@ -428,7 +395,6 @@ export const builtinPipeline = definePipeline([
         'warning',
         'correctness',
       ),
-      card('angular-doctor/template-arrow-not-called', 'Template arrow', 'warning', 'correctness'),
       card('angular-doctor/prefer-signal-forms', 'Signal forms', 'info', 'maintainability', {
         minAngular: 22,
       }),
@@ -463,7 +429,6 @@ export const builtinPipeline = definePipeline([
       ...ruleFormFieldOwnedAttrs(ctx),
       ...ruleNgModelName(ctx),
       ...ruleNgContentInControlFlow(ctx),
-      ...ruleTemplateArrowNotCalled(ctx),
       ...rulePreferSignalForms(ctx),
       ...ruleOutputName(ctx),
       ...ruleInputDomName(ctx),
@@ -480,18 +445,6 @@ export const builtinPipeline = definePipeline([
     kind: 'audit',
     reach: 'project',
     rules: [
-      card('angular-doctor/env-file', 'Environment file', 'error', 'security', {
-        summary: 'A .env file is present in the project tree.',
-        docsUrl: 'https://angular.dev/best-practices/security',
-      }),
-      card('angular-doctor/cleanup-unused-imports-hint', 'Unused import', 'info', 'hygiene', {
-        summary: 'A named import is never used in the file.',
-        docsUrl: 'https://angular.dev/reference/migrations/cleanup-unused-imports',
-        migrationId: 'cleanup-unused-imports',
-      }),
-      card('angular-doctor/unused-export', 'Unused export', 'warning', 'hygiene', {
-        summary: 'An exported class, function, or const is never used.',
-      }),
       card('angular-doctor/zone-js', 'zone.js runtime', 'warning', 'performance', {
         minAngular: 20,
         summary: 'zone.js is still installed or imported on Angular 20+.',
@@ -506,66 +459,27 @@ export const builtinPipeline = definePipeline([
         docsUrl: 'https://angular.dev/tools/cli/template-typecheck',
       }),
     ],
-    run: (ctx) => [
-      ...runEnvFileCheck(ctx),
-      ...runDeadCodeCheck(ctx),
-      ...runZoneJsCheck(ctx),
-      ...runStrictCheck(ctx),
-    ],
+    run: (ctx) => [...runZoneJsCheck(ctx), ...runStrictCheck(ctx)],
   }),
   step({
     kind: 'audit',
     reach: 'file',
     rules: [
-      card('angular-doctor/client-secret', 'Client secret', 'error', 'security', {
-        summary: 'A string literal in client code looks like a secret.',
-        docsUrl: 'https://angular.dev/best-practices/security',
-      }),
       card('angular-doctor/inner-html', 'innerHTML', 'warning', 'security', {
-        summary: 'A binding or assignment uses innerHTML.',
+        summary:
+          'A direct innerHTML assignment, or an [innerHTML] binding fed by a sanitizer bypass.',
         docsUrl: 'https://angular.dev/best-practices/security',
       }),
       card('angular-doctor/target-blank', 'target blank', 'warning', 'security', {
         summary: 'target="_blank" is missing rel="noopener" or rel="noreferrer".',
         docsUrl: 'https://angular.dev/best-practices/security',
       }),
-      card('angular-doctor/img-alt', 'Image alt text', 'warning', 'accessibility', {
-        summary: 'An img has neither alt nor aria-hidden="true".',
-        docsUrl: 'https://angular.dev/guide/accessibility',
-      }),
-      card(
-        'angular-doctor/click-without-keyboard',
-        'Click keyboard path',
-        'warning',
-        'accessibility',
-        {
-          summary: 'A non-interactive element has click and no keyboard handler.',
-          docsUrl: 'https://angular.dev/guide/accessibility',
-        },
-      ),
-      card('angular-doctor/positive-tabindex', 'Positive tabindex', 'warning', 'accessibility', {
-        summary: 'tabindex is greater than 0.',
-        docsUrl: 'https://angular.dev/guide/accessibility',
-      }),
-      card('angular-doctor/control-missing-label', 'Control label', 'warning', 'accessibility', {
-        summary: 'A form control has no accessible label.',
-        docsUrl: 'https://angular.dev/guide/accessibility',
-      }),
       card('angular-doctor/ng-deep', 'ng-deep', 'warning', 'maintainability', {
         summary: '::ng-deep, /deep/, or >>> pierces view encapsulation.',
         docsUrl: 'https://angular.dev/guide/components/styling',
       }),
     ],
-    run: (ctx) => [
-      ...ruleClientSecret(ctx),
-      ...ruleInnerHtml(ctx),
-      ...ruleTargetBlank(ctx),
-      ...ruleImgAlt(ctx),
-      ...ruleClickWithoutKeyboard(ctx),
-      ...rulePositiveTabindex(ctx),
-      ...ruleControlMissingLabel(ctx),
-      ...ruleNgDeep(ctx),
-    ],
+    run: (ctx) => [...ruleInnerHtml(ctx), ...ruleTargetBlank(ctx), ...ruleNgDeep(ctx)],
   }),
 ]);
 

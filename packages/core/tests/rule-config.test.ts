@@ -12,7 +12,12 @@ describe('resolveRuleSeverity', () => {
 
   it('promotes correctness warnings to errors by default', () => {
     expect(
-      resolveRuleSeverity('angular-doctor/ng-model-name', 'warning', undefined, 'correctness'),
+      resolveRuleSeverity(
+        'angular-doctor/effect-writes-state',
+        'warning',
+        undefined,
+        'correctness',
+      ),
     ).toBe('error');
     expect(
       resolveRuleSeverity(
@@ -43,5 +48,37 @@ describe('resolveRuleSeverity', () => {
         'correctness',
       ),
     ).toBe('info');
+  });
+
+  it('ignores unknown rule ids left in config', () => {
+    expect(
+      resolveRuleSeverity(
+        'angular-doctor/ng-model-name',
+        'warning',
+        {
+          rules: { 'angular-doctor/removed-rule': 'off' },
+        },
+        'correctness',
+      ),
+    ).toBe('warning');
+  });
+
+  it('keeps security-bypass and ng-model-name at warning under strict promotion', () => {
+    expect(
+      resolveRuleSeverity('angular-doctor/security-bypass', 'warning', undefined, 'security'),
+    ).toBe('warning');
+    expect(
+      resolveRuleSeverity('angular-doctor/ng-model-name', 'warning', undefined, 'correctness'),
+    ).toBe('warning');
+    expect(
+      resolveRuleSeverity(
+        'angular-doctor/security-bypass',
+        'warning',
+        {
+          rules: { 'angular-doctor/security-bypass': 'error' },
+        },
+        'security',
+      ),
+    ).toBe('error');
   });
 });

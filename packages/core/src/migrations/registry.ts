@@ -119,7 +119,7 @@ export const MIGRATION_ENTRIES: MigrationEntry[] = [
     docsUrl: `${MIGRATIONS_HUB}/cleanup-unused-imports`,
     schematic: 'ng generate @angular/core:cleanup-unused-imports',
     minAngularMajor: 19,
-    ruleIds: ['angular-doctor/cleanup-unused-imports-hint'],
+    ruleIds: [],
     reportOrder: 120,
   },
   {

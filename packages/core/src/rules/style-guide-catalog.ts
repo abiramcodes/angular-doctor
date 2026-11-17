@@ -125,14 +125,6 @@ const entries: RuleCatalogEntry[] = [
     defaultSeverity: 'info',
     styleGuideOnly: true,
   },
-  {
-    ruleId: 'angular-doctor/template-complexity',
-    title: 'Template complexity',
-    styleGuideUrl: 'https://angular.dev/guide/templates/expression-syntax',
-    category: 'maintainability',
-    defaultSeverity: 'info',
-    styleGuideOnly: true,
-  },
 ];
 
 const byRuleId = new Map(entries.map((e) => [e.ruleId, e]));

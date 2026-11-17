@@ -31,39 +31,4 @@ export function ruleGenericEventHandler(ctx: RuleContext): Diagnostic[] {
   return findings;
 }
 
-export function ruleTemplateComplexity(ctx: RuleContext): Diagnostic[] {
-  if (!ctx.file.endsWith('.html') && !ctx.content.includes('template:')) {
-    return [];
-  }
-  const lines = ctx.content.split('\n');
-  const findings = [];
-  let i = 0;
-  for (let lineNo = 0; lineNo < lines.length; lineNo++) {
-    const line = lines[lineNo]!;
-    const complexity =
-      (line.match(/\?\s*[^:]+:/g) ?? []).length +
-      (line.match(/&&|\|\|/g) ?? []).length +
-      (line.match(/\.\w+\(/g) ?? []).length;
-    if (complexity < 4) {
-      continue;
-    }
-    findings.push(
-      diag(
-        {
-          ruleId: 'angular-doctor/template-complexity',
-          severity: 'info',
-          category: 'maintainability',
-          message: 'Template expression may be too complex for inline logic.',
-          file: ctx.file,
-          line: lineNo + 1,
-          column: 1,
-          suggestion: 'Move logic into the class with computed() or a small method.',
-        },
-        i++,
-      ),
-    );
-  }
-  return findings;
-}
-
-export const TEMPLATE_STYLE_RULES = [ruleGenericEventHandler, ruleTemplateComplexity] as const;
+export const TEMPLATE_STYLE_RULES = [ruleGenericEventHandler] as const;

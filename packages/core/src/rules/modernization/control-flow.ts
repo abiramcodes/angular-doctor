@@ -33,7 +33,7 @@ export function ruleMissingForTrack(ctx: RuleContext): Diagnostic[] {
   let i = 0;
   while ((match = re.exec(ctx.content)) !== null) {
     const start = match.index;
-    const headerEnd = ctx.content.indexOf(') {', start);
+    const headerEnd = matchingParen(ctx.content, ctx.content.indexOf('(', start));
     if (headerEnd === -1) {
       continue;
     }
@@ -59,4 +59,22 @@ export function ruleMissingForTrack(ctx: RuleContext): Diagnostic[] {
     }
   }
   return findings;
+}
+
+function matchingParen(content: string, open: number): number {
+  if (open < 0) {
+    return -1;
+  }
+  let depth = 0;
+  for (let i = open; i < content.length; i++) {
+    if (content[i] === '(') {
+      depth += 1;
+    } else if (content[i] === ')') {
+      depth -= 1;
+      if (depth === 0) {
+        return i;
+      }
+    }
+  }
+  return -1;
 }

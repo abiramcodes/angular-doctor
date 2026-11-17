@@ -1,4 +1,5 @@
 import { diag, lineFromIndex, type RuleContext } from '../diag-helpers.js';
+import { maskCommentsAndStrings } from '../preferences/parse.js';
 import { escapeRegExp } from '../match.js';
 import type { Diagnostic } from '../../types.js';
 
@@ -21,7 +22,7 @@ const LIFECYCLE_INTERFACE: Record<string, string> = {
 };
 
 const SIGNAL_APIS =
-  /\b(userId|title|\w+)\s*=\s*(input|model|output|viewChild|contentChild|viewChildren|contentChildren)\s*\(/;
+  /\b(\w+)\s*=\s*(input|model|output|viewChild|contentChild|viewChildren|contentChildren)\s*(?:<[^>]+>)?\s*\(/;
 
 export function rulePreferReadonlySignals(ctx: RuleContext): Diagnostic[] {
   if (!ctx.file.endsWith('.ts')) {
@@ -140,11 +141,12 @@ function extractBracedBlock(content: string, openIndex: number): string | null {
   if (content[openIndex] !== '{') {
     return null;
   }
+  const masked = maskCommentsAndStrings(content);
   let depth = 0;
   for (let i = openIndex; i < content.length; i++) {
-    if (content[i] === '{') {
+    if (masked[i] === '{') {
       depth += 1;
-    } else if (content[i] === '}') {
+    } else if (masked[i] === '}') {
       depth -= 1;
       if (depth === 0) {
         return content.slice(openIndex + 1, i);

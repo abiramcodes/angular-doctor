@@ -7,6 +7,13 @@ const STRICT_ERROR_CATEGORIES: ReadonlySet<Category> = new Set([
   'accessibility',
 ]);
 
+// Rules that intentionally stay warnings even under strict promotion:
+// they call for review, not a guaranteed break.
+const STAYS_WARNING: ReadonlySet<string> = new Set([
+  'angular-doctor/security-bypass',
+  'angular-doctor/ng-model-name',
+]);
+
 // The strict promotion is the only mode: correctness, security, and
 // accessibility warnings are errors, and style-guide infos are warnings.
 // A per-rule override in config still wins because it returns earlier.
@@ -15,7 +22,12 @@ function promoteSeverity(
   severity: Severity,
   category: Category | undefined,
 ): Severity {
-  if (severity === 'warning' && category !== undefined && STRICT_ERROR_CATEGORIES.has(category)) {
+  if (
+    severity === 'warning' &&
+    category !== undefined &&
+    STRICT_ERROR_CATEGORIES.has(category) &&
+    !STAYS_WARNING.has(ruleId)
+  ) {
     return 'error';
   }
   if (severity === 'info' && isStyleGuideOnlyRule(ruleId)) {

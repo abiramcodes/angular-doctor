@@ -1,20 +1,5 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import {
-  ruleClickWithoutKeyboard,
-  ruleControlMissingLabel,
-  ruleImgAlt,
-  rulePositiveTabindex,
-} from '../src/rules/audit/accessibility-rules.js';
-import { runDeadCodeCheck } from '../src/rules/audit/dead-code-rules.js';
-import {
-  ruleClientSecret,
-  ruleInnerHtml,
-  ruleTargetBlank,
-  runEnvFileCheck,
-} from '../src/rules/audit/security-rules.js';
+import { ruleInnerHtml, ruleTargetBlank } from '../src/rules/audit/security-rules.js';
 import type { RuleContext } from '../src/rules/diag-helpers.js';
 import { explainRule, listRuleCards } from '../src/rules/registry.js';
 import type { ProjectInfo } from '../src/types.js';
@@ -32,44 +17,13 @@ function ctx(file: string, content: string, files?: string[]): RuleContext {
 }
 
 describe('security rules', () => {
-  it('flags a client secret and ignores environment reads and placeholders', () => {
-    const found = ruleClientSecret(
-      ctx(
-        '/tmp/src/app/keys.ts',
-        [
-          "const apiKey = 'not-a-real-secret';",
-          'const fromEnv = process.env.API_KEY;',
-          "const placeholder = 'changeme-value';",
-          "const published = 'sk_live_51Habc123456789';",
-        ].join('\n'),
-      ),
-    );
-    expect(found.map((item) => item.line)).toEqual([1, 4]);
-    expect(found.every((item) => item.ruleId === 'angular-doctor/client-secret')).toBe(true);
-    expect(found.every((item) => item.severity === 'error')).toBe(true);
-  });
-
-  it('flags a real env file and ignores the example', () => {
-    const root = join(tmpdir(), `ng-doctor-env-${Date.now()}`);
-    mkdirSync(root, { recursive: true });
-    writeFileSync(join(root, '.env'), 'API=1\n');
-    writeFileSync(join(root, '.env.example'), 'API=\n');
-    const found = runEnvFileCheck({
-      ...ctx(root, ''),
-      project: { ...project, root, workspaceRoots: [root] },
-    });
-    expect(found).toHaveLength(1);
-    expect(found[0]?.file.endsWith('.env')).toBe(true);
-    expect(found[0]?.file.endsWith('.example')).toBe(false);
-    expect(found[0]?.severity).toBe('error');
-  });
-
-  it('flags innerHTML bindings and assignments', () => {
+  it('flags a direct innerHTML assignment and ignores a sanitized binding', () => {
     const found = ruleInnerHtml(
       ctx('/tmp/src/app/view.ts', '<div [innerHTML]="html"></div>\nel.innerHTML = value;\n'),
     );
-    expect(found).toHaveLength(2);
+    expect(found).toHaveLength(1);
     expect(found[0]?.ruleId).toBe('angular-doctor/inner-html');
+    expect(found[0]?.line).toBe(2);
   });
 
   it('flags target blank only when rel is missing', () => {
@@ -88,103 +42,87 @@ describe('security rules', () => {
   });
 });
 
-describe('accessibility rules', () => {
-  it('flags an image without alt text', () => {
-    const file = '/tmp/src/app/view.html';
-    const content = '<img src="a.png" />\n<img alt="" />\n<img aria-hidden="true" />';
-    expect(ruleImgAlt(ctx(file, content))).toHaveLength(1);
+describe('inner-html', () => {
+  it('ignores a sanitized [innerHTML] binding with no security bypass', () => {
+    const content = '<article [innerHTML]="renderedMarkdown"></article>';
+    expect(ruleInnerHtml(ctx('/tmp/src/app/post.html', content))).toHaveLength(0);
   });
 
-  it('flags click handlers on non-interactive elements', () => {
+  it('flags [innerHTML] when the file bypasses the sanitizer', () => {
     const content = [
-      '<div (click)="save()">Save</div>',
-      '<div (click)="save()" (keydown.enter)="save()">Save</div>',
-      '<button (click)="save()">Save</button>',
+      `const html = this.sanitizer.bypassSecurityTrustHtml(raw);`,
+      `<article [innerHTML]="html"></article>`,
     ].join('\n');
-    expect(ruleClickWithoutKeyboard(ctx('/tmp/view.html', content))).toHaveLength(1);
+    expect(ruleInnerHtml(ctx('/tmp/src/app/post.ts', content))).toHaveLength(1);
   });
 
-  it('flags a positive tabindex', () => {
-    const content =
-      '<div tabindex="2"></div>\n<span tabindex="0"></span>\n<button [tabindex]="-1">';
-    const found = rulePositiveTabindex(ctx('/tmp/view.html', content));
-    expect(found).toHaveLength(1);
-    expect(found[0]?.message).toContain('2');
+  it('flags a direct innerHTML assignment', () => {
+    expect(ruleInnerHtml(ctx('/tmp/src/app/view.ts', 'el.innerHTML = value;'))).toHaveLength(1);
   });
 
-  it('flags a control with no label', () => {
+  it('flags an innerHTML += append', () => {
+    expect(ruleInnerHtml(ctx('/tmp/src/app/view.ts', 'el.innerHTML += chunk;'))).toHaveLength(1);
+  });
+
+  it('ignores [innerHTML] when the bypass is only mentioned in a comment', () => {
     const content = [
-      '<input />',
-      '<label for="name">Name</label>',
-      '<input id="name" />',
-      '<input aria-label="Email" />',
-      '<input type="hidden" />',
+      '// Never use bypassSecurityTrustHtml here.',
+      '@Component({ template: \'<article [innerHTML]="html"></article>\' })',
+      'export class Post {}',
     ].join('\n');
-    const found = ruleControlMissingLabel(ctx('/tmp/view.html', content));
-    expect(found).toHaveLength(1);
-    expect(found[0]?.line).toBe(1);
+    expect(ruleInnerHtml(ctx('/tmp/src/app/post.ts', content))).toHaveLength(0);
   });
 });
 
-describe('dead code', () => {
-  it('reports an unused import and skips an export that a spec imports', () => {
-    const root = join(tmpdir(), `ng-doctor-dead-${Date.now()}`);
-    const src = join(root, 'src', 'app');
-    mkdirSync(src, { recursive: true });
-    const widget = join(src, 'widget.ts');
-    const orphan = join(src, 'orphan.ts');
-    const entry = join(src, 'main.ts');
-    writeFileSync(widget, "import { Unused } from './missing';\nexport class Widget {}\n");
-    writeFileSync(orphan, 'export class Orphan {}\n');
-    writeFileSync(entry, 'export class Main {}\n');
-    writeFileSync(join(src, 'widget.spec.ts'), "import { Widget } from './widget';\n");
-    const found = runDeadCodeCheck({
-      project: { ...project, root, workspaceRoots: [root] },
-      file: root,
-      content: '',
-      files: [widget, orphan, entry],
-    });
-    const imports = found.filter(
-      (item) => item.ruleId === 'angular-doctor/cleanup-unused-imports-hint',
-    );
-    const exports = found.filter((item) => item.ruleId === 'angular-doctor/unused-export');
-    expect(imports.map((item) => item.message)).toEqual(['Import Unused is never used.']);
-    expect(imports[0]?.severity).toBe('info');
-    expect(exports.map((item) => item.file)).toEqual([orphan]);
-    expect(exports[0]?.severity).toBe('warning');
+describe('target-blank', () => {
+  it('ignores a bound rel attribute', () => {
+    const html = `<a target="_blank" [rel]="relValue" href="https://angular.dev">Docs</a>`;
+    expect(ruleTargetBlank(ctx('/tmp/src/app/view.html', html))).toHaveLength(0);
   });
 
-  it('ignores an import written as a template string', () => {
-    const root = join(tmpdir(), `ng-doctor-dead-template-${Date.now()}`);
-    const src = join(root, 'src');
-    mkdirSync(src, { recursive: true });
-    const emit = join(src, 'emit.ts');
-    writeFileSync(
-      emit,
-      "export const build = ([pkg, names]) => `import { ${names.join(', ')} } from '${pkg}';`;\n",
+  it('still flags target blank with no rel at all', () => {
+    const html = '<a target="_blank" href="https://angular.dev">Docs</a>';
+    expect(ruleTargetBlank(ctx('/tmp/src/app/view.html', html))[0]?.ruleId).toBe(
+      'angular-doctor/target-blank',
     );
-    const found = runDeadCodeCheck({
-      project: { ...project, root, workspaceRoots: [root] },
-      file: root,
-      content: '',
-      files: [emit],
-    });
-    expect(found.some((item) => item.message.includes('join'))).toBe(false);
   });
 });
 
 describe('rule catalog', () => {
   it('explains a known rule and rejects an unknown id', () => {
-    const rule = explainRule('angular-doctor/client-secret');
+    const rule = explainRule('angular-doctor/inner-html');
     expect(rule.category).toBe('security');
-    expect(rule.defaultSeverity).toBe('error');
-    expect(rule.summary).toContain('secret');
+    expect(rule.summary).toContain('innerHTML');
     expect(() => explainRule('angular-doctor/not-a-rule')).toThrow(/Unknown rule/);
   });
 
   it('filters the catalog by category', () => {
     const security = listRuleCards('security').map((rule) => rule.id);
-    expect(security).toContain('angular-doctor/client-secret');
-    expect(security).not.toContain('angular-doctor/img-alt');
+    expect(security).toContain('angular-doctor/inner-html');
+    expect(security).toContain('angular-doctor/security-bypass');
+    expect(security).not.toContain('angular-doctor/prefer-control-flow');
+  });
+
+  it('no longer lists the rules removed in 0.3.0', () => {
+    const ids = listRuleCards().map((rule) => rule.id);
+    for (const removed of [
+      'angular-doctor/client-secret',
+      'angular-doctor/env-file',
+      'angular-doctor/img-alt',
+      'angular-doctor/click-without-keyboard',
+      'angular-doctor/positive-tabindex',
+      'angular-doctor/control-missing-label',
+      'angular-doctor/cleanup-unused-imports-hint',
+      'angular-doctor/unused-export',
+      'angular-doctor/complex-component',
+      'angular-doctor/repeated-template',
+      'angular-doctor/repeated-component-logic',
+      'angular-doctor/template-complexity',
+      'angular-doctor/template-arrow-not-called',
+    ]) {
+      expect(ids).not.toContain(removed);
+    }
+    expect(ids).toContain('angular-doctor/lifecycle-hook-complexity');
+    expect(ids).toHaveLength(68);
   });
 });

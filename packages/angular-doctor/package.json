@@ -1,6 +1,6 @@
 {
   "name": "@abiramcodes/angular-doctor",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Deterministic health scans for Angular codebases and coding agents.",
   "keywords": [
     "accessibility",
@@ -42,7 +42,10 @@
     "prepublishOnly": "pnpm -w --filter @angular-doctor/core build && pnpm run build"
   },
   "dependencies": {
+    "@angular-eslint/eslint-plugin-template": "^22.6.0",
+    "@angular-eslint/template-parser": "^22.6.0",
     "commander": "^15.1.0",
+    "eslint": "^10.14.0",
     "fast-glob": "^3.3.3",
     "oxlint": "^1.93.0",
     "picocolors": "^1.1.1",

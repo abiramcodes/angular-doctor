@@ -85,7 +85,7 @@ export interface DiagnosticCategory {
 export const diagnostics: DiagnosticCategory[] = [
   {
     category: 'correctness',
-    count: 14,
+    count: 13,
     body: 'Does the code do what it says? Control flow, subscriptions, strict mode, templates.',
     examples: ['prefer-take-until-destroyed', 'typescript-strict', 'strict-templates'],
   },
@@ -97,27 +97,27 @@ export const diagnostics: DiagnosticCategory[] = [
   },
   {
     category: 'maintainability',
-    count: 34,
+    count: 30,
     body: 'The style guide, enforced. Naming, file sets, host bindings, lifecycle, signals.',
     examples: ['one-concept-per-file', 'prefer-host-bindings', 'prefer-signal-forms'],
   },
   {
     category: 'security',
-    count: 5,
-    body: 'Secrets and injection. Client code, env files, innerHTML, target="_blank".',
-    examples: ['client-secret', 'env-file', 'inner-html'],
+    count: 3,
+    body: 'Angular injection paths. Sanitizer bypasses, unsanitized innerHTML, target="_blank". Secret scanning belongs to a dedicated scanner.',
+    examples: ['security-bypass', 'inner-html', 'target-blank'],
   },
   {
     category: 'accessibility',
-    count: 4,
-    body: 'Keyboard and screen reader. Alt text, labels, focus order, click handlers.',
-    examples: ['img-alt', 'control-missing-label', 'click-without-keyboard'],
+    count: 6,
+    body: 'Keyboard and screen reader, checked by the bundled Angular template linter. Alt text, labels, focus order, click handlers — bound attributes understood.',
+    examples: ['template-eslint/alt-text', 'template-eslint/label-has-associated-control', 'template-eslint/click-events-have-key-events'],
   },
   {
     category: 'hygiene',
-    count: 10,
-    body: 'Dead weight and drift. Unused imports and exports, file naming, project layout.',
-    examples: ['unused-export', 'file-hyphen-case', 'project-layout'],
+    count: 8,
+    body: 'Drift in the small. File naming, spec pairing, project layout. Unused code is left to Oxlint and knip.',
+    examples: ['missing-spec-file', 'file-hyphen-case', 'project-layout'],
   },
 ];
 
@@ -175,7 +175,7 @@ export const ciCopy =
 export const whatItIs = [
   'Angular Doctor is a command-line health scan for an Angular CLI or Nx workspace. Run it in the project and it reads the source, prints a score from 0 to 100, and lists what it found.',
   'An error costs 1.5 points in each file where that rule fires. The same error twice in one file still costs 1.5. A warning costs 0.75 once per rule, even when it appears in many files. A note costs nothing. The score starts at 100 and does not go below 0.',
-  'TypeScript goes through Oxlint. Built-in rules cover Angular habits those linters do not: inject(), host bindings, control flow, secrets in client code, accessibility gaps, and similar checks. A curated set of Angular template rules runs over standalone and inline templates. The scan sits next to the lint setup you already run. It does not replace a build or your tests.',
+  'TypeScript goes through Oxlint. Built-in rules cover Angular habits those linters do not: inject(), host bindings, control flow, sanitizer use, and similar checks. A curated set of Angular template rules — including the accessibility rules — runs over standalone and inline templates. Generic duplication and complexity are left to SonarQube. The scan sits next to the lint setup you already run. It does not replace a build or your tests.',
 ];
 
 export const steps = [
@@ -290,7 +290,7 @@ export const commandGroups = [
       },
       {
         command:
-          'npx @abiramcodes/angular-doctor@latest rules explain angular-doctor/client-secret',
+          'npx @abiramcodes/angular-doctor@latest rules explain angular-doctor/inner-html',
         detail: 'Print one rule. Use the full rule id.',
       },
       {

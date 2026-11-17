@@ -36,7 +36,6 @@ describe('builtin pipeline', () => {
       'angular-doctor/lifecycle-hook-complexity',
       'angular-doctor/member-order',
       'angular-doctor/generic-event-handler',
-      'angular-doctor/template-complexity',
     ];
     for (const id of catalogIds) {
       expect(getCatalogEntry(id)?.ruleId).toBe(id);

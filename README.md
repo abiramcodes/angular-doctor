@@ -11,7 +11,7 @@ npx @abiramcodes/angular-doctor@latest --html
 npx @abiramcodes/angular-doctor@latest --category security
 npx @abiramcodes/angular-doctor@latest rules list
 npx @abiramcodes/angular-doctor@latest --colors pastel
-npx @abiramcodes/angular-doctor@latest rules explain angular-doctor/client-secret
+npx @abiramcodes/angular-doctor@latest rules explain angular-doctor/inner-html
 npx @abiramcodes/angular-doctor@latest install
 ```
 
@@ -106,7 +106,7 @@ pnpm docs:build
 
 When violations exist, **`angular-doctor-report.md`** is written for agents, with findings grouped once per rule. `--html` (or `"html"` in `reportFormats`) also writes a self-contained **`angular-doctor-report.html`** with category tabs. Clean scans print only the score.
 
-Severities are strict by default: correctness, security, and accessibility warnings count as errors, and style-guide infos count as warnings. There is no level switch; soften or silence a rule per rule under `rules` (for example `"angular-doctor/ng-model-name": "info"` or `"off"`).
+Severities are strict by default: correctness, security, and accessibility warnings count as errors, and style-guide infos count as warnings. Two rules stay warnings by design because they call for review rather than a guaranteed break: `angular-doctor/security-bypass` and `angular-doctor/ng-model-name`. There is no level switch; soften or silence a rule per rule under `rules` (for example `"angular-doctor/ng-model-name": "info"` or `"off"`).
 
 An error costs 1.5 points in each file where that rule fires. Repeating it in the same file does not cost more. A warning costs 0.75 once per rule, no matter how many files repeat it. Info findings do not lower the score. The score starts at 100 and does not go below 0. `--category` filters the findings list. The score stays the full scan. `rules list` and `rules explain` show the built-in rules grouped by category.
 
@@ -151,7 +151,6 @@ Built-in rules map to the [Angular coding style guide](https://angular.dev/style
 | `angular-doctor/lifecycle-hook-complexity`   | Small lifecycle hooks                                                                                                                            |
 | `angular-doctor/member-order`                | DI/inputs before methods                                                                                                                         |
 | `angular-doctor/generic-event-handler`       | Action-named handlers                                                                                                                            |
-| `angular-doctor/template-complexity`         | Prefer `computed()` for heavy template logic                                                                                                     |
 
 Configure per rule via `angular-doctor.config.json` → `rules`.
 
@@ -186,11 +185,11 @@ Static checks for [NgOptimizedImage](https://angular.dev/guide/image-optimizatio
 
 ## Skill preference rules
 
-Warnings are syntax the Angular skill treats as the wrong tool. Info findings are preferences that existing code can still justify. Complex-component and repeated-template checks compare text fingerprints. They do not parse the Angular template AST.
+Warnings are syntax the Angular skill treats as the wrong tool. Info findings are preferences that existing code can still justify.
 
 | Rule ID                                           | Severity | What it checks                                                                                                |
 | ------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------- |
-| `angular-doctor/effect-writes-state`              | error    | `effect()` calls `.set()` or `.update()`                                                                      |
+| `angular-doctor/effect-writes-state`              | error    | `effect()` calls `.set()` or `.update()` on a signal declared in the same file. Service-owned signals and DOM side effects do not count |
 | `angular-doctor/impure-pipe`                      | error    | `@Pipe({ pure: false })`                                                                                      |
 | `angular-doctor/pipe-name-hyphen`                 | warning  | Pipe `name` contains a hyphen                                                                                 |
 | `angular-doctor/inject-pipe`                      | warning  | A pipe class is injected                                                                                      |
@@ -198,40 +197,38 @@ Warnings are syntax the Angular skill treats as the wrong tool. Info findings ar
 | `angular-doctor/prefer-functional-interceptor`    | warning  | `HTTP_INTERCEPTORS` or `implements HttpInterceptor`                                                           |
 | `angular-doctor/deprecated-incremental-hydration` | warning  | `withIncrementalHydration()` on Angular 22+                                                                   |
 | `angular-doctor/form-field-owned-attrs`           | error    | `[disabled]`, `[readonly]`, or `[value]` on `[formField]`                                                     |
-| `angular-doctor/ng-model-name`                    | error    | `[(ngModel)]` without `name`                                                                                  |
+| `angular-doctor/ng-model-name`                    | warning  | `[(ngModel)]` inside a `<form>` without `name` and without standalone `ngModelOptions`                         |
 | `angular-doctor/ng-content-in-control-flow`       | error    | `<ng-content>` inside `@if`, `@for`, `@switch`, or `<ng-template>`                                            |
-| `angular-doctor/template-arrow-not-called`        | error    | Event binding is an arrow function or uses a block body                                                       |
 | `angular-doctor/tailwind-v3-syntax`               | warning  | Tailwind v3 `@tailwind` or `tailwind.config` when Tailwind 4 is installed                                     |
 | `angular-doctor/prefer-signal-forms`              | info     | `FormControl`, `FormGroup`, `FormArray`, `FormBuilder`, `NgForm`, or `FormsModule`                            |
 | `angular-doctor/prefer-signal-query`              | warning  | `@ViewChild`, `@ViewChildren`, `@ContentChild`, or `@ContentChildren` instead of signal queries (Angular 19+) |
 | `angular-doctor/output-name`                      | info     | Output named `on…` or `click`, `submit`, `change`, `input`, `focus`                                           |
 | `angular-doctor/input-dom-name`                   | info     | Input named `id`, `title`, `role`, `tabIndex`, or `lang`                                                      |
 | `angular-doctor/prefer-http-resource`             | info     | `http.get()` in a component or directive                                                                      |
-| `angular-doctor/prefer-document-token`            | info     | Global `document.` in a component or directive; a warning when SSR/prerender is configured in `angular.json`  |
+| `angular-doctor/prefer-document-token`            | info     | Unresolved global `document.` in a component or directive; a local binding such as `inject(DOCUMENT)` does not count. A warning when SSR/prerender is configured in `angular.json` |
 | `angular-doctor/inject-async-target`              | error    | `injectAsync()` loads a class that is not auto-provided (`@Service` / `providedIn: 'root'`)                   |
 | `angular-doctor/prefer-is-dev-mode`               | info     | `environment.production`                                                                                      |
 | `angular-doctor/query-in-lifecycle`               | info     | Signal query read in `ngAfterViewInit` or `ngAfterContentInit`                                                |
 | `angular-doctor/host-via-element-ref`             | info     | `nativeElement` sets `classList`, `style`, or `setAttribute`                                                  |
-| `angular-doctor/complex-component`                | info     | Template over 80 lines, more than 12 methods, or more than 8 control-flow blocks                              |
-| `angular-doctor/repeated-template`                | info     | The same 6-tag or 15-line template block appears in another component                                         |
-| `angular-doctor/repeated-component-logic`         | info     | A method body of at least 8 lines matches a method in another component                                       |
 
-## Security, accessibility, and dead code
+## Security
 
-Static text checks. They do not call a secret scanner or a template parser.
+Only Angular-specific security is checked here. Secret scanning and generic dead-code detection belong to dedicated tools (a secret scanner in CI, knip), not an Angular health check. Accessibility runs through the bundled template ESLint rules below; unused imports and variables come from Oxlint.
 
 | Rule ID                                      | Severity | What it checks                                                                                        |
 | -------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
-| `angular-doctor/client-secret`               | error    | A string literal in client code looks like a secret                                                   |
-| `angular-doctor/env-file`                    | error    | `.env`, `.env.local`, `.env.development`, `.env.production`, or `.env.*.local` is in the project tree |
-| `angular-doctor/inner-html`                  | error    | `[innerHTML]`, `bind-innerHTML`, or `.innerHTML =`                                                    |
-| `angular-doctor/target-blank`                | error    | `target="_blank"` without `rel="noopener"` or `rel="noreferrer"`                                      |
-| `angular-doctor/img-alt`                     | error    | `<img>` has neither `alt` nor `aria-hidden="true"`                                                    |
-| `angular-doctor/click-without-keyboard`      | error    | `(click)` on `div`, `span`, `section`, or `article` without a key handler                             |
-| `angular-doctor/positive-tabindex`           | error    | `tabindex` greater than 0                                                                             |
-| `angular-doctor/control-missing-label`       | error    | `input`, `textarea`, or `select` has no label                                                         |
-| `angular-doctor/cleanup-unused-imports-hint` | info     | A named import is never used again in the file                                                        |
-| `angular-doctor/unused-export`               | warning  | An exported class, function, or const is never used. Specs count as use. Entry files are skipped      |
+| `angular-doctor/inner-html`                  | error    | A direct `.innerHTML =` assignment, or `[innerHTML]` / `bind-innerHTML` in a file that calls `bypassSecurityTrust*`. A plain `[innerHTML]` binding is sanitized by Angular and does not count |
+| `angular-doctor/target-blank`                | error    | `target="_blank"` without `rel="noopener"`, `rel="noreferrer"`, or a bound `[rel]`                     |
+| `angular-doctor/security-bypass`             | warning  | A `DomSanitizer` `bypassSecurityTrust*` call                                                          |
+
+## What Angular Doctor does not check
+
+Angular Doctor checks Angular semantics: control flow, signals, DI, forms, sanitizer use, naming, and project layout. Generic code-quality metrics are delegated to tools that measure them properly:
+
+- **Duplication and complexity:** SonarQube / SonarQube Cloud compute duplicated lines and blocks plus cognitive and cyclomatic complexity, with quality gates on top. Earlier versions approximated these with `complex-component`, `repeated-template`, `repeated-component-logic`, and `template-complexity`; those rules were removed in 0.3.0. In enterprise setups that already run SonarQube Cloud, its MCP server gives agents issue search, quality-gate status, and component measures alongside this scanner. `angular-doctor/lifecycle-hook-complexity` is kept because it is Angular-specific (lifecycle hooks should delegate), not a generic complexity metric.
+- **Accessibility attributes:** the bundled `@angular-eslint` template rules (`template-eslint/alt-text`, `template-eslint/click-events-have-key-events`, `template-eslint/no-positive-tabindex`, `template-eslint/label-has-associated-control`) understand bound attributes such as `[alt]` and controls wrapped in `<label>` elements.
+- **Unused code:** Oxlint (`no-unused-vars`) runs in every scan. Project-wide unused exports belong to knip or Sonar.
+- **Secrets:** use a dedicated secret scanner (for example gitleaks) in CI. Public client identifiers such as Firebase web API keys are not secrets.
 
 ## Official migrations
 

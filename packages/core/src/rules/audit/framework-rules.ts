@@ -194,10 +194,24 @@ function resolveTsConfig(
   if (!parsed) {
     return null;
   }
-  const base =
+  const extendSpecs =
     typeof parsed.extends === 'string'
-      ? resolveTsConfig(resolveExtends(absolute, parsed.extends), seen)
-      : null;
+      ? [parsed.extends]
+      : Array.isArray(parsed.extends)
+        ? parsed.extends.filter((item): item is string => typeof item === 'string')
+        : [];
+  let baseStrict: boolean | undefined;
+  let baseStrictTemplates: boolean | undefined;
+  for (const spec of extendSpecs) {
+    const resolvedBase = resolveTsConfig(resolveExtends(absolute, spec), seen);
+    if (resolvedBase?.strict !== undefined) {
+      baseStrict = resolvedBase.strict;
+    }
+    if (resolvedBase?.strictTemplates !== undefined) {
+      baseStrictTemplates = resolvedBase.strictTemplates;
+    }
+  }
+  const base = { strict: baseStrict, strictTemplates: baseStrictTemplates };
   const compilerOptions = asRecord(parsed.compilerOptions);
   const angularCompilerOptions = asRecord(parsed.angularCompilerOptions);
   return {

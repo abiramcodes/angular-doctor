@@ -1,13 +1,18 @@
 import type { Category, Diagnostic, Severity } from '../types.js';
 
 // Curated subset of @angular-eslint template rules the runner enables.
-// Deliberately excludes rules the built-in scanner already covers
-// (img-alt, click/keyboard handlers, ngClass/ngStyle bindings, track)
-// and no-call-expression, which needs class context the linter cannot see
-// (covered instead by angular-doctor/method-in-template).
+// The accessibility entries (alt-text, click-events-have-key-events,
+// no-positive-tabindex, label-has-associated-control) replaced the
+// former regex-based angular-doctor accessibility rules in 0.3.0: the
+// AST versions understand bound attributes and wrapping <label> elements.
+// ngClass/ngStyle bindings and track stay with the built-in scanner, as
+// does no-call-expression (needs class context; see getter-in-template).
 const TEMPLATE_RULES: Record<string, { severity: Severity; category: Category }> = {
   'button-has-type': { severity: 'warning', category: 'accessibility' },
   'label-has-associated-control': { severity: 'warning', category: 'accessibility' },
+  'alt-text': { severity: 'warning', category: 'accessibility' },
+  'click-events-have-key-events': { severity: 'warning', category: 'accessibility' },
+  'no-positive-tabindex': { severity: 'warning', category: 'accessibility' },
   'no-any': { severity: 'warning', category: 'correctness' },
   eqeqeq: { severity: 'warning', category: 'correctness' },
   'no-autofocus': { severity: 'warning', category: 'accessibility' },
@@ -71,10 +76,15 @@ export async function runTemplateEslint(
     } & Record<string, unknown>;
     // The parser package is CJS; its ESM namespace wraps the real parser.
     parser = parserModule.default ?? parserModule;
-  } catch {
-    // Dependencies are always present in this repo; a future consumer build
-    // that drops them stays silent instead of failing the scan.
-    return { diagnostics: [], skipped: false };
+  } catch (error) {
+    // Never present a missing template linter as a clean template result:
+    // the scan summary names the skipped check instead.
+    const detail = error instanceof Error ? error.message : String(error);
+    return {
+      diagnostics: [],
+      skipped: true,
+      skipReason: `Template ESLint unavailable: ${detail}`,
+    };
   }
 
   const linter = new Linter();

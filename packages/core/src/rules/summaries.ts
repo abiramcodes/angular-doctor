@@ -26,8 +26,6 @@ export const RULE_SUMMARIES: Record<string, string> = {
   'angular-doctor/member-order': 'Injected fields and inputs should come before methods.',
   'angular-doctor/generic-event-handler':
     'An event handler is named handleX instead of after the action it performs.',
-  'angular-doctor/template-complexity':
-    'A template expression is complex enough to move into computed().',
   'angular-doctor/prefer-control-flow':
     'Legacy *ngIf, *ngFor, or *ngSwitch instead of built-in @if/@for/@switch.',
   'angular-doctor/missing-for-track': 'An @for block has no track expression.',
@@ -67,11 +65,8 @@ export const RULE_SUMMARIES: Record<string, string> = {
   'angular-doctor/deprecated-animations':
     'package.json still lists the legacy @angular/animations package.',
   'angular-doctor/tailwind-v3-syntax': 'Tailwind v3 syntax remains while Tailwind 4 is installed.',
-  'angular-doctor/complex-component':
-    'A component exceeds template, method, or control-flow size limits.',
-  'angular-doctor/repeated-template': 'The same template block appears in another component.',
-  'angular-doctor/repeated-component-logic': 'A method body matches a method in another component.',
-  'angular-doctor/effect-writes-state': 'effect() writes state with set() or update().',
+  'angular-doctor/effect-writes-state':
+    'effect() writes a signal declared in the same file with set() or update().',
   'angular-doctor/impure-pipe': 'A pipe declares pure: false and runs on every check.',
   'angular-doctor/pipe-name-hyphen': 'A pipe name contains a hyphen instead of camelCase.',
   'angular-doctor/inject-pipe': 'A pipe class is injected like a service.',
@@ -82,11 +77,10 @@ export const RULE_SUMMARIES: Record<string, string> = {
     'withIncrementalHydration() used on Angular 22+.',
   'angular-doctor/form-field-owned-attrs':
     'A [formField] element also binds an attribute the field owns.',
-  'angular-doctor/ng-model-name': '[(ngModel)] without a name in a form.',
+  'angular-doctor/ng-model-name':
+    '[(ngModel)] inside a <form> without a name and without standalone options.',
   'angular-doctor/ng-content-in-control-flow':
     '<ng-content> sits inside control flow or an ng-template.',
-  'angular-doctor/template-arrow-not-called':
-    'A template event binding is an arrow function that never runs as a call.',
   'angular-doctor/prefer-signal-forms':
     'Reactive or template-driven forms where Signal Forms apply.',
   'angular-doctor/output-name': 'An output is named on… or after a DOM event like click.',
@@ -98,7 +92,7 @@ export const RULE_SUMMARIES: Record<string, string> = {
   'angular-doctor/defer-missing-trigger':
     '@defer has no on/when/prefetch trigger, so the split buys nothing.',
   'angular-doctor/prefer-document-token':
-    'The global document is used instead of injecting DOCUMENT.',
+    'The unresolved global document is used instead of injecting DOCUMENT. A local binding named document does not count.',
   'angular-doctor/prefer-is-dev-mode': 'environment.production used instead of isDevMode().',
   'angular-doctor/query-in-lifecycle': 'A signal query is read in AfterViewInit/AfterContentInit.',
   'angular-doctor/host-via-element-ref':

@@ -1,14 +1,16 @@
 import type { Diagnostic } from '../../types.js';
 import { diag, lineFromIndex, majorVersion, type RuleContext } from '../diag-helpers.js';
+import { maskCommentsAndStrings } from '../preferences/parse.js';
 
 export function ruleRouterTestingModule(ctx: RuleContext): Diagnostic[] {
   if (!ctx.file.endsWith('.spec.ts')) {
     return [];
   }
-  if (!/RouterTestingModule/.test(ctx.content)) {
+  const source = maskCommentsAndStrings(ctx.content);
+  if (!/RouterTestingModule/.test(source)) {
     return [];
   }
-  const index = ctx.content.indexOf('RouterTestingModule');
+  const index = source.indexOf('RouterTestingModule');
   const pos = lineFromIndex(ctx.content, index);
   return [
     diag({
@@ -29,7 +31,10 @@ export function rulePreferServiceDecorator(ctx: RuleContext): Diagnostic[] {
   if (majorVersion(ctx.project) < 22 || !ctx.file.endsWith('.ts')) {
     return [];
   }
-  if (!/@Injectable\s*\(/.test(ctx.content)) {
+  // @Service only replaces root-provided singletons. Module-scoped,
+  // element-scoped, and multi providers must keep @Injectable.
+  const rootMatch = /@Injectable\s*\(\s*\{[^}]*providedIn\s*:\s*['"]root['"]/.exec(ctx.content);
+  if (!rootMatch || maskCommentsAndStrings(ctx.content)[rootMatch.index] !== '@') {
     return [];
   }
   const index = ctx.content.indexOf('@Injectable');
@@ -62,8 +67,13 @@ export function ruleEagerRoute(ctx: RuleContext): Diagnostic[] {
   const findings: Diagnostic[] = [];
   let i = 0;
   while ((match = re.exec(ctx.content)) !== null) {
-    const before = ctx.content.slice(Math.max(0, match.index - 80), match.index);
+    const before = ctx.content.slice(Math.max(0, match.index - 200), match.index);
     if (/\bloadComponent\s*:/.test(before) || /\bloadChildren\s*:/.test(before)) {
+      continue;
+    }
+    // The empty-path shell component renders on every navigation, so
+    // eager loading is the right choice for it.
+    if (/\bpath\s*:\s*['"]['"]/.test(before)) {
       continue;
     }
     const pos = lineFromIndex(ctx.content, match.index);
@@ -89,6 +99,7 @@ export function ruleEagerRoute(ctx: RuleContext): Diagnostic[] {
 
 export function ruleBypassSecurity(ctx: RuleContext): Diagnostic[] {
   const findings: Diagnostic[] = [];
+  const masked = maskCommentsAndStrings(ctx.content);
   const patterns = [
     /bypassSecurityTrustHtml/g,
     /bypassSecurityTrustStyle/g,
@@ -101,12 +112,15 @@ export function ruleBypassSecurity(ctx: RuleContext): Diagnostic[] {
     let i = 0;
     const re = new RegExp(pattern.source, 'g');
     while ((match = re.exec(ctx.content)) !== null) {
+      if (masked[match.index] !== 'b') {
+        continue;
+      }
       const pos = lineFromIndex(ctx.content, match.index);
       findings.push(
         diag(
           {
             ruleId: 'angular-doctor/security-bypass',
-            severity: 'error',
+            severity: 'warning',
             category: 'security',
             message: 'DomSanitizer bypass API usage requires strict review.',
             file: ctx.file,

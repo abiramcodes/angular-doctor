@@ -18,6 +18,18 @@ describe('ruleMissingForTrack', () => {
 
   it('flags @for without track', () => {
     const content = `@for (item of items) { <span></span> }`;
+    expect(ruleMissingForTrack({ project, file: 'x.html', content })[0]?.ruleId).toBe(
+      'angular-doctor/missing-for-track',
+    );
+  });
+
+  it('flags @for without track when the brace is on the next line', () => {
+    const content = '@for (item of items)\n{ <span></span> }';
     expect(ruleMissingForTrack({ project, file: 'x.html', content })).toHaveLength(1);
+  });
+
+  it('passes when track calls a function with parentheses', () => {
+    const content = '@for (item of items; track idOf(item)) { <span></span> }';
+    expect(ruleMissingForTrack({ project, file: 'x.html', content })).toHaveLength(0);
   });
 });

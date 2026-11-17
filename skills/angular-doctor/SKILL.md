@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires an Angular CLI or Nx workspace (Angular 15+), Node.js 20.19+, and network access for npx.
 metadata:
   project: angular-doctor
-  version: "0.2.1"
+  version: "0.3.0"
 ---
 
 # Angular Doctor (agent skill)

@@ -3,12 +3,19 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  ruleComponentFileSetMismatch,
   ruleFileHyphenCase,
+  ruleFilenameClassMismatch,
   ruleGenericFilename,
   ruleNamingConventionMix,
 } from '../src/rules/naming/naming-rules.js';
 import { ruleGenericEventHandler } from '../src/rules/templates/template-style-rules.js';
-import { rulePreferReadonlySignals } from '../src/rules/components/component-class-rules.js';
+import {
+  ruleLifecycleHookComplexity,
+  ruleLifecycleInterface,
+  ruleMemberOrder,
+  rulePreferReadonlySignals,
+} from '../src/rules/components/component-class-rules.js';
 import { calculateScore } from '../src/score/calculate-score.js';
 import type { Diagnostic, ProjectInfo } from '../src/types.js';
 import { inferNamingConvention } from '../src/project/infer-naming-convention.js';
@@ -130,5 +137,86 @@ describe('inferNamingConvention', () => {
       naming: snap,
     });
     expect(ui[0]?.ruleId).toBe('angular-doctor/naming-convention-mix');
+  });
+});
+
+describe('component class rules', () => {
+  it('flags a lifecycle hook without its interface', () => {
+    const found = ruleLifecycleInterface({
+      project,
+      file: '/tmp/src/app/a.ts',
+      content: '@Component({}) export class A { ngOnInit() {} }',
+    });
+    expect(found[0]?.ruleId).toBe('angular-doctor/lifecycle-interface');
+    expect(
+      ruleLifecycleInterface({
+        project,
+        file: '/tmp/src/app/a.ts',
+        content: '@Component({}) export class A implements OnInit { ngOnInit() {} }',
+      }),
+    ).toHaveLength(0);
+  });
+
+  it('flags a long lifecycle hook and ignores braces inside strings', () => {
+    const body = Array.from({ length: 20 }, (_, i) => `step${i}();`).join('\n');
+    const found = ruleLifecycleHookComplexity({
+      project,
+      file: '/tmp/src/app/a.ts',
+      content: `export class A { ngOnInit() {\n${body}\n} }`,
+    });
+    expect(found[0]?.ruleId).toBe('angular-doctor/lifecycle-hook-complexity');
+    const tricky =
+      "export class A { ngOnInit() { const s = '{{{{'; go(); } other() { " +
+      'x();\n'.repeat(20) +
+      ' } }';
+    expect(
+      ruleLifecycleHookComplexity({ project, file: '/tmp/src/app/a.ts', content: tricky }),
+    ).toHaveLength(0);
+  });
+
+  it('flags methods declared before signal fields', () => {
+    const found = ruleMemberOrder({
+      project,
+      file: '/tmp/src/app/a.ts',
+      content: '@Component({})\nexport class A {\n  save() {}\n  title = input<string>();\n}',
+    });
+    expect(found[0]?.ruleId).toBe('angular-doctor/member-order');
+    expect(
+      ruleMemberOrder({
+        project,
+        file: '/tmp/src/app/a.ts',
+        content: '@Component({})\nexport class A {\n  title = input<string>();\n  save() {}\n}',
+      }),
+    ).toHaveLength(0);
+  });
+
+  it('accepts acronym class names in kebab-case files', () => {
+    expect(
+      ruleFilenameClassMismatch({
+        project,
+        file: '/tmp/src/app/url-parser.ts',
+        content: 'export class URLParser {}',
+      }),
+    ).toHaveLength(0);
+  });
+
+  it('accepts double-quoted inline templates as a file set', () => {
+    const root = join(tmpdir(), `ng-doctor-fileset-${Date.now()}`);
+    mkdirSync(root, { recursive: true });
+    const file = join(root, 'widget.ts');
+    writeFileSync(file, '@Component({ template: "<p>hi</p>" }) export class Widget {}');
+    expect(
+      ruleComponentFileSetMismatch({
+        project,
+        file,
+        content: '@Component({ template: "<p>hi</p>" }) export class Widget {}',
+      }),
+    ).toHaveLength(0);
+    const missing = join(root, 'panel.ts');
+    const content = "@Component({ templateUrl: './panel.html' }) export class Panel {}";
+    writeFileSync(missing, content);
+    expect(ruleComponentFileSetMismatch({ project, file: missing, content })[0]?.ruleId).toBe(
+      'angular-doctor/component-file-set-mismatch',
+    );
   });
 });
