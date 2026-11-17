@@ -187,39 +187,39 @@ Static checks for [NgOptimizedImage](https://angular.dev/guide/image-optimizatio
 
 Warnings are syntax the Angular skill treats as the wrong tool. Info findings are preferences that existing code can still justify.
 
-| Rule ID                                           | Severity | What it checks                                                                                                |
-| ------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------- |
-| `angular-doctor/effect-writes-state`              | error    | `effect()` calls `.set()` or `.update()` on a signal declared in the same file. Service-owned signals and DOM side effects do not count |
-| `angular-doctor/impure-pipe`                      | error    | `@Pipe({ pure: false })`                                                                                      |
-| `angular-doctor/pipe-name-hyphen`                 | warning  | Pipe `name` contains a hyphen                                                                                 |
-| `angular-doctor/inject-pipe`                      | warning  | A pipe class is injected                                                                                      |
-| `angular-doctor/prefer-provide-http-client`       | warning  | `HttpClientModule`                                                                                            |
-| `angular-doctor/prefer-functional-interceptor`    | warning  | `HTTP_INTERCEPTORS` or `implements HttpInterceptor`                                                           |
-| `angular-doctor/deprecated-incremental-hydration` | warning  | `withIncrementalHydration()` on Angular 22+                                                                   |
-| `angular-doctor/form-field-owned-attrs`           | error    | `[disabled]`, `[readonly]`, or `[value]` on `[formField]`                                                     |
-| `angular-doctor/ng-model-name`                    | warning  | `[(ngModel)]` inside a `<form>` without `name` and without standalone `ngModelOptions`                         |
-| `angular-doctor/ng-content-in-control-flow`       | error    | `<ng-content>` inside `@if`, `@for`, `@switch`, or `<ng-template>`                                            |
-| `angular-doctor/tailwind-v3-syntax`               | warning  | Tailwind v3 `@tailwind` or `tailwind.config` when Tailwind 4 is installed                                     |
-| `angular-doctor/prefer-signal-forms`              | info     | `FormControl`, `FormGroup`, `FormArray`, `FormBuilder`, `NgForm`, or `FormsModule`                            |
-| `angular-doctor/prefer-signal-query`              | warning  | `@ViewChild`, `@ViewChildren`, `@ContentChild`, or `@ContentChildren` instead of signal queries (Angular 19+) |
-| `angular-doctor/output-name`                      | info     | Output named `on…` or `click`, `submit`, `change`, `input`, `focus`                                           |
-| `angular-doctor/input-dom-name`                   | info     | Input named `id`, `title`, `role`, `tabIndex`, or `lang`                                                      |
-| `angular-doctor/prefer-http-resource`             | info     | `http.get()` in a component or directive                                                                      |
+| Rule ID                                           | Severity | What it checks                                                                                                                                                                     |
+| ------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `angular-doctor/effect-writes-state`              | error    | `effect()` calls `.set()` or `.update()` on a signal declared in the same file. Service-owned signals and DOM side effects do not count                                            |
+| `angular-doctor/impure-pipe`                      | error    | `@Pipe({ pure: false })`                                                                                                                                                           |
+| `angular-doctor/pipe-name-hyphen`                 | warning  | Pipe `name` contains a hyphen                                                                                                                                                      |
+| `angular-doctor/inject-pipe`                      | warning  | A pipe class is injected                                                                                                                                                           |
+| `angular-doctor/prefer-provide-http-client`       | warning  | `HttpClientModule`                                                                                                                                                                 |
+| `angular-doctor/prefer-functional-interceptor`    | warning  | `HTTP_INTERCEPTORS` or `implements HttpInterceptor`                                                                                                                                |
+| `angular-doctor/deprecated-incremental-hydration` | warning  | `withIncrementalHydration()` on Angular 22+                                                                                                                                        |
+| `angular-doctor/form-field-owned-attrs`           | error    | `[disabled]`, `[readonly]`, or `[value]` on `[formField]`                                                                                                                          |
+| `angular-doctor/ng-model-name`                    | warning  | `[(ngModel)]` inside a `<form>` without `name` and without standalone `ngModelOptions`                                                                                             |
+| `angular-doctor/ng-content-in-control-flow`       | error    | `<ng-content>` inside `@if`, `@for`, `@switch`, or `<ng-template>`                                                                                                                 |
+| `angular-doctor/tailwind-v3-syntax`               | warning  | Tailwind v3 `@tailwind` or `tailwind.config` when Tailwind 4 is installed                                                                                                          |
+| `angular-doctor/prefer-signal-forms`              | info     | `FormControl`, `FormGroup`, `FormArray`, `FormBuilder`, `NgForm`, or `FormsModule`                                                                                                 |
+| `angular-doctor/prefer-signal-query`              | warning  | `@ViewChild`, `@ViewChildren`, `@ContentChild`, or `@ContentChildren` instead of signal queries (Angular 19+)                                                                      |
+| `angular-doctor/output-name`                      | info     | Output named `on…` or `click`, `submit`, `change`, `input`, `focus`                                                                                                                |
+| `angular-doctor/input-dom-name`                   | info     | Input named `id`, `title`, `role`, `tabIndex`, or `lang`                                                                                                                           |
+| `angular-doctor/prefer-http-resource`             | info     | `http.get()` in a component or directive                                                                                                                                           |
 | `angular-doctor/prefer-document-token`            | info     | Unresolved global `document.` in a component or directive; a local binding such as `inject(DOCUMENT)` does not count. A warning when SSR/prerender is configured in `angular.json` |
-| `angular-doctor/inject-async-target`              | error    | `injectAsync()` loads a class that is not auto-provided (`@Service` / `providedIn: 'root'`)                   |
-| `angular-doctor/prefer-is-dev-mode`               | info     | `environment.production`                                                                                      |
-| `angular-doctor/query-in-lifecycle`               | info     | Signal query read in `ngAfterViewInit` or `ngAfterContentInit`                                                |
-| `angular-doctor/host-via-element-ref`             | info     | `nativeElement` sets `classList`, `style`, or `setAttribute`                                                  |
+| `angular-doctor/inject-async-target`              | error    | `injectAsync()` loads a class that is not auto-provided (`@Service` / `providedIn: 'root'`)                                                                                        |
+| `angular-doctor/prefer-is-dev-mode`               | info     | `environment.production`                                                                                                                                                           |
+| `angular-doctor/query-in-lifecycle`               | info     | Signal query read in `ngAfterViewInit` or `ngAfterContentInit`                                                                                                                     |
+| `angular-doctor/host-via-element-ref`             | info     | `nativeElement` sets `classList`, `style`, or `setAttribute`                                                                                                                       |
 
 ## Security
 
 Only Angular-specific security is checked here. Secret scanning and generic dead-code detection belong to dedicated tools (a secret scanner in CI, knip), not an Angular health check. Accessibility runs through the bundled template ESLint rules below; unused imports and variables come from Oxlint.
 
-| Rule ID                                      | Severity | What it checks                                                                                        |
-| -------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
-| `angular-doctor/inner-html`                  | error    | A direct `.innerHTML =` assignment, or `[innerHTML]` / `bind-innerHTML` in a file that calls `bypassSecurityTrust*`. A plain `[innerHTML]` binding is sanitized by Angular and does not count |
-| `angular-doctor/target-blank`                | error    | `target="_blank"` without `rel="noopener"`, `rel="noreferrer"`, or a bound `[rel]`                     |
-| `angular-doctor/security-bypass`             | warning  | A `DomSanitizer` `bypassSecurityTrust*` call                                                          |
+| Rule ID                          | Severity | What it checks                                                                                                                                                                                |
+| -------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `angular-doctor/inner-html`      | error    | A direct `.innerHTML =` assignment, or `[innerHTML]` / `bind-innerHTML` in a file that calls `bypassSecurityTrust*`. A plain `[innerHTML]` binding is sanitized by Angular and does not count |
+| `angular-doctor/target-blank`    | error    | `target="_blank"` without `rel="noopener"`, `rel="noreferrer"`, or a bound `[rel]`                                                                                                            |
+| `angular-doctor/security-bypass` | warning  | A `DomSanitizer` `bypassSecurityTrust*` call                                                                                                                                                  |
 
 ## What Angular Doctor does not check
 

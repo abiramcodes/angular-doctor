@@ -21,7 +21,6 @@ export const firebaseConfig = {
   projectId: 'demo',
 };
 
-
 @Component({
   selector: 'app-showcase-fixed',
   imports: [FormsModule, NgOptimizedImage],
@@ -48,8 +47,14 @@ export const firebaseConfig = {
     <a target="_blank" [rel]="externalRel" href="https://angular.dev">Angular docs</a>
 
     <!-- Duplicated on purpose: duplication is SonarQube's job since 0.3.0. -->
-    <section class="card"><h3>{{ coverLabel() }}</h3><p>First card body.</p></section>
-    <section class="card"><h3>{{ coverLabel() }}</h3><p>Second card body.</p></section>
+    <section class="card">
+      <h3>{{ coverLabel() }}</h3>
+      <p>First card body.</p>
+    </section>
+    <section class="card">
+      <h3>{{ coverLabel() }}</h3>
+      <p>Second card body.</p>
+    </section>
   `,
 })
 export class ShowcaseFixed {

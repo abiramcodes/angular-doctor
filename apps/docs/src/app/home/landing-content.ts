@@ -111,7 +111,11 @@ export const diagnostics: DiagnosticCategory[] = [
     category: 'accessibility',
     count: 6,
     body: 'Keyboard and screen reader, checked by the bundled Angular template linter. Alt text, labels, focus order, click handlers — bound attributes understood.',
-    examples: ['template-eslint/alt-text', 'template-eslint/label-has-associated-control', 'template-eslint/click-events-have-key-events'],
+    examples: [
+      'template-eslint/alt-text',
+      'template-eslint/label-has-associated-control',
+      'template-eslint/click-events-have-key-events',
+    ],
   },
   {
     category: 'hygiene',
@@ -289,8 +293,7 @@ export const commandGroups = [
         detail: 'List one category.',
       },
       {
-        command:
-          'npx @abiramcodes/angular-doctor@latest rules explain angular-doctor/inner-html',
+        command: 'npx @abiramcodes/angular-doctor@latest rules explain angular-doctor/inner-html',
         detail: 'Print one rule. Use the full rule id.',
       },
       {

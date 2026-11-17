@@ -35,10 +35,10 @@ export const routeMeta: RouteMeta = { title: 'Changelog' };
                   left in config are ignored; rules explain on a removed id now errors.
                 </li>
                 <li>
-                  template-arrow-not-called is removed. security-bypass and ng-model-name are
-                  now warnings instead of errors — both call for review rather than a guaranteed
-                  break. Raise either back to error per rule in config if your team wants the
-                  stricter gate.
+                  template-arrow-not-called is removed. security-bypass and ng-model-name are now
+                  warnings instead of errors — both call for review rather than a guaranteed break.
+                  Raise either back to error per rule in config if your team wants the stricter
+                  gate.
                 </li>
                 <li>
                   Scoring: the removed accessibility rules counted as errors and their template
@@ -73,8 +73,8 @@ export const routeMeta: RouteMeta = { title: 'Changelog' };
                   track detection works when the brace is on the next line, tsconfig array-form
                   extends is honored, double-quoted inline templates and acronym class names
                   (URLParser in url-parser.ts) pass, member-order recognizes input&lt;T&gt;()
-                  generics, afterRenderEffect writes count like effect writes, and the
-                  modernization rules ignore trigger words in comments and strings.
+                  generics, afterRenderEffect writes count like effect writes, and the modernization
+                  rules ignore trigger words in comments and strings.
                 </li>
                 <li>
                   prefer-service-decorator only fires for providedIn: 'root' singletons,
